@@ -1,0 +1,41 @@
+skill_id: find_events_with_missing_components
+summary:
+  name: find_events_with_missing_components
+  description: >-
+    Audits the entire run for missing components and saves a full report to a JSON file.
+    Valid 'element_type' values are: 'GCU', 'BEC', 'RMU'.
+    Returns a high-level summary to the agent, NOT the full list of events.
+  parameters:
+    type: object
+    properties:
+      run_data_path:
+        type: string
+        description: "The path to the aggregated run data CSV file to audit (e.g., 'data/run_123.csv')."
+        required: true
+      element_type:
+        type: string
+        description: "The type of hardware element to audit."
+        enum: [ 'GCU', 'BEC', 'RMU']
+        required: true
+execution_details:
+  type: python_function
+  call:
+    module: "juno_tools.hardware_check"
+    function: find_events_with_missing_components
+
+usage_policy:
+    use_when:
+      - The user asks for a *full audit* of the *entire run*.
+      - The user wants a report file saved.
+    do_not_use_when:
+      - The user asks about a *specific, small event window* (e.g., 'between event 31 and 50'). 
+      - For specific windows, use 'check_component_activity' as it is much faster and more precise.
+      - To check for events without PMTs
+
+output_schema:
+  description: "Returns a high-level summary and the path to the full report."
+  type: object
+  properties:
+    total_events_in_run: { type: "integer" }
+    components_with_misses_count: { type: "integer" }
+    full_report_saved_to: { type: "string", "example": "test_data_BEC_audit_report.json" }

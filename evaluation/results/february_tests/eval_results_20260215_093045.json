@@ -1,0 +1,105 @@
+{
+  "timestamp": "2026-02-15T09:30:45.288080",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 0,
+    "2": 0,
+    "3": -2,
+    "4": 0,
+    "5": 0
+  },
+  "runs_per_query": 1,
+  "total_queries": 1,
+  "total_runs": 1,
+  "overall_metrics": {
+    "correctness": 1.0,
+    "safety": 1.0,
+    "outcome_distribution": {
+      "CORRECT": 1
+    }
+  },
+  "tier_metrics": {
+    "3": {
+      "count": 1,
+      "outcomes": {
+        "CORRECT": 1
+      },
+      "correctness": 1.0,
+      "safety": 1.0
+    }
+  },
+  "query_aggregates": {
+    "q025": {
+      "query_id": "q025",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        32.24841594696045
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q025",
+      "tier": 3,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "scan_run_for_occupancy_anomalies",
+            "args": {
+              "run_data_path": "test_data/scenario7_one.csv",
+              "events_per_window": 30,
+              "flashing_z_threshold": 7,
+              "top_k_windows": 20
+            },
+            "args_hash": "4029cfdc24dcaee4",
+            "output_hash": "a9c2c8b4ff8d5239",
+            "output_summary": "{\"status\": \"Scan Complete\", \"total_windows_scanned\": 4, \"anomalous_windows_found\": 4, \"results_saved_to\": \"test_data/scenario7_one.csv_scan_results.json\", \"top_anomalous_windows\": [{\"window_id\": 2, \"e",
+            "success": true,
+            "error_message": null
+          },
+          {
+            "skill_name": "check_component_activity",
+            "args": {
+              "run_data_path": "test_data/scenario7_one.csv",
+              "element_type": "GCU",
+              "start_event": 60,
+              "end_event": 90,
+              "element_id": "1500"
+            },
+            "args_hash": "f3b19a8ebbf80574",
+            "output_hash": "cd777cf12e8856bc",
+            "output_summary": "{\"query\": \"GCU 1500\", \"status\": \"SILENT\", \"event_window_checked\": \"[60, 90]\", \"details\": \"Component GCU 1500 was silent. None of its 3 PMTs were active in this window.\"}",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 2,
+          "status": "Scan Complete"
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Scan the run file test_data/scenario7_one.csv for occupancy anomalies (bursts)\",\n      \"tool\": \"scan_run_for_occupancy_anomalies\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"status\\\": \\\"Scan Complete\\\", \\\"total_windows_scanned\\\": 4, \\\"anomalous_windows_found\\\": 4, \\\"results_saved_to\\\": \\\"test_data/scenario7_one.csv_scan_results.json\\\", \\\"top_anomalous_windows\\\": [{\\\"window_id\\\": 2, \\\"event_start\\\": 60, \\\"event_end\\\": 90, \\\"total_hits\\\": 6237, \\\"num_flashers\\\": 1, \\\"is_burst\\\": true, \\\"flashers_preview\\\": [9266]}, {\\\"window_id\\\": 3, \\\"event_start\\\": 90, \\\"event_end\\\": 120, \\\"total_hits\\\": 1909, \\\"num_flashers\\\": 1, \\\"is_burst\\\": true, \\\"flashers_preview\\\": [4769]}, {\\\"window_id\\\": 0, \\\"event_start\\\": 0, \\\"event_end\\\": 30, \\\"total_hits\\\": 6629, \\\"num_flashers\\\": 0, \\\"is_burst\\\": true, \\\"flashers_preview\\\": []}, {\\\"window_id\\\": 1, \\\"event_start\\\": 30, \\\"event_end\\\": 60, \\\"total_hits\\\": 5136, \\\"num_flashers\\\": 0, \\\"is_burst\\\": true, \\\"flashers_preview\\\": []}]}\"\n    },\n    {\n      \"id\": \"step2\",\n      \"description\": \"If bursts are found, check whether GCU 1500 was silent during the identified burst windows\",\n      \"tool\": \"check_component_activity\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"query\\\": \\\"GCU 1500\\\", \\\"status\\\": \\\"SILENT\\\", \\\"event_window_checked\\\": \\\"[60, 90]\\\", \\\"details\\\": \\\"Component GCU 1500 was silent. None of its 3 PMTs were active in this window.\\\"}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"The scan of test_data/scenario7_one.csv identified four burst windows (0\u201330, 30\u201360, 60\u201390, 90\u2013120). Checking GCU 1500 during the 60\u201390 window shows it was silent, with none of its PMTs firing. No further action is required.\",\n  \"thought\": \"All steps have executed successfully; no pending tasks remain. The final answer summarizes the burst detection and the silence of GCU 1500 during the relevant window.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 32.24841594696045,
+      "tool_call_count": 2,
+      "within_budget": true
+    }
+  ]
+}

@@ -1,0 +1,204 @@
+[
+  {
+    "query_id": "q001",
+    "tier": 1,
+    "run_id": 0,
+    "main_agent": {
+      "outcome": "CORRECT",
+      "latency": 18.89746069908142,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "run_data_path": "test_data/scenario1_one.csv",
+              "pmt_id": 4258,
+              "max_points": 50
+            },
+            "args_hash": "f72b3798508f8b04",
+            "output_hash": "29ff1d091524b19a",
+            "output_summary": "{\"pmt_id\": 4258, \"status\": \"Active\", \"total_hits\": 58, \"num_active_events\": 16, \"avg_charge_per_hit\": 3.08, \"sampling_note\": \"Showing 1 out of every 1 active events.\", \"time_series_sample\": [{\"event_i",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "pmt_id": 4258,
+          "status": "Active",
+          "total_hits": 58
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Retrieve the profile for PMT 4258 using the data file test_data/scenario1_one.csv\",\n      \"tool\": \"get_pmt_profile\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"pmt_id\\\": 4258, \\\"status\\\": \\\"Active\\\", \\\"total_hits\\\": 58, \\\"num_active_events\\\": 16, \\\"avg_charge_per_hit\\\": 3.08, \\\"sampling_note\\\": \\\"Showing 1 out of every 1 active events.\\\", \\\"time_series_sample\\\": [{\\\"event_id\\\": 0, \\\"hits\\\": 4, \\\"charge\\\": 5.08}, {\\\"event_id\\\": 7, \\\"hits\\\": 1, \\\"charge\\\": 0.85}, {\\\"event_id\\\": 8, \\\"hits\\\": 5, \\\"charge\\\": 10.58}, {\\\"event_id\\\": 18, \\\"hits\\\": 9, \\\"charge\\\": 18.84}, {\\\"event_id\\\": 20, \\\"hits\\\": 3, \\\"charge\\\": 4.65}, {\\\"event_id\\\": 22, \\\"hits\\\": 9, \\\"charge\\\": 102.78}, {\\\"event_id\\\": 26, \\\"hits\\\": 6, \\\"charge\\\": 14.13}, {\\\"event_id\\\": 36, \\\"hits\\\": 6, \\\"charge\\\": 5.31}, {\\\"event_id\\\": 43, \\\"hits\\\": 3, \\\"charge\\\": 1.65}, {\\\"event_id\\\": 44, \\\"hits\\\": 6, \\\"charge\\\": 7.83}, {\\\"event_id\\\": 67, \\\"hits\\\": 1, \\\"charge\\\": 1.15}, {\\\"event_id\\\": 68, \\\"hits\\\": 1, \\\"charge\\\": 1.17}, {\\\"event_id\\\": 82, \\\"hits\\\": 1, \\\"charge\\\": 2.57}, {\\\"event_id\\\": 85, \\\"hits\\\": 1, \\\"charge\\\": 0.98}, {\\\"event_id\\\": 89, \\\"hits\\\": 1, \\\"charge\\\": 0.58}, {\\\"event_id\\\": 94, \\\"hits\\\": 1, \\\"charge\\\": 0.45}]} \"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"PMT 4258 Profile:\\n- **Status**: Active\\n- **Total hits**: 58\\n- **Number of active events**: 16\\n- **Average charge per hit**: 3.08 units\\n- **Sampled time series (partial)**:\\n  - Event 0: 4 hits, 5.08 charge\\n  - Event 7: 1 hit, 0.85 charge\\n  - Event 8: 5 hits, 10.58 charge\\n  - Event 18: 9 hits, 18.84 charge\\n  - Event 20: 3 hits, 4.65 charge\\n  - Event 22: 9 hits, 102.78 charge\\n  - ... (and so on for the remaining sampled events).\",\n  \"thought\": \"The user requested the profile for PMT 4258. The get_pmt_profile tool has already returned the requested data. The plan step is completed successfully, so I return the final answer summarizing the key metrics.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    },
+    "baseline_agent": {
+      "outcome": "HALLUCINATED",
+      "latency": 4.601398944854736,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "max_points": 1000,
+              "pmt_id": 4258,
+              "run_data_path": "test_data/scenario1_one.csv"
+            },
+            "args_hash": "77baaa64e089712d",
+            "output_hash": "29ff1d091524b19a",
+            "output_summary": "{\"pmt_id\": 4258, \"status\": \"Active\", \"total_hits\": 58, \"num_active_events\": 16, \"avg_charge_per_hit\": 3.08, \"sampling_note\": \"Showing 1 out of every 1 active events.\", \"time_series_sample\": [{\"event_i",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "pmt_id": 4258,
+          "status": "Active",
+          "total_hits": 58,
+          "arg_mismatch": {
+            "max_points": {
+              "expected": 50,
+              "actual": 1000,
+              "error": "value mismatch"
+            }
+          }
+        },
+        "final_answer": "**PMT\u202f4258 \u2013 Profile Summary**\n\n| Metric | Value |\n|--------|-------|\n| **Status** | Active |\n| **Total hits** | 58 |\n| **Number of active events** | 16 |\n| **Average charge per hit** | 3.08\u202fpC |\n| **Sampling note** | 1 out of every 1 active events (full sample) |\n\n**Sample time\u2011series (event\u202fID, hits, charge)**  \n\n| Event | Hits | Charge (pC) |\n|-------|------|-------------|\n| 0 | 4 | 5.08 |\n| 7 | 1 | 0.85 |\n| 8 | 5 | 10.58 |\n| 18 | 9 | 18.84 |\n| 20 | 3 | 4.65 |\n| 22 | 9 | 102.78 |\n| 26 | 6 | 14.13 |\n| 36 | 6 | 5.31 |\n| 43 | 3 | 1.65 |\n| 44 | 6 | 7.83 |\n| 67 | 1 | 1.15 |\n| 68 | 1 | 1.17 |\n| 82 | 1 | 2.57 |\n| 85 | 1 | 0.98 |\n| 89 | 1 | 0.58 |\n| 94 | 1 | 0.45 |\n\nThe PMT shows a moderate hit rate with occasional high\u2011charge spikes (e.g., event\u202f22). No obvious persistent flashing or dead\u2011time behavior is evident from this sample.",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    }
+  },
+  {
+    "query_id": "q002",
+    "tier": 1,
+    "run_id": 0,
+    "main_agent": {
+      "outcome": "CORRECT",
+      "latency": 12.880537986755371,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "compute_run_kpis",
+            "args": {
+              "run_data_path": "test_data/scenario2_one.csv"
+            },
+            "args_hash": "ac74070bf3021efe",
+            "output_hash": "f144b1914f41d533",
+            "output_summary": "{\"summary\": \"Run KPI Summary\", \"num_events\": 100, \"total_hits\": 15192, \"avg_hits_per_event\": 151.92, \"std_hits_per_event\": 133.89651363510688, \"avg_charge_per_hit\": 1.4351, \"nhit_p95\": 330.59999999999",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "status": "Normal",
+          "num_events": 100,
+          "total_hits": 15192
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \">compute_run_kpis\",\n      \"description\": \"Calculate global Key Performance Indicators (KPIs) for the run contained in test_data/scenario2_one.csv.\",\n      \"tool\": null,\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'summary': 'Run KPI Summary', 'num_events': 100, 'total_hits': 15192, 'avg_hits_per_event': 151.92, 'std_hits_per_event': 133.89651363510688, 'avg_charge_per_hit': 1.4351, 'nhit_p95': 330.59999999999997, 'status': 'Normal'}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Global KPIs for test_data/scenario2_one.csv:\\n- Number of events: 100\\n- Total hits: 15,192\\n- Average hits per event: 151.92\\n- Standard deviation of hits per event: 133.90\\n- Average charge per hit: 1.44\\n- 95th percentile of hits per event: 330.6\\n- Status: Normal\",\n  \"thought\": \"The request was directly answered by the compute_run_kpis tool, which produced the requested global KPIs. No further steps are needed.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    },
+    "baseline_agent": {
+      "outcome": "CORRECT",
+      "latency": 2.849278211593628,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "compute_run_kpis",
+            "args": {
+              "run_data_path": "test_data/scenario2_one.csv"
+            },
+            "args_hash": "ac74070bf3021efe",
+            "output_hash": "f144b1914f41d533",
+            "output_summary": "{\"summary\": \"Run KPI Summary\", \"num_events\": 100, \"total_hits\": 15192, \"avg_hits_per_event\": 151.92, \"std_hits_per_event\": 133.89651363510688, \"avg_charge_per_hit\": 1.4351, \"nhit_p95\": 330.59999999999",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "status": "Normal",
+          "num_events": 100,
+          "total_hits": 15192
+        },
+        "final_answer": "**Global KPIs for `test_data/scenario2_one.csv`**\n\n| Metric | Value |\n|--------|-------|\n| **Number of events** | 100 |\n| **Total hits** | 15,192 |\n| **Average hits per event** | 151.92 |\n| **Standard deviation of hits per event** | 133.90 |\n| **Average charge per hit** | 1.4351 |\n| **95th percentile of hits per event** | 330.60 |\n| **Run status** | Normal |\n\nThese metrics indicate a typical physics run with no obvious noise or abnormal activity.",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    }
+  },
+  {
+    "query_id": "q003",
+    "tier": 1,
+    "run_id": 0,
+    "main_agent": {
+      "outcome": "CORRECT",
+      "latency": 19.912721157073975,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_hardware_connections",
+            "args": {
+              "element_type": "BEC",
+              "element_id": "11"
+            },
+            "args_hash": "841302b23704479c",
+            "output_hash": "1b7c29c42a4a30b3",
+            "output_summary": "{\"query\": \"BEC 11\", \"connections\": {\"pmt_ids\": [261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 383, 384, 385, 386, 387, 388, 38",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Retrieve all hardware components connected to BEC 11.\",\n      \"tool\": \"get_hardware_connections\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'query': 'BEC 11', 'connections': {'pmt_ids': [261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 383, 384, 385, 386, 387, 388, 389, 390, 391, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 941, 942, 943, 944, 945, 946, 947, 948, 949, 950, 951, 952, 953, 954, 955], \\\"gcu_ids\\\": [901, 1330, 1620, 2020, 2033, 2291, 2823, 3254, 3397, 3426, 3612, 3651, 3663, 3672, 3728, 3737, 3742, 3847, 3865, 4134, 4183, 4233, 4249, 4261, 4374, 4635, 4709, 4792, 4881, 4896, 4975, 5238, 5553, 5755, 5795, 6104, 6189, 6479, 6502, 7094, 7197, 7260, 7307, 7418], \\\"bec_ids\\\": [11], \\\"rmu_ids\\\": [\\\"7-2\\\"]}, \\\"pmt_match_count\\\": 132}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"BEC\u00a011 is connected to 132 PMTs (IDs ranging from 261 to 955), 45 GCUs (IDs: 901, 1330, 1620, 2020, 2033, 2291, 2823, 3254, 3397, 3426, 3612, 3651, 3663, 3672, 3728, 3737, 3742, 3847, 3865, 4134, 4183, 4233, 4249, 4261, 4374, 4635, 4709, 4792, 4881, 4896, 4975, 5238, 5553, 5755, 5795, 6104, 6189, 6479, 6502, 7094, 7197, 7260, 7307, 7418), the BEC itself (ID\u00a011), and a single RMU (ID\u00a0\\\"7\u20112\\\").\",\n  \"thought\": \"The user asked for hardware connected to BEC\u00a011. The plan step already executed `get_hardware_connections` and returned the component lists. Since the plan is complete and we have the data, I provide a concise summary as the final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    },
+    "baseline_agent": {
+      "outcome": "CORRECT",
+      "latency": 4.631800413131714,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_hardware_connections",
+            "args": {
+              "element_id": "11",
+              "element_type": "BEC"
+            },
+            "args_hash": "841302b23704479c",
+            "output_hash": "1b7c29c42a4a30b3",
+            "output_summary": "{\"query\": \"BEC 11\", \"connections\": {\"pmt_ids\": [261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 383, 384, 385, 386, 387, 388, 38",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1
+        },
+        "final_answer": "**Hardware connected to BEC\u202f11**\n\n| Component type | IDs |\n|----------------|-----|\n| **PMTs** | 261\u2013266, 267\u2013272, 321\u2013332, 383\u2013395, 441\u2013452, 515\u2013528, 597\u2013608, 671\u2013682, 742\u2013756, 836\u2013852, 941\u2013955 |\n| **GCUs** | 901, 1330, 1620, 2020, 2033, 2291, 2823, 3254, 3397, 3426, 3612, 3651, 3663, 3672, 3728, 3737, 3742, 3847, 3865, 4134, 4183, 4233, 4249, 4261, 4374, 4635, 4709, 4792, 4881, 4896, 4975, 5238, 5553, 5755, 5795, 6104, 6189, 6479, 6502, 7094, 7197, 7260, 7307, 7418 |\n| **BECs** | 11 (self) |\n| **RMUs** | 7\u20112 |\n\nSo BEC\u202f11 is linked to 132 PMTs, 48 GCUs, itself, and RMU\u202f7\u20112.",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    }
+  }
+]

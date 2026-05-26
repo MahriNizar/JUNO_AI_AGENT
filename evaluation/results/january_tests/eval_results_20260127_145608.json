@@ -1,0 +1,127 @@
+{
+  "timestamp": "2026-01-27T14:56:08.509719",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 2,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "runs_per_query": 1,
+  "total_queries": 2,
+  "total_runs": 2,
+  "overall_metrics": {
+    "correctness": 0.5,
+    "safety": 0.5,
+    "outcome_distribution": {
+      "HALLUCINATED": 1,
+      "CORRECT": 1
+    }
+  },
+  "tier_metrics": {
+    "1": {
+      "count": 2,
+      "outcomes": {
+        "HALLUCINATED": 1,
+        "CORRECT": 1
+      },
+      "correctness": 0.5,
+      "safety": 0.5
+    }
+  },
+  "query_aggregates": {
+    "q001": {
+      "query_id": "q001",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        18.31970477104187
+      ]
+    },
+    "q002": {
+      "query_id": "q002",
+      "n_runs": 1,
+      "correct_rate": 0.0,
+      "hallucination_rate": 1.0,
+      "worst_case": "FAILED",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "HALLUCINATED": 1
+      },
+      "latencies": [
+        12.429871320724487
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q001",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args_hash": "f72b3798508f8b04",
+            "output_hash": "29ff1d091524b19a",
+            "output_summary": "{\"pmt_id\": 4258, \"status\": \"Active\", \"total_hits\": 58, \"num_active_events\": 16, \"avg_charge_per_hit\": 3.08, \"sampling_note\": \"Showing 1 out of every 1 active events.\", \"time_series_sample\": [{\"event_i",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "pmt_id": "4258"
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Retrieve the historical profile for PMT 4258 from the specified data file.\",\n      \"tool\": \"get_pmt_profile\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"pmt_id\\\": 4258, \\\"status\\\": \\\"Active\\\", \\\"total_hits\\\": 58, \\\"num_active_events\\\": 16, \\\"avg_charge_per_hit\\\": 3.08, \\\"sampling_note\\\": \\\"Showing 1 out of every 1 active events.\\\", \\\"time_series_sample\\\": [{\\\"event_id\\\": 0, \\\"hits\\\": 4, \\\"charge\\\": 5.08}, {\\\"event_id\\\": 7, \\\"hits\\\": 1, \\\"charge\\\": 0.85}, {\\\"event_id\\\": 8, \\\"hits\\\": 5, \\\"charge\\\": 10.58}, {\\\"event_id\\\": 18, \\\"hits\\\": 9, \\\"charge\\\": 18.84}, {\\\"event_id\\\": 20, \\\"hits\\\": 3, \\\"charge\\\": 4.65}, {\\\"event_id\\\": 22, \\\"hits\\\": 9, \\\"charge\\\": 102.78}, {\\\"event_id\\\": 26, \\\"hits\\\": 6, \\\"charge\\\": 14.13}, {\\\"event_id\\\": 36, \\\"hits\\\": 6, \\\"charge\\\": 5.31}, {\\\"event_id\\\": 43, \\\"hits\\\": 3, \\\"charge\\\": 1.65}, {\\\"event_id\\\": 44, \\\"hits\\\": 6, \\\"charge\\\": 7.83}, {\\\"event_id\\\": 67, \\\"hits\\\": 1, \\\"charge\\\": 1.15}, {\\\"event_id\\\": 68, \\\"hits\\\": 1, \\\"charge\\\": 1.17}, {\\\"event_id\\\": 82, \\\"hits\\\": 1, \\\"charge\\\": 2.57}, {\\\"event_id\\\": 85, \\\"hits\\\": 1, \\\"charge\\\": 0.98}, {\\\"event_id\\\": 89, \\\"hits\\\": 1, \\\"charge\\\": 0.58}, {\\\"event_id\\\": 94, \\\"hits\\\": 1, \\\"charge\\\": 0.45}]}\\\"\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"PMT 4258 Profile (from test_data/scenario1_one.csv):\\n- Status: Active\\n- Total Hits: 58\\n- Active Events: 16\\n- Average Charge per Hit: 3.08\\n- Sample Time Series (event_id, hits, charge):\\n  \u2022 0: 4 hits, 5.08\\n  \u2022 7: 1 hit, 0.85\\n  \u2022 8: 5 hits, 10.58\\n  \u2022 18: 9 hits, 18.84\\n  \u2022 20: 3 hits, 4.65\\n  \u2022 22: 9 hits, 102.78\\n  \u2022 26: 6 hits, 14.13\\n  \u2022 36: 6 hits, 5.31\\n  \u2022 43: 3 hits, 1.65\\n  \u2022 44: 6 hits, 7.83\\n  \u2022 67: 1 hit, 1.15\\n  \u2022 68: 1 hit, 1.17\\n  \u2022 82: 1 hit, 2.57\\n  \u2022 85: 1 hit, 0.98\\n  \u2022 89: 1 hit, 0.58\\n  \u2022 94: 1 hit, 0.45\\n\\nThis provides an overview of the PMT's activity, charge distribution, and a representative sample of its hit times.\",\n  \"thought\": \"The request was fulfilled by the get_pmt_profile tool. The plan now has no pending steps, so I provide a final answer summarizing the profile.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 18.31970477104187,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q002",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "HALLUCINATED",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "compute_run_kpis",
+            "args_hash": "ac74070bf3021efe",
+            "output_hash": "f144b1914f41d533",
+            "output_summary": "{\"summary\": \"Run KPI Summary\", \"num_events\": 100, \"total_hits\": 15192, \"avg_hits_per_event\": 151.92, \"std_hits_per_event\": 133.89651363510688, \"avg_charge_per_hit\": 1.4351, \"nhit_p95\": 330.59999999999",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "has_kpis": false
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"\",\n      \"description\": \"Compute global key performance indicators for the specified run file.\",\n      \"tool\": \"compute_run_kpis\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"summary\\\": \\\"Run KPI Summary\\\", \\\"num_events\\\": 100, \\\"total_hits\\\": 15192, \\\"avg_hits_per_event\\\": 151.92, \\\"std_hits_per_event\\\": 133.89651363510688, \\\"avg_charge_per_hit\\\": 1.4351, \\\"nhit_p95\\\": 330.59999999999997, \\\"status\\\": \\\"Normal\\\"}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Global KPIs for *test_data/scenario2_one.csv*:\\n- Number of events: 100\\n- Total hits: 15,192\\n- Average hits per event: 151.92 (\u03c3 = 133.90)\\n- 95th percentile hits per event (nhit_p95): ~330.6\\n- Average charge per hit: 1.4351\\n- Run status: Normal\",\n  \"thought\": \"The only step in the plan was the compute_run_kpis call, which succeeded. No pending steps remain, so we return the final answer summarizing the KPIs.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 12.429871320724487,
+      "tool_call_count": 1,
+      "within_budget": true
+    }
+  ]
+}

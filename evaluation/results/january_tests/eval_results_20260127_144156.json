@@ -1,0 +1,253 @@
+{
+  "timestamp": "2026-01-27T14:41:56.510252",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 5,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "runs_per_query": 1,
+  "total_queries": 5,
+  "total_runs": 5,
+  "overall_metrics": {
+    "correctness": 0.6,
+    "safety": 0.6,
+    "outcome_distribution": {
+      "HALLUCINATED": 2,
+      "CORRECT": 3
+    }
+  },
+  "tier_metrics": {
+    "1": {
+      "count": 5,
+      "outcomes": {
+        "HALLUCINATED": 2,
+        "CORRECT": 3
+      },
+      "correctness": 0.6,
+      "safety": 0.6
+    }
+  },
+  "query_aggregates": {
+    "q001": {
+      "query_id": "q001",
+      "n_runs": 1,
+      "correct_rate": 0.0,
+      "hallucination_rate": 1.0,
+      "worst_case": "FAILED",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "HALLUCINATED": 1
+      },
+      "latencies": [
+        10.795970439910889
+      ]
+    },
+    "q002": {
+      "query_id": "q002",
+      "n_runs": 1,
+      "correct_rate": 0.0,
+      "hallucination_rate": 1.0,
+      "worst_case": "FAILED",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "HALLUCINATED": 1
+      },
+      "latencies": [
+        10.738280296325684
+      ]
+    },
+    "q005": {
+      "query_id": "q005",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        17.46819019317627
+      ]
+    },
+    "q007": {
+      "query_id": "q007",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        14.065075635910034
+      ]
+    },
+    "q010": {
+      "query_id": "q010",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        14.929689168930054
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q001",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "HALLUCINATED",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args_hash": "10660847e9e42a50",
+            "output_hash": "f55bc831e7ed7762",
+            "output_summary": "{\"pmt_id\": 1200, \"status\": \"No hits found (Dead or Invalid ID)\", \"total_hits\": 0}",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "pmt_id": "1200"
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Retrieve the profile for PMT 1200 using the specified data file\",\n      \"tool\": \"get_pmt_profile\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'pmt_id': 1200, 'status': 'No hits found (Dead or Invalid ID)', 'total_hits': 0}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"PMT 1200 shows no recorded hits in the file `test_data/scenario1_one.csv`. The profile indicates it is either dead or not present in this dataset.\",\n  \"thought\": \"The requested PMT profile was successfully retrieved with the get_pmt_profile tool. The output indicates zero hits, so the PMT is either dead or not included in the file. No further actions are required.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 10.795970439910889,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q002",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "HALLUCINATED",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "compute_run_kpis",
+            "args_hash": "ac74070bf3021efe",
+            "output_hash": "f144b1914f41d533",
+            "output_summary": "{\"summary\": \"Run KPI Summary\", \"num_events\": 100, \"total_hits\": 15192, \"avg_hits_per_event\": 151.92, \"std_hits_per_event\": 133.89651363510688, \"avg_charge_per_hit\": 1.4351, \"nhit_p95\": 330.59999999999",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "has_kpis": false
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"1\",\n      \"description\": \"Calculate global KPIs for the run data in test_data/scenario2_one.csv\",\n      \"tool\": \"compute_run_kpis\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"summary\\\": \\\"Run KPI Summary\\\", \\\"num_events\\\": 100, \\\"total_hits\\\": 15192, \\\"avg_hits_per_event\\\": 151.92, \\\"std_hits_per_event\\\": 133.89651363510688, \\\"avg_charge_per_hit\\\": 1.4351, \\\"nhit_p95\\\": 330.59999999999997, \\\"status\\\": \\\"Normal\\\"}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Global KPIs for the run:\\n- Number of events: 100\\n- Total hits: 15,192\\n- Average hits per event: 151.92\\n- Standard deviation of hits per event: 133.90\\n- Average charge per hit: 1.4351\\n- 95th percentile hits per event: 331\\n- Run status: Normal\",\n  \"thought\": \"The user requested global KPIs. The compute_run_kpis tool completed successfully and provided all required metrics. No further steps are needed, so the plan is complete and we can present the results as the final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 10.738280296325684,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q005",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_event_multiplicity_distribution",
+            "args_hash": "d3b1f4d8c6d22c2c",
+            "output_hash": "093b7cc02b7c5aca",
+            "output_summary": "{\"summary_stats\": {\"mean\": 209.37, \"median\": 179.0, \"max\": 1148, \"min\": 137, \"p99\": 595.5800000000029}, \"histogram_bins\": [{\"bin_range\": \"137-187\", \"count\": 64}, {\"bin_range\": \"187-238\", \"count\": 22},",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "has_distribution": true
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Compute the hits-per-event (multiplicity) distribution for test_data/scenario4_one.csv\",\n      \"tool\": \"get_event_multiplicity_distribution\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'summary_stats': {'mean': 209.37, 'median': 179.0, 'max': 1148, 'min': 137, 'p99': 595.5800000000029}, 'histogram_bins': [{'bin_range': '137-187', 'count': 64}, {'bin_range': '187-238', 'count': 22}, {'bin_range': '238-288', 'count': 4}, {'bin_range': '288-339', 'count': 3}, {'bin_range': '339-389', 'count': 3}, {'bin_range': '389-440', 'count': 1}, {'bin_range': '440-490', 'count': 0}, {'bin_range': '490-541', 'count': 1}, {'bin_range': '541-591', 'count': 1}, {'bin_range': '591-642', 'count': 0}, {'bin_range': '642-693', 'count': 0}, {'bin_range': '693-743', 'count': 0}, {'bin_range': '743-794', 'count': 0}, {'bin_range': '794-844', 'count': 0}, {'bin_range': '844-895', 'count': 0}, {'bin_range': '895-945', 'count': 0}, {'bin_range': '945-996', 'count': 0}, {'bin_range': '996-1046', 'count': 0}, {'bin_range': '1046-1097', 'count': 0}, {'bin_range': '1097-1148', 'count': 1}], 'note': 'Bins with 0 counts are included to show gaps.'}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Here\u2019s the hits\u2011per\u2011event (multiplicity) distribution for *test_data/scenario4_one.csv*:\\n\\n- **Mean**: 209.4 hits per event\\n- **Median**: 179 hits\\n- **Minimum**: 137 hits\\n- **Maximum**: 1,148 hits\\n- **99th percentile (p99)**: 595.6 hits\\n\\nThe histogram (bins of 50 hits) shows a peak around 137\u2013187 hits (64 events), a secondary bump around 187\u2013238 hits (22 events), and a long tail extending to 1,148 hits. Zero\u2011count bins indicate a gap in the distribution around 440\u2013490 and 490\u2013541, which is typical for this dataset.\\n\\nIf you\u2019d like a visual plot or a more detailed breakdown, let me know and I can generate it for you.\",\n  \"thought\": \"The user requested the distribution. The plan has completed the required step with the tool output. No further actions are needed. I will provide a concise summary and key statistics as the final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 17.46819019317627,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q007",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "find_events_with_missing_components",
+            "args_hash": "6166e54ae7abf522",
+            "output_hash": "a7fc9c7181a3d8ba",
+            "output_summary": "{\"query\": \"Audit of missing BEC components\", \"element_type\": \"BEC\", \"total_events_in_run\": 100, \"components_with_misses_count\": 134, \"full_report_saved_to\": \"test_data/scenario8_one_BEC_audit_report.j",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "audit_completed": true
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Run a full BEC audit for test_data/scenario8_one.csv\",\n      \"tool\": \"find_events_with_missing_components\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'query': 'Audit of missing BEC components', 'element_type': 'BEC', 'total_events_in_run': 100, 'components_with_misses_count': 134, 'full_report_saved_to': 'test_data/scenario8_one_BEC_audit_report.json'}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"The BEC audit for `test_data/scenario8_one.csv` has finished successfully. A detailed report summarizing missing BEC components (134 missing instances across 100 events) has been written to `test_data/scenario8_one_BEC_audit_report.json`.\",\n  \"thought\": \"The requested audit was performed via `find_events_with_missing_components`. The tool succeeded, generating a report file and a summary of missing BEC components. Since no further steps remain, the plan is complete and I return the final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 14.065075635910034,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q010",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "find_events_with_missing_components",
+            "args_hash": "624a7eca420ad546",
+            "output_hash": "06066cf6afdf34fd",
+            "output_summary": "{\"query\": \"Audit of missing GCU components\", \"element_type\": \"GCU\", \"total_events_in_run\": 100, \"components_with_misses_count\": 5878, \"full_report_saved_to\": \"test_data/scenario1_one_GCU_audit_report.",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "audit_completed": true
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"1\",\n      \"description\": \"Audit entire run for missing GCUs\",\n      \"tool\": \"find_events_with_missing_components\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"query\\\":\\\"Audit of missing GCU components\\\",\\\"element_type\\\":\\\"GCU\\\",\\\"total_events_in_run\\\":100,\\\"components_with_misses_count\\\":5878,\\\"full_report_saved_to\\\":\\\"test_data/scenario1_one_GCU_audit_report.json\\\"}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Audit complete:\\n- Total events in run: 100\\n- Number of missing GCU components detected: 5,878\\n- Detailed report saved to: test_data/scenario1_one_GCU_audit_report.json\\n\\nYou can inspect the JSON file for a per\u2011event breakdown of the missing GCUs. If you need further analysis (e.g., identify specific PMTs or time windows with the most missing GCUs), let me know!\",\n  \"thought\": \"The user asked for an audit of missing GCUs. The find_events_with_missing_components tool was used successfully, producing a report. Since the single planned step completed, the plan is finished and I provide a concise summary.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 14.929689168930054,
+      "tool_call_count": 1,
+      "within_budget": true
+    }
+  ]
+}

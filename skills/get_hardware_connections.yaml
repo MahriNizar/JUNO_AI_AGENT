@@ -1,0 +1,43 @@
+skill_id: get_hardware_connections
+summary:
+  name: get_hardware_connections
+  description: >-
+    Finds all connected hardware components (PMTs, GCUs, BECs, RMUs) 
+    for a single JUNO hardware element. Use this to trace connections, 
+    find related components, and localize the scope of a problem.
+  parameters:
+    type: object
+    properties:
+      element_type:
+        type: string
+        description: "The type of hardware element to query."
+        required: true
+      element_id:
+        type: string
+        description: "The specific ID of the element (e.g., '1925' for a GCU, '5-1' for an RMU)."
+        required: true
+execution_details:
+  type: python_function
+  call:
+    module: "juno_tools.hardware_check"
+    function: get_hardware_connections
+
+usage_policy:
+    use_when: 
+      - You have a *specific component ID* (e.g., BEC '11') and need to find what it's connected to (e.g., its GCU).
+      - This is the *only* tool that can trace hardware connections.
+    do_not_use_when: 
+      - You are checking for activity in an event window (use 'check_component_activity').
+
+output_schema:
+    description: "Returns a dictionary of all hardware connected to the queried element."
+    type: object
+    properties:
+      query: { type: "string", "example": "BEC 11" }
+      connections:
+        type: object
+        properties:
+          pmt_ids: { type: "array", "items": { "type": "integer" } }
+          gcu_ids: { type: "array", "items": { "type": "integer" } }
+          bec_ids: { type: "array", "items": { "type": "integer" } }
+          rmu_ids: { type: "array", "items": { "type": "string" } }

@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-02-15T10:16:58.644749",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": -2
+  },
+  "runs_per_query": 1,
+  "total_queries": 1,
+  "total_runs": 1,
+  "overall_metrics": {
+    "correctness": 0.0,
+    "safety": 0.0,
+    "outcome_distribution": {
+      "HALLUCINATED": 1
+    }
+  },
+  "tier_metrics": {
+    "5": {
+      "count": 1,
+      "outcomes": {
+        "HALLUCINATED": 1
+      },
+      "correctness": 0.0,
+      "safety": 0.0
+    }
+  },
+  "query_aggregates": {
+    "q036": {
+      "query_id": "q036",
+      "n_runs": 1,
+      "correct_rate": 0.0,
+      "hallucination_rate": 1.0,
+      "worst_case": "FAILED",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "HALLUCINATED": 1
+      },
+      "latencies": [
+        2.9723944664001465
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q036",
+      "tier": 5,
+      "run_id": 0,
+      "outcome": "HALLUCINATED",
+      "evidence": {
+        "tool_calls": [],
+        "key_values": {
+          "tool_outputs_count": 0
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [],\n  \"skill_to_use\": null,\n  \"final_answer\": \"I\u2019m sorry, but I don\u2019t have a tool that can read or process a calibration file such as \\\"test_data/scenario1_one.csv\\\". My current skill set focuses on occupancy, component audits, and basic event statistics, not on extracting or interpreting calibration data from CSV files.\",\n  \"thought\": \"The request is to provide the PMT calibration from a CSV file, but none of the available skills (e.g., get_pmt_profile, get_pmt_group plots, etc.) can directly read or analyze a calibration CSV. Therefore the request is out of scope.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 2.9723944664001465,
+      "tool_call_count": 0,
+      "within_budget": true
+    }
+  ]
+}

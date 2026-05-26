@@ -1,0 +1,46 @@
+skill_id: get_pmt_profile
+summary:
+  name: get_pmt_profile
+  description: >-
+    Retrieves the history of a single PMT. Returns total hits, average charge, 
+    and a sampled time-series of events where the PMT fired. Use this to visualize 
+    if a PMT is consistently noisy, bursting, or drifting.
+  parameters:
+    type: object
+    properties:
+      run_data_path:
+        type: string
+        description: "Path to the run data CSV."
+        required: true
+      pmt_id:
+        type: integer
+        description: "The ID of the PMT to inspect."
+        required: true
+      max_points:
+        type: integer
+        description: "Maximum number of time points to return to save context."
+        required: false
+        default: 50
+execution_details:
+  type: python_function
+  call:
+    module: "juno_tools.physics_analysis"
+    function: "get_pmt_profile"
+usage_policy:
+  use_when:
+    - You identified a noisy PMT ID (e.g., from 'detect_global_occupancy_outliers') and want to see *when* it fired.
+    - User asks "Show me the history of PMT 1200".
+  do_not_use_when:
+    - You want to find *which* PMTs are noisy (use 'detect_global_occupancy_outliers' first).
+output_schema:
+  description: "Returns aggregate stats and a sampled event list."
+  type: object
+  properties:
+    time_series_sample:
+      type: array
+      items:
+        type: object
+        properties:
+          event_id: { type: integer }
+          hits: { type: integer }
+          charge: { type: number }

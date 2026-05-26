@@ -1,0 +1,17 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Perform a global assessment of charge uniformity across the full run using test_data/your_run_first600.csv.",
+      "expected_behavior": "Return overall uniformity metrics and flag potential hemispheric imbalance."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Check for any hardware failures in the data from test_data/your_run_first600.csv.",
+      "expected_behavior": "Provide a report on possible dead GCU/BEC/RMU blocks and general imbalance indicators."
+    }
+  ],
+  "use_provided_data": true,
+  "provided_data_path": "test_data/your_run_first600.csv",
+  "mock_files": null
+}

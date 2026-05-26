@@ -1,0 +1,185 @@
+{
+  "timestamp": "2026-02-15T10:51:21.109853",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 3,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "runs_per_query": 1,
+  "total_queries": 3,
+  "total_runs": 3,
+  "overall_metrics": {
+    "correctness": 1.0,
+    "safety": 1.0,
+    "outcome_distribution": {
+      "CORRECT": 3
+    }
+  },
+  "tier_metrics": {
+    "1": {
+      "count": 3,
+      "outcomes": {
+        "CORRECT": 3
+      },
+      "correctness": 1.0,
+      "safety": 1.0
+    }
+  },
+  "query_aggregates": {
+    "q001": {
+      "query_id": "q001",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        18.564607858657837
+      ]
+    },
+    "q002": {
+      "query_id": "q002",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        11.246967077255249
+      ]
+    },
+    "q003": {
+      "query_id": "q003",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        19.788330793380737
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q001",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "run_data_path": "test_data/scenario1_one.csv",
+              "pmt_id": 4258,
+              "max_points": 50
+            },
+            "args_hash": "f72b3798508f8b04",
+            "output_hash": "29ff1d091524b19a",
+            "output_summary": "{\"pmt_id\": 4258, \"status\": \"Active\", \"total_hits\": 58, \"num_active_events\": 16, \"avg_charge_per_hit\": 3.08, \"sampling_note\": \"Showing 1 out of every 1 active events.\", \"time_series_sample\": [{\"event_i",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "pmt_id": 4258,
+          "status": "Active",
+          "total_hits": 58
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"1\",\n      \"description\": \"Retrieve the PMT profile for PMT 4258 from the provided data file\",\n      \"tool\": \"get_pmt_profile\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'pmt_id': 4258, 'status': 'Active', 'total_hits': 58, 'num_active_events': 16, 'avg_charge_per_hit': 3.08, 'sampling_note': 'Showing 1 out of every 1 active events.', 'time_series_sample': [{'event_id': 0, 'hits': 4, 'charge': 5.08}, {'event_id': 7, 'hits': 1, 'charge': 0.85}, {'event_id': 8, 'hits': 5, 'charge': 10.58}, {'event_id': 18, 'hits': 9, 'charge': 18.84}, {'event_id': 20, 'hits': 3, 'charge': 4.65}, {'event_id': 22, 'hits': 9, 'charge': 102.78}, {'event_id': 26, 'hits': 6, 'charge': 14.13}, {'event_id': 36, 'hits': 6, 'charge': 5.31}, {'event_id': 43, 'hits': 3, 'charge': 1.65}, {'event_id': 44, 'hits': 6, 'charge': 7.83}, {'event_id': 67, 'hits': 1, 'charge': 1.15}, {'event_id': 68, 'hits': 1, 'charge': 1.17}, {'event_id': 82, 'hits': 1, 'charge': 2.57}, {'event_id': 85, 'hits': 1, 'charge': 0.98}, {'event_id': 89, 'hits': 1, 'charge': 0.58}, {'event_id': 94, 'hits': 1, 'charge': 0.45}]}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"PMT 4258 profile (from test_data/scenario1_one.csv):\\n\\n- PMT ID: 4258\\n- Status: Active\\n- Total hits recorded: 58\\n- Number of active events: 16\\n- Average charge per hit: 3.08 a.u.\\n- Sampled time\u2011series (showing 1 out of every 1 active event):\\n  - Event 0: 4 hits, 5.08 charge\\n  - Event 7: 1 hit, 0.85 charge\\n  - Event 8: 5 hits, 10.58 charge\\n  - Event 18: 9 hits, 18.84 charge\\n  - Event 20: 3 hits, 4.65 charge\\n  - Event 22: 9 hits, 102.78 charge\\n  - Event 26: 6 hits, 14.13 charge\\n  - Event 36: 6 hits, 5.31 charge\\n  - Event 43: 3 hits, 1.65 charge\\n  - Event 44: 6 hits, 7.83 charge\\n  - Event 67: 1 hit, 1.15 charge\\n  - Event 68: 1 hit, 1.17 charge\\n  - Event 82: 1 hit, 2.57 charge\\n  - Event 85: 1 hit, 0.98 charge\\n  - Event 89: 1 hit, 0.58 charge\\n  - Event 94: 1 hit, 0.45 charge\\n\\nThis summary gives you the key performance metrics for PMT 4258 over the selected dataset. If you need additional details or a visual plot, let me know!\",\n  \"thought\": \"The request was fulfilled by calling get_pmt_profile. The plan has a single successful step, so no further actions are needed. I provide a concise summary of the profile as the final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 18.564607858657837,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q002",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "compute_run_kpis",
+            "args": {
+              "run_data_path": "test_data/scenario2_one.csv"
+            },
+            "args_hash": "ac74070bf3021efe",
+            "output_hash": "f144b1914f41d533",
+            "output_summary": "{\"summary\": \"Run KPI Summary\", \"num_events\": 100, \"total_hits\": 15192, \"avg_hits_per_event\": 151.92, \"std_hits_per_event\": 133.89651363510688, \"avg_charge_per_hit\": 1.4351, \"nhit_p95\": 330.59999999999",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "status": "Normal",
+          "num_events": 100,
+          "total_hits": 15192
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"1\",\n      \"description\": \"Compute global KPIs for the run provided in test_data/scenario2_one.csv\",\n      \"tool\": null,\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'summary': 'Run KPI Summary', 'num_events': 100, 'total_hits': 15192, 'avg_hits_per_event': 151.92, 'std_hits_per_event': 133.89651363510688, 'avg_charge_per_hit': 1.4351, 'nhit_p95': 330.59999999999997, 'status': 'Normal'}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Global KPIs for test_data/scenario2_one.csv:\\n\u2022 Number of events: 100\\n\u2022 Total hits: 15,192\\n\u2022 Average hits per event: 151.92 (\u03c3 = 133.90)\\n\u2022 Average charge per hit: 1.4351\\n\u2022 95th percentile of hits per event: 330.60\\n\u2022 Run status: Normal\",\n  \"thought\": \"The user requested global KPIs. The compute_run_kpis tool was already executed successfully in the plan, providing all requested metrics. No further action is required.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 11.246967077255249,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q003",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_hardware_connections",
+            "args": {
+              "element_type": "BEC",
+              "element_id": "11"
+            },
+            "args_hash": "841302b23704479c",
+            "output_hash": "1b7c29c42a4a30b3",
+            "output_summary": "{\"query\": \"BEC 11\", \"connections\": {\"pmt_ids\": [261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 383, 384, 385, 386, 387, 388, 38",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step_1\",\n      \"description\": \"Retrieve all hardware components connected to BEC 11 using get_hardware_connections.\",\n      \"tool\": \"get_hardware_connections\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"query\\\": \\\"BEC 11\\\", \\\"connections\\\": {\\\"pmt_ids\\\": [261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 383, 384, 385, 386, 387, 388, 389, 390, 391, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 941, 942, 943, 944, 945, 946, 947, 948, 949, 950, 951, 952, 953, 954, 955], \\\"gcu_ids\\\": [901, 1330, 1620, 2020, 2033, 2291, 2823, 3254, 3397, 3426, 3612, 3651, 3663, 3672, 3728, 3737, 3742, 3847, 3865, 4134, 4183, 4233, 4249, 4261, 4374, 4635, 4709, 4792, 4881, 4896, 4975, 5238, 5553, 5755, 5795, 6104, 6189, 6479, 6502, 7094, 7197, 7260, 7307, 7418], \\\"bec_ids\\\": [11], \\\"rmu_ids\\\": [\\\"7-2\\\"]}, \\\"pmt_match_count\\\": 132}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"The following hardware components are connected to BEC\u00a011:\\n\\n\u2022 PMTs: 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 383, 384, 385, 386, 387, 388, 389, 390, 391, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 941, 942, 943, 944, 945, 946, 947, 948, 949, 950, 951, 952, 953, 954, 955.\\n\u2022 GCUs: 901, 1330, 1620, 2020, 2033, 2291, 2823, 3254, 3397, 3426, 3612, 3651, 3663, 3672, 3728, 3737, 3742, 3847, 3865, 4134, 4183, 4233, 4249, 4261, 4374, 4635, 4709, 4792, 4881, 4896, 4975, 5238, 5553, 5755, 5795, 6104, 6189, 6479, 6502, 7094, 7197, 7260, 7307, 7418.\\n\u2022 RMU: 7\u20112.\\n\u2022 The BEC itself: 11.\",\n  \"thought\": \"The user asked for hardware connected to BEC 11. The get_hardware_connections tool returned the full list of PMTs, GCUs, RMUs, and the BEC ID. Since the plan step succeeded and there are no pending steps, I provide the final answer summarizing the retrieved connections.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 19.788330793380737,
+      "tool_call_count": 1,
+      "within_budget": true
+    }
+  ]
+}

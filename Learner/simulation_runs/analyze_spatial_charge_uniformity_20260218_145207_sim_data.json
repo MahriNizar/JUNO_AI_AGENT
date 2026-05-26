@@ -1,0 +1,17 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Please run the spatial charge uniformity analysis on the full dataset located at 'test_data/your_run_first600.csv' to diagnose global charge uniformity across all hardware levels.",
+      "expected_behavior": "The tool should process the entire file and output a diagnostics report on charge uniformity."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Can you check the uniformity of charge for the data in 'test_data/your_run_first600.csv'?",
+      "expected_behavior": "The tool may interpret the request as a need for a uniformity check but could be unclear about the depth of analysis."
+    }
+  ],
+  "use_provided_data": true,
+  "provided_data_path": "test_data/your_run_first600.csv",
+  "mock_files": null
+}

@@ -1,0 +1,17 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "I would like to perform a detector‑wide charge uniformity health check using the file test_data/your_run_first600.csv.",
+      "expected_behavior": "Tool should return run summary, top/bottom asymmetry, and block‑level diagnostics."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Could you examine any charge asymmetry differences in the data from test_data/your_run_first600.csv?",
+      "expected_behavior": "Tool may be invoked, but the user intent is not explicitly a detector‑wide health check."
+    }
+  ],
+  "use_provided_data": true,
+  "provided_data_path": "test_data/your_run_first600.csv",
+  "mock_files": null
+}

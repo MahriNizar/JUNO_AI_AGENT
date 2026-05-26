@@ -1,0 +1,53 @@
+skill_id: scan_run_for_occupancy_anomalies
+summary:
+  name: scan_run_for_occupancy_anomalies
+  description: >-
+    Scans the run in time-windows to find transient anomalies (e.g., bursts, 
+    short-term flashing PMTs) that global stats might miss.
+    Saves a detailed JSON report to disk and returns a summary of the worst windows.
+  parameters:
+    type: object
+    properties:
+      run_data_path:
+        type: string
+        description: "Path to the run data CSV."
+        required: true
+      events_per_window:
+        type: integer
+        description: "Size of the sliding window in events.Default is 30"
+        required: false
+        default: 30
+      flashing_z_threshold:
+        type: float
+        description: "threshold of z number to detect flashing pmt. Default is 7"
+        required: false
+        default: 7
+      top_k_windows:
+        type: integer
+        description: "windows to return the top k values. Default is 20"
+        required: false
+        default: 20
+execution_details:
+  type: python_function
+  call:
+    module: "juno_tools.physics_analysis"
+    function: "scan_run_for_occupancy_anomalies"
+usage_policy:
+  use_when:
+    - User asks "When did the error happen?" or "Are there any bursts?".
+    - Global stats look normal, but you suspect hidden issues.
+  do_not_use_when:
+    - User just wants a global summary.
+output_schema:
+  description: "Returns path to saved results and a list of top problematic windows."
+  type: object
+  properties:
+    results_saved_to: { type: string }
+    top_anomalous_windows:
+      type: array
+      items:
+        type: object
+        properties:
+          window_id: { type: integer }
+          event_start: { type: integer }
+          num_flashers: { type: integer }

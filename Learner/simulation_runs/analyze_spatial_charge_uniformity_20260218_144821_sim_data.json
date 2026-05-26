@@ -1,0 +1,22 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Analyze the charge uniformity across all blocks using Learner/mock_data\\mock_run.csv.",
+      "expected_behavior": "The tool should successfully compute the spatial charge uniformity without errors."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Please review the hardware performance for the data in Learner/mock_data\\mock_run.csv.",
+      "expected_behavior": "The tool should either prompt for clarification or attempt a generic uniformity check."
+    }
+  ],
+  "use_provided_data": false,
+  "provided_data_path": null,
+  "mock_files": [
+    {
+      "name": "mock_run.csv",
+      "content": "EventID,PMTID,Charge,Theta\n1,101,12.5,45.0\n2,102,13.0,46.5\n3,103,11.8,44.2\n"
+    }
+  ]
+}

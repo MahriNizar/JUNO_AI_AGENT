@@ -1,0 +1,22 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Please filter events 2 through 4 in the file Learner/mock_data\\mock_run.csv.",
+      "expected_behavior": "The tool should produce a new CSV containing events 2, 3, and 4 from mock_run.csv."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Could you show me events around 3 in Learner/mock_data\\mock_run.csv?",
+      "expected_behavior": "The tool should interpret this as a request to filter events within a range that includes event 3, possibly 2–4."
+    }
+  ],
+  "use_provided_data": false,
+  "provided_data_path": null,
+  "mock_files": [
+    {
+      "name": "mock_run.csv",
+      "content": "Event,time_ns,charge_pe\n1,100.0,5.0\n2,200.0,3.2\n3,300.0,4.1\n4,400.0,2.9\n5,500.0,6.7\n"
+    }
+  ]
+}

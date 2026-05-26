@@ -1,0 +1,96 @@
+{
+  "timestamp": "2026-02-15T09:05:08.738914",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 0,
+    "2": -2,
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "runs_per_query": 1,
+  "total_queries": 1,
+  "total_runs": 1,
+  "overall_metrics": {
+    "correctness": 0.0,
+    "safety": 0.0,
+    "outcome_distribution": {
+      "HALLUCINATED": 1
+    }
+  },
+  "tier_metrics": {
+    "2": {
+      "count": 1,
+      "outcomes": {
+        "HALLUCINATED": 1
+      },
+      "correctness": 0.0,
+      "safety": 0.0
+    }
+  },
+  "query_aggregates": {
+    "q015": {
+      "query_id": "q015",
+      "n_runs": 1,
+      "correct_rate": 0.0,
+      "hallucination_rate": 1.0,
+      "worst_case": "FAILED",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "HALLUCINATED": 1
+      },
+      "latencies": [
+        11.252154350280762
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q015",
+      "tier": 2,
+      "run_id": 0,
+      "outcome": "HALLUCINATED",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "compute_run_kpis",
+            "args": {
+              "run_data_path": "test_data/scenario7_one.csv"
+            },
+            "args_hash": "34e83072f499b4aa",
+            "output_hash": "9a02c969afcf68dd",
+            "output_summary": "{\"summary\": \"Run KPI Summary\", \"num_events\": 100, \"total_hits\": 19911, \"avg_hits_per_event\": 199.11, \"std_hits_per_event\": 119.46715832893959, \"avg_charge_per_hit\": 1.4353, \"nhit_p95\": 356.04999999999",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "status": "Normal",
+          "num_events": 100,
+          "total_hits": 19911,
+          "arg_mismatch": {
+            "num_bins": {
+              "expected": 20,
+              "actual": null,
+              "error": "argument not found"
+            }
+          }
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Compute global KPIs for the run in test_data/scenario7_one.csv to provide a quick health check.\",\n      \"tool\": \"compute_run_kpis\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"summary\\\": \\\"Run KPI Summary\\\", \\\"num_events\\\": 100, \\\"total_hits\\\": 19911, \\\"avg_hits_per_event\\\": 199.11, \\\"std_hits_per_event\\\": 119.46715832893959, \\\"avg_charge_per_hit\\\": 1.4353, \\\"nhit_p95\\\": 356.04999999999995, \\\"status\\\": \\\"Normal\\\"}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Quick health check for **test_data/scenario7_one.csv**:\\n- **Events**: 100\\n- **Total hits**: 19,911\\n- **Average hits per event**: 199.1 (\u03c3 = 119.5)\\n- **Average charge per hit**: 1.44 (units assumed)\\n- **95th percentile hit count per event**: 356\\n- **Run status**: **Normal** \u2013 no obvious excess noise or dead\u2011time issues detected.\",\n  \"thought\": \"The user requested a quick health check; the compute_run_kpis step succeeded and produced all needed metrics. No further actions required.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 11.252154350280762,
+      "tool_call_count": 1,
+      "within_budget": true
+    }
+  ]
+}

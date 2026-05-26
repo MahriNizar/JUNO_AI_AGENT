@@ -1,0 +1,17 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Analyze global charge uniformity across the full run using test_data/your_run_first600.csv to detect any hemispheric imbalance.",
+      "expected_behavior": "Perform a comprehensive uniformity assessment over all events in the file, flagging hemispheric differences and hardware block failures."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Could you check for any dead hardware blocks in test_data/your_run_first600.csv, but I'm not sure if a full run analysis is necessary.",
+      "expected_behavior": "Run a basic uniformity check on the provided file, returning any identified hardware failures while noting the uncertainty about the analysis scope."
+    }
+  ],
+  "use_provided_data": true,
+  "provided_data_path": "test_data/your_run_first600.csv",
+  "mock_files": null
+}

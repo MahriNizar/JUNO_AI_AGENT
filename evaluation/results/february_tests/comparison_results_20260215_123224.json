@@ -1,0 +1,66 @@
+[
+  {
+    "query_id": "q009",
+    "tier": 1,
+    "run_id": 0,
+    "main_agent": {
+      "outcome": "GRACEFUL_REFUSAL",
+      "latency": 4.976394891738892,
+      "tool_count": 0,
+      "evidence": {
+        "tool_calls": [],
+        "key_values": {
+          "tool_outputs_count": 0
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [],\n  \"skill_to_use\": null,\n  \"final_answer\": \"I\u2019m sorry, but I don\u2019t have a tool that can read an arbitrary CSV file and extract the time\u2011series for a specific PMT. My available tools are focused on analyzing data from runs and internal databases, not on processing raw CSV files. Therefore I\u2019m unable to provide the requested time\u2011series data for PMT\u202f4500 from `test_data/scenario8_one.csv`.\",\n  \"thought\": \"The request asks for direct access to a CSV file, but none of the available tools support reading arbitrary CSV files or extracting a time\u2011series from them. The only tool that deals with PMT data (`get_pmt_profile`) requires a run or internal dataset, not a file path. Thus the request is out of scope.\"\n}",
+        "admitted_uncertainty": true,
+        "crashed": false,
+        "crash_message": null
+      }
+    },
+    "baseline_agent": {
+      "outcome": "HALLUCINATED",
+      "latency": 2.6057069301605225,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "pmt_id": 4500,
+              "run_data_path": "test_data/scenario8_one.csv",
+              "max_points": 1000
+            },
+            "args_hash": "b0ddc52e64f0e84f",
+            "output_hash": "b12e9a0175df2a35",
+            "output_summary": "{\"pmt_id\": 4500, \"status\": \"No hits found (Dead or Invalid ID)\", \"total_hits\": 0}",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "pmt_id": 4500,
+          "status": "No hits found (Dead or Invalid ID)",
+          "total_hits": 0,
+          "arg_mismatch": {
+            "run_data_path": {
+              "expected": "test_data/one_output_3398_200.csv",
+              "actual": "test_data/scenario8_one.csv",
+              "error": "value mismatch"
+            },
+            "max_points": {
+              "expected": 50,
+              "actual": 1000,
+              "error": "value mismatch"
+            }
+          }
+        },
+        "final_answer": "It looks like PMT\u202f4500 didn\u2019t fire in that run \u2013 the data file reports zero hits for that channel. If you\u2019d like to check another PMT or investigate why it\u2019s silent, let me know!",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    }
+  }
+]

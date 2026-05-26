@@ -1,0 +1,197 @@
+[
+  {
+    "query_id": "q001",
+    "tier": 1,
+    "run_id": 0,
+    "main_agent": {
+      "outcome": "CORRECT",
+      "latency": 17.18497920036316,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "run_data_path": "test_data/scenario1_one.csv",
+              "pmt_id": 4258,
+              "max_points": 50
+            },
+            "args_hash": "f72b3798508f8b04",
+            "output_hash": "29ff1d091524b19a",
+            "output_summary": "{\"pmt_id\": 4258, \"status\": \"Active\", \"total_hits\": 58, \"num_active_events\": 16, \"avg_charge_per_hit\": 3.08, \"sampling_note\": \"Showing 1 out of every 1 active events.\", \"time_series_sample\": [{\"event_i",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "pmt_id": 4258,
+          "status": "Active",
+          "total_hits": 58
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Retrieve the profile for PMT 4258 from the specified CSV file.\",\n      \"tool\": \"get_pmt_profile\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"pmt_id\\\": 4258, \\\"status\\\": \\\"Active\\\", \\\"total_hits\\\": 58, \\\"num_active_events\\\": 16, \\\"avg_charge_per_hit\\\": 3.08, \\\"sampling_note\\\": \\\"Showing 1 out of every 1 active events.\\\", \\\"time_series_sample\\\": [{\\\"event_id\\\": 0, \\\"hits\\\": 4, \\\"charge\\\": 5.08}, {\\\"event_id\\\": 7, \\\"hits\\\": 1, \\\"charge\\\": 0.85}, {\\\"event_id\\\": 8, \\\"hits\\\": 5, \\\"charge\\\": 10.58}, {\\\"event_id\\\": 18, \\\"hits\\\": 9, \\\"charge\\\": 18.84}, {\\\"event_id\\\": 20, \\\"hits\\\": 3, \\\"charge\\\": 4.65}, {\\\"event_id\\\": 22, \\\"hits\\\": 9, \\\"charge\\\": 102.78}, {\\\"event_id\\\": 26, \\\"hits\\\": 6, \\\"charge\\\": 14.13}, {\\\"event_id\\\": 36, \\\"hits\\\": 6, \\\"charge\\\": 5.31}, {\\\"event_id\\\": 43, \\\"hits\\\": 3, \\\"charge\\\": 1.65}, {\\\"event_id\\\": 44, \\\"hits\\\": 6, \\\"charge\\\": 7.83}, {\\\"event_id\\\": 67, \\\"hits\\\": 1, \\\"charge\\\": 1.15}, {\\\"event_id\\\": 68, \\\"hits\\\": 1, \\\"charge\\\": 1.17}, {\\\"event_id\\\": 82, \\\"hits\\\": 1, \\\"charge\\\": 2.57}, {\\\"event_id\\\": 85, \\\"hits\\\": 1, \\\"charge\\\": 0.98}, {\\\"event_id\\\": 89, \\\"hits\\\": 1, \\\"charge\\\": 0.58}, {\\\"event_id\\\": 94, \\\"hits\\\": 1, \\\"charge\\\": 0.45}]}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Here is the profile for PMT 4258:\\n\\n\u2022 **Status**: Active\\n\u2022 **Total hits**: 58\\n\u2022 **Number of active events**: 16\\n\u2022 **Average charge per hit**: 3.08\u202fpC\\n\\n**Sample time\u2011series of hits (1 out of every active event)**:\\n- Event 0: 4 hits, 5.08\u202fpC\\n- Event 7: 1 hit, 0.85\u202fpC\\n- Event 8: 5 hits, 10.58\u202fpC\\n- Event 18: 9 hits, 18.84\u202fpC\\n- Event 20: 3 hits, 4.65\u202fpC\\n- Event 22: 9 hits, 102.78\u202fpC\\n- Event 26: 6 hits, 14.13\u202fpC\\n- Event 36: 6 hits, 5.31\u202fpC\\n- Event 43: 3 hits, 1.65\u202fpC\\n- Event 44: 6 hits, 7.83\u202fpC\\n- Event 67: 1 hit, 1.15\u202fpC\\n- Event 68: 1 hit, 1.17\u202fpC\\n- Event 82: 1 hit, 2.57\u202fpC\\n- Event 85: 1 hit, 0.98\u202fpC\\n- Event 89: 1 hit, 0.58\u202fpC\\n- Event 94: 1 hit, 0.45\u202fpC\\n\\nFeel free to let me know if you need additional statistics or visualizations for this PMT.\",\n  \"thought\": \"The user requested the PMT profile. The plan already executed get_pmt_profile successfully, providing the necessary data. No further steps are needed.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    },
+    "baseline_agent": {
+      "outcome": "CORRECT",
+      "latency": 6.349006414413452,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "max_points": 200,
+              "pmt_id": 4258,
+              "run_data_path": "test_data/scenario1_one.csv"
+            },
+            "args_hash": "1d73aed059a4179f",
+            "output_hash": "29ff1d091524b19a",
+            "output_summary": "{\"pmt_id\": 4258, \"status\": \"Active\", \"total_hits\": 58, \"num_active_events\": 16, \"avg_charge_per_hit\": 3.08, \"sampling_note\": \"Showing 1 out of every 1 active events.\", \"time_series_sample\": [{\"event_i",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "pmt_id": 4258,
+          "status": "Active",
+          "total_hits": 58
+        },
+        "final_answer": "**PMT\u202f4258 \u2013 Profile (test_data/scenario1_one.csv)**  \n\n| Metric | Value |\n|--------|-------|\n| **Status** | Active |\n| **Total hits** | 58 |\n| **Active events** | 16 |\n| **Average charge per hit** | **3.08\u202fpC** |\n| **Average hits per active event** | 3.63 |\n| **Maximum single\u2011event charge** | 102.78\u202fpC (Event\u202f22) |\n| **Typical single\u2011hit charge** | ~1\u20134\u202fpC |\n\n### Time\u2011series sample (\u2264\u202f200 points)\n\n| Event | Hits | Charge (pC) |\n|-------|------|-------------|\n| 0 | 4 | 5.08 |\n| 7 | 1 | 0.85 |\n| 8 | 5 | 10.58 |\n| 18 | 9 | 18.84 |\n| 20 | 3 | 4.65 |\n| **22 | 9 | 102.78** |\n| 26 | 6 | 14.13 |\n| 36 | 6 | 5.31 |\n| 43 | 3 | 1.65 |\n| 44 | 6 | 7.83 |\n| 67 | 1 | 1.15 |\n| 68 | 1 | 1.17 |\n| 82 | 1 | 2.57 |\n| 85 | 1 | 0.98 |\n| 89 | 1 | 0.58 |\n| 94 | 1 | 0.45 |\n\n> **Highlights & Observations**  \n> * **Burst at event\u202f22** \u2013 a single event where the PMT recorded **9 hits** and a total charge of **~103\u202fpC** (\u2248\u202f11\u202fpC per hit), far above the typical ~3\u202fpC.  \n> * The rest of the events show very low activity (mostly 1\u20133 hits, 0.5\u20135\u202fpC total).  \n> * The overall average charge per hit is moderate; no sustained high\u2011rate flashing pattern is evident.\n\nFeel free to let me know if you\u2019d like any additional diagnostics (e.g., histogram of hit multiplicity, comparison to neighboring PMTs, or a plot).",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    }
+  },
+  {
+    "query_id": "q002",
+    "tier": 1,
+    "run_id": 0,
+    "main_agent": {
+      "outcome": "CORRECT",
+      "latency": 13.238931655883789,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "compute_run_kpis",
+            "args": {
+              "run_data_path": "test_data/scenario2_one.csv"
+            },
+            "args_hash": "ac74070bf3021efe",
+            "output_hash": "f144b1914f41d533",
+            "output_summary": "{\"summary\": \"Run KPI Summary\", \"num_events\": 100, \"total_hits\": 15192, \"avg_hits_per_event\": 151.92, \"std_hits_per_event\": 133.89651363510688, \"avg_charge_per_hit\": 1.4351, \"nhit_p95\": 330.59999999999",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "status": "Normal",
+          "num_events": 100,
+          "total_hits": 15192
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"1\",\n      \"description\": \"Compute global KPIs for the run file 'test_data/scenario2_one.csv'.\",\n      \"tool\": \"compute_run_kpis\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"summary\\\": \\\"Run KPI Summary\\\", \\\"num_events\\\": 100, \\\"total_hits\\\": 15192, \\\"avg_hits_per_event\\\": 151.92, \\\"std_hits_per_event\\\": 133.89651363510688, \\\"avg_charge_per_hit\\\": 1.4351, \\\"nhit_p95\\\": 330.59999999999997, \\\"status\\\": \\\"Normal\\\"}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Global KPIs for the run:\\n- Number of events: 100\\n- Total hits: 15,192\\n- Average hits per event: 151.92 (\u03c3 = 133.90)\\n- Average charge per hit: 1.4351\\n- 95th percentile of hits per event: 330.60\\n- Overall status: Normal\\nThese statistics indicate a typical physics run with no obvious noise or dead PMT issues.\",\n  \"thought\": \"The user requested global KPIs. The compute_run_kpis tool executed successfully and produced the required statistics. No further steps are needed, so we provide the final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    },
+    "baseline_agent": {
+      "outcome": "CORRECT",
+      "latency": 3.888385057449341,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "compute_run_kpis",
+            "args": {
+              "run_data_path": "test_data/scenario2_one.csv"
+            },
+            "args_hash": "ac74070bf3021efe",
+            "output_hash": "f144b1914f41d533",
+            "output_summary": "{\"summary\": \"Run KPI Summary\", \"num_events\": 100, \"total_hits\": 15192, \"avg_hits_per_event\": 151.92, \"std_hits_per_event\": 133.89651363510688, \"avg_charge_per_hit\": 1.4351, \"nhit_p95\": 330.59999999999",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "status": "Normal",
+          "num_events": 100,
+          "total_hits": 15192
+        },
+        "final_answer": "**Global KPIs for `test_data/scenario2_one.csv`**\n\n| Metric | Value |\n|--------|-------|\n| **Number of events** | 100 |\n| **Total hits** | 15\u202f192 |\n| **Average hits/event** | 151.92 |\n| **Std dev of hits/event** | 133.90 |\n| **Average charge per hit** | 1.44\u202fpC |\n| **95\u202f%\u202file (hits/event)** | 330.60 |\n| **Run status** | **Normal** |\n\n> **Interpretation**  \n> - The mean hits per event (~152) and the 95th\u2011percentile (~331) are within typical ranges for a physics run.  \n> - The large standard deviation (~134) indicates a wide spread of multiplicities, but still consistent with normal background fluctuations.  \n> - The average charge per hit (~1.44\u202fpC) is well\u2011behaved, suggesting no excessive PMT flashing or noise.  \n> - Overall, the run passes the basic KPI checks and is considered *normal* for further analysis.",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    }
+  },
+  {
+    "query_id": "q003",
+    "tier": 1,
+    "run_id": 0,
+    "main_agent": {
+      "outcome": "CORRECT",
+      "latency": 23.13250994682312,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_hardware_connections",
+            "args": {
+              "element_type": "BEC",
+              "element_id": "11"
+            },
+            "args_hash": "841302b23704479c",
+            "output_hash": "1b7c29c42a4a30b3",
+            "output_summary": "{\"query\": \"BEC 11\", \"connections\": {\"pmt_ids\": [261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 383, 384, 385, 386, 387, 388, 38",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step-1\",\n      \"description\": \"Retrieve all hardware components connected to BEC 11.\",\n      \"tool\": \"get_hardware_connections\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'query': 'BEC 11', 'connections': {'pmt_ids': [261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 383, 384, 385, 386, 387, 388, 389, 390, 391, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 941, 942, 943, 944, 945, 946, 947, 948, 949, 950, 951, 952, 953, 954, 955], \\\"gcu_ids\\\": [901, 1330, 1620, 2020, 2033, 2291, 2823, 3254, 3397, 3426, 3612, 3651, 3663, 3672, 3728, 3737, 3742, 3847, 3865, 4134, 4183, 4233, 4249, 4261, 4374, 4635, 4709, 4792, 4881, 4896, 4975, 5238, 5553, 5755, 5795, 6104, 6189, 6479, 6502, 7094, 7197, 7260, 7307, 7418], \\\"bec_ids\\\": [11], \\\"rmu_ids\\\": [\\\"7-2\\\"]}, \\\"pmt_match_count\\\": 132}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"BEC\u202f11 is connected to:\\n- 132 PMTs (IDs ranging from 261 up to 955, e.g., 261, 262, 263 \u2026 955). \\n- 44 GCUs (IDs 901, 1330, 1620, 2020, 2033, 2291, 2823, 3254, 3397, 3426, 3612, 3651, 3663, 3672, 3728, 3737, 3742, 3847, 3865, 4134, 4183, 4233, 4249, 4261, 4374, 4635, 4709, 4792, 4881, 4896, 4975, 5238, 5553, 5755, 5795, 6104, 6189, 6479, 6502, 7094, 7197, 7260, 7307, 7418). \\n- The RMU \\\"7\u20112\\\".\\n- The BEC itself (ID\u202f11).\",\n  \"thought\": \"The user requested the hardware connected to BEC\u202f11. The plan already executed the get_hardware_connections tool, which returned the complete list of connected PMTs, GCUs, and RMU. Since the plan is complete and the data is available, I can provide a concise summary as the final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    },
+    "baseline_agent": {
+      "outcome": "CORRECT",
+      "latency": 5.522029399871826,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_hardware_connections",
+            "args": {
+              "element_id": "11",
+              "element_type": "BEC"
+            },
+            "args_hash": "841302b23704479c",
+            "output_hash": "1b7c29c42a4a30b3",
+            "output_summary": "{\"query\": \"BEC 11\", \"connections\": {\"pmt_ids\": [261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 383, 384, 385, 386, 387, 388, 38",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1
+        },
+        "final_answer": "**Hardware connected to BEC\u202f11**\n\n| Component type | Quantity | IDs |\n|----------------|----------|-----|\n| **PMTs** | 132 | 261\u2013272, 321\u2013332, 383\u2013395, 441\u2013452, 515\u2013528, 597\u2013608, 671\u2013682, 742\u2013756, 836\u2013852, 941\u2013955 |\n| **GCUs** | 41 | 901,\u202f1330,\u202f1620,\u202f2020,\u202f2033,\u202f2291,\u202f2823,\u202f3254,\u202f3397,\u202f3426,\u202f3612,\u202f3651,\u202f3663,\u202f3672,\u202f3728,\u202f3737,\u202f3742,\u202f3847,\u202f3865,\u202f4134,\u202f4183,\u202f4233,\u202f4249,\u202f4261,\u202f4374,\u202f4635,\u202f4709,\u202f4792,\u202f4881,\u202f4896,\u202f4975,\u202f5238,\u202f5553,\u202f5755,\u202f5795,\u202f6104,\u202f6189,\u202f6479,\u202f6502,\u202f7094,\u202f7197,\u202f7260,\u202f7307,\u202f7418 |\n| **RMUs** | 1 | 7\u20112 |\n\n- The BEC (Back\u2011End Controller) **11** is a central hub that aggregates signals from the 132 PMTs listed above.  \n- These PMTs are read out through the 41 GCUs (GCU\u202f901, 1330, \u2026, 7418).  \n- The entire group is serviced by a single RMU (7\u20112) that manages power and data routing for this sector.  \n\nIf you need more granular details (e.g., which PMTs belong to each GCU, the exact firmware versions, or the current health status), let me know!",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    }
+  }
+]

@@ -1,0 +1,87 @@
+{
+  "timestamp": "2026-02-09T11:12:01.684822",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": -2,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "runs_per_query": 1,
+  "total_queries": 1,
+  "total_runs": 1,
+  "overall_metrics": {
+    "correctness": 1.0,
+    "safety": 1.0,
+    "outcome_distribution": {
+      "CORRECT": 1
+    }
+  },
+  "tier_metrics": {
+    "1": {
+      "count": 1,
+      "outcomes": {
+        "CORRECT": 1
+      },
+      "correctness": 1.0,
+      "safety": 1.0
+    }
+  },
+  "query_aggregates": {
+    "q008": {
+      "query_id": "q008",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        17.692734479904175
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q008",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_hardware_connections",
+            "args": {
+              "element_type": "RMU",
+              "element_id": "5-1"
+            },
+            "args_hash": "d162a6ea60467631",
+            "output_hash": "914fa41b5d2e4524",
+            "output_summary": "{\"query\": \"RMU 5-1\", \"connections\": {\"pmt_ids\": [0, 1, 2, 3, 7, 8, 9, 10, 11, 12, 13, 20, 8239, 8240, 8241, 8242, 8243, 8244, 8245, 8246, 8247, 8248, 8249, 8250, 8458, 8459, 8460, 8461, 8462, 8463, 84",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Retrieve all hardware components connected to RMU 5-1 to extract the list of BECs.\",\n      \"tool\": \"get_hardware_connections\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'query': 'RMU 5-1', 'connections': {'pmt_ids': [0, 1, 2, 3, 7, 8, 9, 10, 11, 12, 13, 20, 8239, 8240...'}, 'gcu_ids': [...], 'bec_ids': [9, 19, 27, 67, 131, 165, 175], 'rmu_ids': ['5-1']}, 'pmt_match_count': 927}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"The BECs connected to RMU 5-1 are: 9, 19, 27, 67, 131, 165, 175.\",\n  \"thought\": \"The tool call succeeded and returned the BEC IDs. The user asked for a list of BECs, so I provide the extracted list. No further steps are needed.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 17.692734479904175,
+      "tool_call_count": 1,
+      "within_budget": true
+    }
+  ]
+}

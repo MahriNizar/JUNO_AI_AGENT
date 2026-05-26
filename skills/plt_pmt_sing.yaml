@@ -1,0 +1,46 @@
+skill_id: plt_pmt_sing
+summary:
+  name: plt_pmt_sing
+  description: "Plots a 2\u2011D scatter of PMT locations (Phi vs Theta) coloured\
+    \ by RMU_ID and optionally highlights PMTs from a run data CSV. Returns a matplotlib\
+    \ Figure with optional Voronoi ridges and a colour\u2011bar. WARNING: Produces\
+    \ a plot object but does not write to disk."
+  parameters:
+    type: object
+    properties:
+      highlight_csv:
+        type: string
+        description: Path to a CSV file containing PMT IDs to highlight in the plot.
+        required: true
+        default: null
+execution_details:
+  type: python_function
+  call:
+    module: juno_tools.plt_pmt_single
+    function: plt_pmt_sing
+usage_policy:
+  use_when:
+  - The user wants a visual overview of the entire PMT array.
+  do_not_use_when:
+  - "The user is analysing a single event or a small time window \u2013 for that use\
+    \ dedicated event\u2011plotting tools."
+  - "The user needs the plot to be automatically saved to a file \u2013 this function\
+    \ only returns a Figure object."
+output_schema:
+  description: "A Matplotlib Figure containing a single Axes that visualises a 2\u2011\
+    D scatter of PMT locations (Phi vs Theta).  The scatter points are coloured by\
+    \ `RMU_ID` and optionally overlaid with highlighted PMTs from a user\u2011supplied\
+    \ CSV.  If adjacent Voronoi ridges belong to different `BECID`s, they are drawn\
+    \ as coloured line segments.  The figure includes a colour\u2011bar with the discrete\
+    \ `RMU_ID` values, axis labels, a title, grid lines, and limits expanded by 2\xB0\
+    \ on each side."
+  type: matplotlib.figure.Figure
+  properties:
+    axes_count: 1
+    axes_type: matplotlib.axes._axes.Axes
+    scatter_count: 1
+    linecollection_count: "0 or 1 (only if there are inter\u2011BEC ridges)"
+    colorbar:
+      ticks: unique RMU_ID values (integers)
+      label: RMU_ID
+  items: null

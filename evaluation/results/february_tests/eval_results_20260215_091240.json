@@ -1,0 +1,89 @@
+{
+  "timestamp": "2026-02-15T09:12:40.678742",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 0,
+    "2": -2,
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "runs_per_query": 1,
+  "total_queries": 1,
+  "total_runs": 1,
+  "overall_metrics": {
+    "correctness": 1.0,
+    "safety": 1.0,
+    "outcome_distribution": {
+      "CORRECT": 1
+    }
+  },
+  "tier_metrics": {
+    "2": {
+      "count": 1,
+      "outcomes": {
+        "CORRECT": 1
+      },
+      "correctness": 1.0,
+      "safety": 1.0
+    }
+  },
+  "query_aggregates": {
+    "q016": {
+      "query_id": "q016",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        15.973710775375366
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q016",
+      "tier": 2,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "detect_global_occupancy_outliers",
+            "args": {
+              "run_data_path": "test_data/scenario8_one.csv",
+              "noisy_z_threshold": 5.0,
+              "quiet_z_threshold": 3.0,
+              "top_k": 20
+            },
+            "args_hash": "94803eb5595b3013",
+            "output_hash": "e8dcdb47ab41620e",
+            "output_summary": "{\"summary_stats\": {\"total_active_pmts\": 1655, \"occupancy_median\": 10.0, \"occupancy_mad\": 8.9, \"noisy_count\": 0, \"quiet_count\": 0, \"quiet_threshold_hits\": 0}, \"noisy_pmts\": [], \"quiet_pmts\": [], \"note\"",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Identify globally noisy or dead PMTs in test_data/scenario8_one.csv.\",\n      \"tool\": null,\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'summary_stats': {'total_active_pmts': 1655, 'occupancy_median': 10.0, 'occupancy_mad': 8.9, 'noisy_count': 0, 'quiet_count': 0, 'quiet_threshold_hits': 0}, 'noisy_pmts': [], 'quiet_pmts': [], 'note': \\\"PMTs with fewer than 0 hits are flagged as quiet.\\\"}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"The analysis of `test_data/scenario8_one.csv` found no PMTs with zero or near\u2011zero occupancy \u2013 i.e., there are no dead PMTs in this run.\",\n  \"thought\": \"The tool returned an empty list of quiet (dead) PMTs and no noisy PMTs, indicating all PMTs are active. The plan contains only one step, which is now complete, so we can provide a final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 15.973710775375366,
+      "tool_call_count": 1,
+      "within_budget": true
+    }
+  ]
+}

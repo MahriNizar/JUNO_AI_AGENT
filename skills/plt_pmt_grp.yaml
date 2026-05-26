@@ -1,0 +1,34 @@
+skill_id: plt_pmt_grp
+summary:
+  name: plt_pmt_grp
+  description: "Generates a PDF of PMT group plots from CSV files in a directory.\
+    \ WARNING: Writes to disk."
+  parameters:
+    type: object
+    properties:
+      highlight_dir:
+        type: string
+        description: Directory containing PMT CSV files to be plotted.
+        required: true
+        default: null
+execution_details:
+  type: python_function
+  call:
+    module: juno_tools.plt_pmt_group
+    function: plt_pmt_grp
+usage_policy:
+  use_when:
+  - "The user wants a comprehensive visual overview of all PMT groups (e.g., for calibration\
+    \ or data quality review)."
+  - The user explicitly requests a PDF containing all plots rather than a quick, interactive
+    preview.
+  do_not_use_when:
+  - The user needs a plot for a single, specific event or a narrow time window. In
+    such cases, use a targeted plotting function (e.g., plot_single_event).
+  - The user only wants textual data or a summary, not the full PDF.
+output_schema:
+  description: 'Message confirming the PDF generation and its file name. Example:
+    "[OK] All plots saved to plots_larger_theta_vs_phi.pdf"'
+  type: string
+  properties: null
+  items: null

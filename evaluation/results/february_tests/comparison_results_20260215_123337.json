@@ -1,0 +1,90 @@
+[
+  {
+    "query_id": "q009",
+    "tier": 1,
+    "run_id": 0,
+    "main_agent": {
+      "outcome": "HALLUCINATED",
+      "latency": 10.528115272521973,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "run_data_path": "test_data/scenario8_one.csv",
+              "pmt_id": 4500,
+              "max_points": 50
+            },
+            "args_hash": "0d19df2523d1b5c6",
+            "output_hash": "b12e9a0175df2a35",
+            "output_summary": "{\"pmt_id\": 4500, \"status\": \"No hits found (Dead or Invalid ID)\", \"total_hits\": 0}",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "pmt_id": 4500,
+          "status": "No hits found (Dead or Invalid ID)",
+          "total_hits": 0,
+          "arg_mismatch": {
+            "run_data_path": {
+              "expected": "test_data/one_output_3398_200.csv",
+              "actual": "test_data/scenario8_one.csv",
+              "error": "value mismatch"
+            }
+          }
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Retrieve the profile for PMT 4500 from the specified CSV file\",\n      \"tool\": \"get_pmt_profile\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'pmt_id': 4500, 'status': 'No hits found (Dead or Invalid ID)', 'total_hits': 0}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"PMT 4500 has no recorded hits in test_data/scenario8_one.csv. The profile indicates it is dead or has an invalid ID, with a total hit count of 0.\",\n  \"thought\": \"The user's request was to get the data profile for PMT 4500. The get_pmt_profile tool returned the requested information, showing zero hits and a status of 'Dead or Invalid ID'. Since the plan now has no pending steps, the task is complete.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    },
+    "baseline_agent": {
+      "outcome": "HALLUCINATED",
+      "latency": 2.704598903656006,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "max_points": 1000,
+              "pmt_id": 4500,
+              "run_data_path": "test_data/scenario8_one.csv"
+            },
+            "args_hash": "b0ddc52e64f0e84f",
+            "output_hash": "b12e9a0175df2a35",
+            "output_summary": "{\"pmt_id\": 4500, \"status\": \"No hits found (Dead or Invalid ID)\", \"total_hits\": 0}",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "pmt_id": 4500,
+          "status": "No hits found (Dead or Invalid ID)",
+          "total_hits": 0,
+          "arg_mismatch": {
+            "run_data_path": {
+              "expected": "test_data/one_output_3398_200.csv",
+              "actual": "test_data/scenario8_one.csv",
+              "error": "value mismatch"
+            },
+            "max_points": {
+              "expected": 50,
+              "actual": 1000,
+              "error": "value mismatch"
+            }
+          }
+        },
+        "final_answer": "**PMT 4500 Profile (test_data/scenario8_one.csv)**  \n\n- **Status:** No hits found (Dead or Invalid ID)  \n- **Total hits:** 0  \n\nNo further statistics (average charge, time\u2011series) are available because the PMT did not register any events in this run.",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    }
+  }
+]

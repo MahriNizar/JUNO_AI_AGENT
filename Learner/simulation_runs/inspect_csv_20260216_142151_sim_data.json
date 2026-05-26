@@ -1,0 +1,22 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Could you give me a quick overview of the run data in mock_run.csv?",
+      "expected_behavior": "Return a summary of the CSV, including number of events and basic statistics."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "I need to check something in the data from mock_run.csv.",
+      "expected_behavior": "The tool should attempt to load the CSV and provide a generic overview, but the exact intent is unclear."
+    }
+  ],
+  "use_provided_data": false,
+  "provided_data_path": null,
+  "mock_files": [
+    {
+      "name": "mock_run.csv",
+      "content": "Event,Time,Charge\n1,100.0,5.0\n2,150.0,6.5\n3,200.0,7.2"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+skill_id: filter_events_by_range
+summary:
+  name: filter_events_by_range
+  description: 'Extracts all hits in a given event-ID range [start, end] from a
+    large CSV and writes them to a new, smaller CSV file. Use this to
+    create manageable slices before running analysis tools.'
+  parameters:
+    type: object
+    properties:
+      run_data_path:
+        type: string
+        description: Path to the source CSV file containing the full run data.
+        required: true
+        default: null
+      start_event:
+        type: integer
+        description: Inclusive lower bound of event IDs to include in the slice.
+        required: true
+        default: null
+      end_event:
+        type: integer
+        description: Inclusive upper bound of event IDs to include in the slice.
+        required: true
+        default: null
+      output_path:
+        type: string
+        description: Destination for the filtered CSV.
+        required: true
+        default: null
+execution_details:
+  type: python_function
+  call:
+    module: juno_tools.csv_tooling
+    function: filter_events_by_range
+usage_policy:
+  use_when:
+  - The user requests a manageable subset of a large run before running heavy analysis
+    such as detect_global_occupancy_outliers or scan_run_for_occupancy_anomalies.
+  - The user wants a quick, local inspection of a specific event window to avoid loading
+    the entire run.
+  do_not_use_when:
+  - The user requires analysis of the entire run without any prior filtering.
+  - "The user wants a purely in\u2011memory slice and is willing to process the full\
+    \ dataset in memory."
+  - The user is working with a very small event window (e.g., fewer than 1000 events)
+    where the overhead of writing a new CSV outweighs the benefit.
+output_schema:
+  description: Result of the filtering operation. Either an error message or details
+    about the generated file.
+  type: dict
+  properties:
+    error:
+      type: string
+      description: "Present when the function cannot complete the operation. The value\
+        \ contains a human\u2011readable error message."
+    output_path:
+      type: string
+      description: Full filesystem path to the CSV file created by the function.
+    num_events:
+      type: integer
+      description: Number of distinct `Event` identifiers in the filtered slice.
+    total_rows:
+      type: integer
+      description: "Total number of hit\u2011level rows written to the output CSV."
+    event_range:
+      type: array
+      items:
+      - type: integer
+      - type: integer
+      description: "Two\u2011element list containing the smallest and largest `Event`\
+        \ value actually written to the output file."
+  items: null

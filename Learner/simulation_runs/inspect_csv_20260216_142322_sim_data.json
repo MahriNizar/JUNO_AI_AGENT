@@ -1,0 +1,22 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Please give me a quick overview of the new run file mock_run.csv so I can decide if filtering or batching is needed.",
+      "expected_behavior": "The tool should return a concise summary of the file, e.g., number of events, basic statistics, and column names."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Could you show me the summary of mock_run.csv?",
+      "expected_behavior": "The tool should interpret this as a request for an overview and provide a brief summary, possibly prompting for clarification if necessary."
+    }
+  ],
+  "use_provided_data": false,
+  "provided_data_path": null,
+  "mock_files": [
+    {
+      "name": "mock_run.csv",
+      "content": "Event,time_ns,charge_pe\n1,123456.0,10.5\n2,123457.5,12.3\n3,123459.0,9.8"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Please give me an overview of the events in Learner/mock_data\\mock_run.csv.",
+      "expected_behavior": "The tool should return event count and basic statistics for mock_run.csv."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Show me some statistics from Learner/mock_data\\mock_run.csv.",
+      "expected_behavior": "The tool may or may not handle this request due to ambiguity."
+    }
+  ],
+  "use_provided_data": false,
+  "provided_data_path": null,
+  "mock_files": [
+    {
+      "name": "mock_run.csv",
+      "content": "Event,Energy,Time\n1,5.4,12345.6\n2,3.1,12350.0\n3,4.2,12355.2\n"
+    }
+  ]
+}

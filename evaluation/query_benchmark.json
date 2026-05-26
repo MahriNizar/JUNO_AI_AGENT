@@ -1,0 +1,937 @@
+[
+    {
+        "id": "q001",
+        "tier": 1,
+        "description": "Tier 1: Single-Tool Direct - PMT profile retrieval",
+        "query": "Show me the profile for PMT 4258 using the data file test_data/scenario1_one.csv",
+        "expected_tools": [
+            "get_pmt_profile"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "get_pmt_profile": {
+                    "run_data_path": "test_data/scenario1_one.csv",
+                    "pmt_id": 4258,
+                    "max_points": 50
+                }
+            }
+        ]
+    },
+    {
+        "id": "q002",
+        "tier": 1,
+        "description": "Tier 1: Single-Tool Direct - compute run KPIs",
+        "query": "Calculate the global KPIs for test_data/scenario2_one.csv",
+        "expected_tools": [
+            "compute_run_kpis"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "compute_run_kpis": {
+                    "run_data_path": "test_data/scenario2_one.csv"
+                }
+            }
+        ]
+    },
+    {
+        "id": "q003",
+        "tier": 1,
+        "description": "Tier 1: Single-Tool Direct - get hardware connections for a BEC",
+        "query": "What hardware is connected to BEC 11?",
+        "expected_tools": [
+            "get_hardware_connections"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 1,
+        "ground_truth": null,
+        "expected_args": {
+            "element_type": "BEC",
+            "element_id": "11"
+        }
+    },
+    {
+        "id": "q004",
+        "tier": 1,
+        "description": "Tier 1: Single-Tool Direct - detect global occupancy outliers",
+        "query": "Find the noisy PMTs in test_data/scenario3_one.csv",
+        "expected_tools": [
+            "detect_global_occupancy_outliers"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "detect_global_occupancy_outliers": {
+                    "run_data_path": "test_data/scenario3_one.csv",
+                    "noisy_z_threshold": 5.0,
+                    "quiet_z_threshold": 3.0,
+                    "top_k": 20
+                }
+            }
+        ]
+    },
+    {
+        "id": "q005",
+        "tier": 1,
+        "description": "Tier 1: Single-Tool Direct - get event multiplicity distribution",
+        "query": "Show me the hits-per-event distribution for test_data/scenario4_one.csv",
+        "expected_tools": [
+            "get_event_multiplicity_distribution"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "get_event_multiplicity_distribution": {
+                    "run_data_path": "test_data/scenario4_one.csv",
+                    "num_bins": 20
+                }
+            }
+        ]
+    },
+    {
+        "id": "q006",
+        "tier": 1,
+        "description": "Tier 1: Single-Tool Direct - scan run for occupancy anomalies",
+        "query": "Scan test_data/scenario7_one.csv for transient anomalies and bursts",
+        "expected_tools": [
+            "scan_run_for_occupancy_anomalies"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "scan_run_for_occupancy_anomalies": {
+                    "run_data_path": "test_data/scenario7_one.csv",
+                    "events_per_window": 30,
+                    "flashing_z_threshold": 7,
+                    "top_k_windows": 20
+                }
+            }
+        ]
+    },
+    {
+        "id": "q007",
+        "tier": 1,
+        "description": "Tier 1: Single-Tool Direct - find events with missing components",
+        "query": "Run a full BEC audit for test_data/scenario8_one.csv",
+        "expected_tools": [
+            "find_events_with_missing_components"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "find_events_with_missing_components": {
+                    "run_data_path": "test_data/scenario8_one.csv",
+                    "element_type": "BEC"
+                }
+            }
+        ]
+    },
+    {
+        "id": "q008",
+        "tier": 1,
+        "description": "Tier 1: Single-Tool Direct - get connections for an RMU",
+        "query": "List all BECs connected to RMU 5-1",
+        "expected_tools": [
+            "get_hardware_connections"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 1,
+        "ground_truth": null,
+        "expected_args": {
+            "element_type": "RMU",
+            "element_id": "5-1"
+        }
+    },
+    {
+        "id": "q009",
+        "tier": 1,
+        "description": "Tier 1: Single-Tool Direct - get PMT profile with specific ID",
+        "query": "Get the data profile for PMT 4500 from test_data/scenario8_one.csv",
+        "expected_tools": [
+            "get_pmt_profile"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "get_pmt_profile": {
+                    "run_data_path": "test_data/scenario8_one.csv",
+                    "pmt_id": 4500,
+                    "max_points": 50
+                }
+            }
+        ]
+    },
+    {
+        "id": "q010",
+        "tier": 1,
+        "description": "Tier 1: Single-Tool Direct - find missing GCUs in run",
+        "query": "Audit the entire run test_data/scenario1_one.csv for missing GCUs",
+        "expected_tools": [
+            "find_events_with_missing_components"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "find_events_with_missing_components": {
+                    "run_data_path": "test_data/scenario1_one.csv",
+                    "element_type": "GCU"
+                }
+            }
+        ]
+    },
+    {
+        "id": "q011",
+        "tier": 2,
+        "description": "Tier 2: Single-Tool Indirect - requires parameter inference",
+        "query": "Check if RMU 5-1 was silent between event 30 and 50 in test_data/scenario8_one.csv",
+        "expected_tools": [
+            "check_component_activity"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "check_component_activity": {
+                    "run_data_path": "test_data/scenario8_one.csv",
+                    "element_type": "RMU",
+                    "element_id": "5-1",
+                    "start_event": 30,
+                    "end_event": 50
+                }
+            }
+        ]
+    },
+    {
+        "id": "q012",
+        "tier": 2,
+        "description": "Tier 2: Single-Tool Indirect - infer element type from context",
+        "query": "Was there any issue with BEC 142 during events 30-60 in test_data/scenario2_one.csv?",
+        "expected_tools": [
+            "check_component_activity"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "check_component_activity": {
+                    "run_data_path": "test_data/scenario2_one.csv",
+                    "element_type": "BEC",
+                    "element_id": "142",
+                    "start_event": 30,
+                    "end_event": 60
+                }
+            }
+        ]
+    },
+    {
+        "id": "q013",
+        "tier": 2,
+        "description": "Tier 2: Single-Tool Indirect - implicit request for flashers",
+        "query": "Are there any flasher PMTs I should worry about in test_data/scenario3_one.csv?",
+        "expected_tools": [
+            "detect_global_occupancy_outliers"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": [
+            "scan_run_for_occupancy_anomalies"
+        ],
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "detect_global_occupancy_outliers": {
+                    "run_data_path": "test_data/scenario3_one.csv",
+                    "noisy_z_threshold": 5.0,
+                    "quiet_z_threshold": 3.0,
+                    "top_k": 20
+                }
+            }
+        ]
+    },
+    {
+        "id": "q014",
+        "tier": 2,
+        "description": "Tier 2: Single-Tool Indirect - check all silent RMUs in window",
+        "query": "Find all RMUs that didn't fire between event 0 and 10 in test_data/scenario4_one.csv",
+        "expected_tools": [
+            "check_component_activity"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "check_component_activity": {
+                    "run_data_path": "test_data/scenario4_one.csv",
+                    "start_event": 0,
+                    "end_event": 10,
+                    "element_type": "RMU"
+                }
+            }
+        ]
+    },
+    {
+        "id": "q015",
+        "tier": 2,
+        "description": "Tier 2: Single-Tool Indirect - quick health check request",
+        "query": "Give me a quick health check on the kpis for test_data/scenario7_one.csv",
+        "expected_tools": [
+            "compute_run_kpis"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": [
+            "detect_global_occupancy_outliers"
+        ],
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "compute_run_kpis": {
+                    "run_data_path": "test_data/scenario7_one.csv"
+                }
+            }
+        ]
+    },
+    {
+        "id": "q016",
+        "tier": 2,
+        "description": "Tier 2: Single-Tool Indirect - look for dead PMTs",
+        "query": "Are there any dead PMTs in test_data/scenario8_one.csv?",
+        "expected_tools": [
+            "detect_global_occupancy_outliers"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "detect_global_occupancy_outliers": {
+                    "run_data_path": "test_data/scenario8_one.csv",
+                    "noisy_z_threshold": 5.0,
+                    "quiet_z_threshold": 3.0,
+                    "top_k": 20
+                }
+            }
+        ]
+    },
+    {
+        "id": "q017",
+        "tier": 2,
+        "description": "Tier 2: Single-Tool Indirect - check for bursts in specific time window",
+        "query": "Look for temporary problems in the first 50 events of test_data/scenario1_one.csv",
+        "expected_tools": [
+            "check_component_activity"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 3,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "check_component_activity": {
+                    "run_data_path": "test_data/scenario1_one.csv",
+                    "element_type": "PMT",
+                    "start_event": 1,
+                    "end_event": 50,
+                    "element_id": "None"
+                }
+            }
+        ]
+    },
+    {
+        "id": "q018",
+        "tier": 2,
+        "description": "Tier 2: Single-Tool Indirect - specific PMT history request",
+        "query": "I heard PMT 2000 was problematic - can you check its behavior in test_data/scenario2_one.csv?",
+        "expected_tools": [
+            "get_pmt_profile"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "get_pmt_profile": {
+                    "run_data_path": "test_data/scenario2_one.csv",
+                    "pmt_id": 2000,
+                    "max_points": 50
+                }
+            }
+        ]
+    },
+    {
+        "id": "q019",
+        "tier": 2,
+        "description": "Tier 2: Single-Tool Indirect - locate GCU connections",
+        "query": "Which PMTs are on GCU 1925?",
+        "expected_tools": [
+            "get_hardware_connections"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": null,
+        "tool_call_budget": 1,
+        "ground_truth": null,
+        "expected_args": {
+            "element_type": "GCU",
+            "element_id": "1925"
+        }
+    },
+    {
+        "id": "q020",
+        "tier": 2,
+        "description": "Tier 2: Single-Tool Indirect - check for mixed event types",
+        "query": "Does test_data/scenario3_one.csv look like it has mixed physics events or just noise?",
+        "expected_tools": [
+            "get_event_multiplicity_distribution"
+        ],
+        "forbidden_tools": null,
+        "alternative_tools": [
+            "compute_run_kpis"
+        ],
+        "allowed_refusals": null,
+        "accepted_toolchains": [
+            [
+                "get_event_multiplicity_distribution",
+                "compute_run_kpis"
+            ]
+        ],
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "compute_run_kpis": {
+                    "run_data_path": "test_data/scenario3_one.csv"
+                }
+            },
+            {
+                "get_event_multiplicity_distribution": {
+                    "run_data_path": "test_data/scenario3_one.csv",
+                    "num_bins": 20
+                }
+            }
+        ]
+    },
+    {
+        "id": "q021",
+        "tier": 3,
+        "description": "Tier 3: Multi-Tool Sequential - find silent BECs then get connections",
+        "query": "Find all silent BECs between event 30 and 60 in test_data/scenario8_one.csv, then show me the hardware connections for the first one",
+        "expected_tools": null,
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": [
+            [
+                "inspect_csv",
+                "check_component_activity",
+                "get_hardware_connections"
+            ]
+        ],
+        "tool_call_budget": 5,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "inspect_csv": {
+                    "run_data_path": "test_data/scenario8_one.csv"
+                }
+            },
+            {
+                "check_component_activity": {
+                    "run_data_path": "test_data/scenario8_one.csv",
+                    "element_type": "BEC",
+                    "start_event": 30,
+                    "end_event": 60,
+                    "element_id": "None"
+                }
+            },
+            {
+                "get_hardware_connections": {
+                    "element_type": "BEC",
+                    "element_id": "7"
+                }
+            }
+        ]
+    },
+    {
+        "id": "q022",
+        "tier": 3,
+        "description": "Tier 3: Multi-Tool Sequential - find noisy PMTs then get profile",
+        "query": "Find the noisiest PMT in test_data/scenario1_one.csv for a noisy z threshold of 3 and then show me its detailed profile",
+        "expected_tools": null,
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": [
+            [
+                "inspect_csv",
+                "detect_global_occupancy_outliers",
+                "get_pmt_profile"
+            ]
+        ],
+        "tool_call_budget": 5,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "inspect_csv": {
+                    "run_data_path": "test_data/scenario1_one.csv"
+                }
+            },
+            {
+                "detect_global_occupancy_outliers": {
+                    "run_data_path": "test_data/scenario1_one.csv",
+                    "noisy_z_threshold": 3.0,
+                    "quiet_z_threshold": 3.0,
+                    "top_k": 1
+                }
+            },
+            {
+                "get_pmt_profile": {
+                    "run_data_path": "test_data/scenario1_one.csv",
+                    "pmt_id": 12594,
+                    "max_points": 50
+                }
+            }
+        ]
+    },
+    {
+        "id": "q023",
+        "tier": 3,
+        "description": "Tier 3: Multi-Tool Sequential - audit then read detailed report",
+        "query": "Perform a full RMU audit on test_data/scenario3_one.csv and give me a summary of the worst offenders",
+        "expected_tools": null,
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": [
+            [
+                "inspect_csv",
+                "find_events_with_missing_components",
+                "read_missing_components_report"
+            ],
+            [
+                "inspect_csv",
+                "find_events_with_missing_components"
+            ]
+        ],
+        "tool_call_budget": 5,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "inspect_csv": {
+                    "run_data_path": "test_data/scenario3_one.csv"
+                }
+            },
+            {
+                "find_events_with_missing_components": {
+                    "run_data_path": "test_data/scenario3_one.csv",
+                    "element_type": "RMU"
+                }
+            },
+            {
+                "read_missing_components_report": {
+                    "report_path": "test_data/scenario3_one_RMU_audit_report.json",
+                    "max_components": 10
+                }
+            }
+        ]
+    },
+    {
+        "id": "q024",
+        "tier": 3,
+        "description": "Tier 3: Multi-Tool Sequential - get KPIs first then investigate anomalies",
+        "query": "First get an overview of test_data/scenario4_one.csv, then if it looks noisy, find the problematic PMTs",
+        "expected_tools": null,
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": [
+            [
+                "inspect_csv",
+                "compute_run_kpis",
+                "detect_global_occupancy_outliers"
+            ],
+            [
+                "inspect_csv",
+                "compute_run_kpis"
+            ],
+            [
+                "inspect_csv",
+                "detect_global_occupancy_outliers"
+            ]
+        ],
+        "tool_call_budget": 5,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "inspect_csv": {
+                    "run_data_path": "test_data/scenario4_one.csv"
+                }
+            },
+            {
+                "compute_run_kpis": {
+                    "run_data_path": "test_data/scenario4_one.csv"
+                }
+            },
+            {
+                "detect_global_occupancy_outliers": {
+                    "run_data_path": "test_data/scenario4_one.csv",
+                    "noisy_z_threshold": 3.0,
+                    "quiet_z_threshold": 3.0,
+                    "top_k": 1
+                }
+            }
+        ]
+    },
+    {
+        "id": "q025",
+        "tier": 3,
+        "description": "Tier 3: Multi-Tool Sequential - find transient anomaly then check component",
+        "query": "Scan test_data/scenario7_one.csv for bursts, and if you find any, check if GCU 1500 was silent during the whole test set",
+        "expected_tools": null,
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": [
+            [
+                "inspect_csv",
+                "scan_run_for_occupancy_anomalies",
+                "check_component_activity"
+            ],
+            [
+                "inspect_csv",
+                "scan_run_for_occupancy_anomalies"
+            ]
+        ],
+        "tool_call_budget": 6,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "inspect_csv": {
+                    "run_data_path": "test_data/scenario7_one.csv"
+                }
+            },
+            {
+                "scan_run_for_occupancy_anomalies": {
+                    "run_data_path": "test_data/scenario7_one.csv",
+                    "events_per_window": 30,
+                    "flashing_z_threshold": 7,
+                    "top_k_windows": 20
+                }
+            },
+            {
+                "check_component_activity": {
+                    "run_data_path": "test_data/scenario7_one.csv",
+                    "element_type": "GCU",
+                    "start_event": 0,
+                    "end_event": 99,
+                    "element_id": "1500"
+                }
+            }
+        ]
+    },
+    {
+        "id": "q026",
+        "tier": 3,
+        "description": "Tier 3: Multi-Tool Sequential - identify problem then trace hardware",
+        "query": "Check which RMUs were silent between event 40-60 in test_data/scenario8_one.csv, then plot the map for the same file",
+        "expected_tools": null,
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": [
+            [
+                "inspect_csv",
+                "check_component_activity",
+                "plt_pmt_sing"
+            ]
+        ],
+        "tool_call_budget": 5,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "inspect_csv": {
+                    "run_data_path": "test_data/scenario8_one.csv"
+                }
+            },
+            {
+                "check_component_activity": {
+                    "run_data_path": "test_data/scenario8_one.csv",
+                    "element_type": "RMU",
+                    "start_event": 40,
+                    "end_event": 60
+                }
+            },
+            {
+                "plt_pmt_single": {
+                    "highlight_csv": "test_data/scenario8_one.csv"
+                }
+            }
+        ]
+    },
+    {
+        "id": "q027",
+        "tier": 3,
+        "description": "Tier 3: Multi-Tool Sequential - distribution analysis then detailed PMT check",
+        "query": "Show me the event multiplicity for test_data/scenario1_one.csv, and if there's a long tail, check PMT 3000's profile",
+        "expected_tools": null,
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": [
+            [
+                "inspect_csv",
+                "get_event_multiplicity_distribution",
+                "get_pmt_profile"
+            ],
+            [
+                "inspect_csv",
+                "get_event_multiplicity_distribution"
+            ]
+        ],
+        "tool_call_budget": 5,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "inspect_csv": {
+                    "run_data_path": "test_data/scenario1_one.csv"
+                }
+            },
+            {
+                "get_event_multiplicity_distribution": {
+                    "run_data_path": "test_data/scenario1_one.csv",
+                    "num_bins": 20
+                }
+            },
+            {
+                "get_pmt_profile": {
+                    "run_data_path": "test_data/scenario1_one.csv",
+                    "pmt_id": 3000,
+                    "max_points": 50
+                }
+            }
+        ]
+    },
+    {
+        "id": "q028",
+        "tier": 3,
+        "description": "Tier 3: Multi-Tool Sequential - full audit then connection lookup",
+        "query": "Audit test_data/scenario7_one.csv for missing BECs and then find what GCUs are connected to the most problematic BEC",
+        "expected_tools": null,
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": null,
+        "accepted_toolchains": [
+            [
+                "inspect_csv",
+                "find_events_with_missing_components",
+                "get_hardware_connections"
+            ],
+            [
+                "inspect_csv",
+                "find_events_with_missing_components",
+                "read_missing_components_report",
+                "get_hardware_connections"
+            ]
+        ],
+        "tool_call_budget": 6,
+        "ground_truth": null,
+        "expected_args": [
+            {
+                "inspect_csv": {
+                    "run_data_path": "test_data/scenario7_one.csv"
+                }
+            },
+            {
+                "find_events_with_missing_components": {
+                    "run_data_path": "test_data/scenario7_one.csv",
+                    "element_type": "BEC"
+                }
+            },
+            {
+                "read_missing_components_report": {
+                    "report_path": "test_data/scenario7_one_BEC_audit_report.json",
+                    "max_components": 10
+                }
+            },
+            {
+                "get_hardware_connections": {
+                    "element_type": "BEC",
+                    "element_id": "125"
+                }
+            }
+        ]
+    },
+    {
+        "id": "q029",
+        "tier": 5,
+        "description": "Tier 5: Negative/Edge Case - PMT calibration not supported",
+        "query": "Give me the PMT calibration in test_data/scenario1_one.csv",
+        "expected_tools": null,
+        "forbidden_tools": [
+            "get_pmt_profile"
+        ],
+        "alternative_tools": [
+            "detect_global_occupancy_outliers",
+            "scan_run_for_occupancy_anomalies"
+        ],
+        "allowed_refusals": [
+            "(calibration).*(not supported|cannot|don't have)",
+            "(cannot|can't).*(check|detect).*(calibration)",
+            "my tools (only|do not) support",
+            "no.*(calibration).*(tool|function|capability)"
+        ],
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": {}
+    },
+    {
+        "id": "q030",
+        "tier": 5,
+        "description": "Tier 5: Negative/Edge Case - request for unsupported file format",
+        "query": "Analyze the ROOT file test_data/scenario1_one.root for anomalies",
+        "expected_tools": null,
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": [
+            "(root|format).*(not supported|cannot)",
+            "(cannot|can't).*(read|open|analyze).*(root)",
+            "only.*(csv|supported)"
+        ],
+        "accepted_toolchains": null,
+        "tool_call_budget": 1,
+        "ground_truth": null,
+        "expected_args": {}
+    },
+    {
+        "id": "q031",
+        "tier": 5,
+        "description": "Tier 5: Negative/Edge Case - PMT type not supported for missing component check",
+        "query": "Find all events with missing PMTs in test_data/scenario2_one.csv",
+        "expected_tools": null,
+        "forbidden_tools": [
+            "find_events_with_missing_components"
+        ],
+        "alternative_tools": [
+            "detect_global_occupancy_outliers",
+            "check_component_activity"
+        ],
+        "allowed_refusals": [
+            "(pmt).*(not supported|invalid|cannot)",
+            "element.*(type|only).*(gcu|bec|rmu)",
+            "(cannot|can't).*(find|check|audit).*missing.*(pmt)"
+        ],
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": {}
+    },
+    {
+        "id": "q032",
+        "tier": 5,
+        "description": "Tier 5: Negative/Edge Case - request prediction/simulation",
+        "query": "Predict what will happen to PMT 1200 in the next 1000 events",
+        "expected_tools": null,
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": [
+            "(predict|simulation|future).*(not supported|cannot)",
+            "(cannot|can't).*(predict|simulate|forecast)",
+            "only.*(analyze|analysis).*(existing|current|past)"
+        ],
+        "accepted_toolchains": null,
+        "tool_call_budget": 1,
+        "ground_truth": null,
+        "expected_args": {}
+    },
+    {
+        "id": "q033",
+        "tier": 5,
+        "description": "Tier 5: Negative/Edge Case - request for non-existent file",
+        "query": "Analyze test_data/run3.csv for anomalies",
+        "expected_tools": null,
+        "forbidden_tools": null,
+        "alternative_tools": null,
+        "allowed_refusals": [
+            "(file|path).*(not found|does not exist|cannot)",
+            "(cannot|can't).*(find|locate|access).*(file)",
+            "no.*(file|data).*found"
+        ],
+        "accepted_toolchains": null,
+        "tool_call_budget": 2,
+        "ground_truth": null,
+        "expected_args": {}
+    }
+]

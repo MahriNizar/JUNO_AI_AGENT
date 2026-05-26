@@ -1,0 +1,57 @@
+skill_id: detect_global_occupancy_outliers
+summary:
+  name: detect_global_occupancy_outliers
+  description: >-
+    Identifies globally noisy PMTs (flashers) or dead PMTs over the entire run.
+    Uses robust statistics (Median/MAD) to ignore outliers. Returns a small list
+    of the worst offenders.
+  parameters:
+    type: object
+    properties:
+      run_data_path:
+        type: string
+        description: "Path to the run data CSV."
+        required: true
+      noisy_z_threshold:
+        type: float
+        description: "Z-score threshold for flagging a PMT as noisy."
+        required: false
+        default: 5.0
+      quiet_z_threshold:
+        type: float
+        description: "Z-score threshold for flagging dead/quiet pmts."
+        required: false
+        default: 3.0
+      top_k:
+        type: integer
+        description: "Max number of noisy PMTs to return to avoid flooding the context."
+        required: false
+        default: 20
+execution_details:
+  type: python_function
+  call:
+    module: "juno_tools.physics_analysis"
+    function: "detect_global_occupancy_outliers"
+usage_policy:
+  use_when:
+    - User asks "Which PMTs are noisy?" or "Are there any flashers?".
+    - You want to find the "worst" PMTs in the whole file.
+  do_not_use_when:
+    - User asks about a specific time window (use 'scan_run_for_occupancy_anomalies').
+    
+output_schema:
+  description: "Returns summary stats and a list of top noisy PMTs."
+  type: object
+  properties:
+    summary_stats:
+      type: object
+      properties:
+        occupancy_median: { type: number }
+        noisy_count: { type: integer }
+    noisy_pmts:
+      type: array
+      items:
+        type: object
+        properties:
+          pmt_id: { type: integer }
+          z_score: { type: number }

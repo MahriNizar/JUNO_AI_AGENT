@@ -1,0 +1,61 @@
+skill_id: check_component_activity
+summary:
+  name: check_component_activity
+  description: >-
+    Checks for silent (inactive) components within a specific event window.
+    Can check for a specific component ID or all components of a given type.
+    Valid 'element_type' values are: 'PMT', 'GCU', 'BEC', 'RMU'.
+  parameters:
+    type: object
+    properties:
+      run_data_path:
+        type: string
+        description: "The path to the aggregated run data CSV file to analyze (e.g., 'data/run_123.csv')."
+        required: true
+      element_type:
+        type: string
+        description: "The type of hardware element to check."
+        enum: ['PMT', 'GCU', 'BEC', 'RMU']
+        required: true
+      start_event:
+        type: integer
+        description: "Optional. The starting event ID of the window (inclusive). If omitted, defaults to the start of the run. First event is 0"
+        required: false
+        default: 0
+      end_event:
+        type: integer
+        description: "Optional. The ending event ID of the window (inclusive). If omitted, defaults to the end of the run."
+        required: false
+        default: None
+      element_id:
+        type: string
+        description: "Optional. If provided, check only this specific component ID. If omitted, check all components of this type."
+        required: false
+        default: None
+execution_details:
+  type: python_function
+  call:
+    module: "juno_tools.hardware_check"
+    function: check_component_activity
+
+usage_policy:
+    use_when:
+      - You need to check for inactive components within a *specific event window* (e.c., 'between event 30 and 50').
+      - You want to find *all* silent components of a type (e.g., all BECs) within that window. To do this, provide 'start_event' and 'end_event' but omit 'element_id'.
+    do_not_use_when:
+      - You need to audit the *entire* run (use 'find_events_with_missing_components').
+      - You need to find hardware *connections* (use 'get_hardware_connections').
+
+output_schema:
+    description: "The output depends on whether 'element_id' was provided.It either Returns a list of all components of that type that were silent in the window. or  Returns a list of all components of that type that were silent in the window."
+    type: object
+    properties:
+      properties_1:
+        status: { type: "string", "example": "GLOBAL_CHECK" }
+        event_window_checked: { type: "string", "example": "[31, 50]" }
+        element_type: { type: "string", "example": "BEC" }
+        missing_components: { type: "array", "items": { "type": "integer" } }
+
+      properties_2:
+        status: { type: "string", "example": "SILENT" }
+        event_window_checked: { type: "string", "example": "[31, 50]" }

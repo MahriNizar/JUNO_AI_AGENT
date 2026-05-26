@@ -1,0 +1,77 @@
+skill_id: inspect_csv
+summary:
+  name: inspect_csv
+  description: Returns a lightweight summary of a JUNO run CSV (size, event count,
+    event range, columns, average hits) without loading the full dataset.
+  parameters:
+    type: object
+    properties:
+      run_data_path:
+        type: string
+        description: Path to the CSV file containing at least an 'Event' column.
+        required: true
+        default: null
+execution_details:
+  type: python_function
+  call:
+    module: juno_tools.csv_tooling
+    function: inspect_csv
+usage_policy:
+  use_when:
+  - The user needs an initial overview of a new run file to determine whether further
+    analysis requires filtering or batching.
+  - The user wants quick metrics (size, event count, average hits) without loading
+    the entire dataset.
+  do_not_use_when:
+  - The user is already working with a small subset or specific event window.
+
+output_schema:
+  description: null
+  type: object
+  properties:
+    success:
+      type: object
+      properties:
+        file_size_mb:
+          type: number
+          description: File size in megabytes, rounded to 2 decimals.
+        total_rows:
+          type: integer
+          description: "Number of hit\u2011level rows in the CSV."
+        num_events:
+          type: integer
+          description: Number of unique events.
+        event_range:
+          type: array
+          items:
+            type: integer
+          minItems: 2
+          maxItems: 2
+          description: Minimum and maximum event numbers.
+        columns:
+          type: array
+          items:
+            type: string
+          description: All column names present in the CSV.
+        avg_hits_per_event:
+          type: number
+          description: Mean hits per event, rounded to 1 decimal.
+        recommendation:
+          type: string
+          description: "Human\u2011readable hint for the next step."
+      required:
+      - file_size_mb
+      - total_rows
+      - num_events
+      - event_range
+      - columns
+      - avg_hits_per_event
+      - recommendation
+    error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message explaining why the inspection failed.
+      required:
+      - error

@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-02-15T10:18:35.676157",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": -2
+  },
+  "runs_per_query": 1,
+  "total_queries": 1,
+  "total_runs": 1,
+  "overall_metrics": {
+    "correctness": 0.0,
+    "safety": 1.0,
+    "outcome_distribution": {
+      "GRACEFUL_REFUSAL": 1
+    }
+  },
+  "tier_metrics": {
+    "5": {
+      "count": 1,
+      "outcomes": {
+        "GRACEFUL_REFUSAL": 1
+      },
+      "correctness": 0.0,
+      "safety": 1.0
+    }
+  },
+  "query_aggregates": {
+    "q038": {
+      "query_id": "q038",
+      "n_runs": 1,
+      "correct_rate": 0.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "FAILED",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "GRACEFUL_REFUSAL": 1
+      },
+      "latencies": [
+        4.1421473026275635
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q038",
+      "tier": 5,
+      "run_id": 0,
+      "outcome": "GRACEFUL_REFUSAL",
+      "evidence": {
+        "tool_calls": [],
+        "key_values": {
+          "tool_outputs_count": 0
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [],\n  \"skill_to_use\": null,\n  \"final_answer\": \"I\u2019m sorry, but none of the available tools can directly identify events with missing PMTs. The only audit tool, `find_events_with_missing_components`, operates on GCU, BEC, and RMU components, not PMTs. Without a dedicated tool or data format that flags missing PMTs, I\u2019m unable to fulfill this request.\",\n  \"thought\": \"The user requests missing PMTs. Available skills only handle GCU, BEC, RMU. No tool can produce the desired result. Therefore I must return a final answer explaining the limitation.\"\n}",
+        "admitted_uncertainty": true,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 4.1421473026275635,
+      "tool_call_count": 0,
+      "within_budget": true
+    }
+  ]
+}

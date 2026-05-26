@@ -1,0 +1,61 @@
+[
+  {
+    "query_id": "q009",
+    "tier": 1,
+    "run_id": 0,
+    "main_agent": {
+      "outcome": "HALLUCINATED",
+      "latency": 5.744953632354736,
+      "tool_count": 0,
+      "evidence": {
+        "tool_calls": [],
+        "key_values": {
+          "tool_outputs_count": 0
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [],\n  \"skill_to_use\": null,\n  \"final_answer\": \"I\u2019m sorry, but I don\u2019t have a tool that can directly read or extract data from an arbitrary CSV file such as `test_data/one_output_3398_200.csv`. The available tools in this environment are focused on high\u2011level run analysis and PMT profiling via run identifiers, not on raw CSV file manipulation. If you can provide the run identifier or use a tool that extracts the data from the file beforehand, I can help you process it using the available tools.\",\n  \"thought\": \"The user requests time\u2011series data from a specific CSV file. None of the listed skills can read or parse an arbitrary CSV, so this request is out of scope.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    },
+    "baseline_agent": {
+      "outcome": "HALLUCINATED",
+      "latency": 2.5924792289733887,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "pmt_id": 4500,
+              "run_data_path": "test_data/one_output_3398_200.csv",
+              "max_points": 1000
+            },
+            "args_hash": "1218fa9ee39148f2",
+            "output_hash": "b12e9a0175df2a35",
+            "output_summary": "{\"pmt_id\": 4500, \"status\": \"No hits found (Dead or Invalid ID)\", \"total_hits\": 0}",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "pmt_id": 4500,
+          "status": "No hits found (Dead or Invalid ID)",
+          "total_hits": 0,
+          "arg_mismatch": {
+            "max_points": {
+              "expected": 50,
+              "actual": 1000,
+              "error": "value mismatch"
+            }
+          }
+        },
+        "final_answer": "It looks like PMT\u202f4500 didn\u2019t record any hits in that file \u2013 the tool reports it as \u201cNo hits found (Dead or Invalid ID)\u201d. If you suspect it should be active, double\u2011check the run file or try a different PMT ID.",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    }
+  }
+]

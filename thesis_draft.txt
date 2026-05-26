@@ -1,0 +1,3214 @@
+                                                               B R U X E L L E S
+                                                               D E
+                                                               L I B R E
+                                                               U N I V E R S I T É
+ Scalable Intelligent Agent System
+for Automated Monitoring and Debugging
+Support of the JUNO Electronics system.
+Mémoire présenté en vue de l’obtention du diplôme
+d’Ingénieur Civil Physicien
+
+
+
+
+Nizar Mahri
+
+
+
+
+Directeur
+Professeur Nicolas Pauly
+Co-Promoteur
+Professeur Barbara Clerbaux
+Superviseur
+Dr. Yifan Yang
+Service                                              Année académique
+Interuniversity Institute for High Energies (IIHE)         2025 - 2026
+Abstract
+
+Student:            Nizar Mahri
+Degree:             Physics Engineering
+Academic year:      2025-2026
+Thesis title:       A Scalable Intelligent Agent System for Automated Monitoring
+                    and Debugging Support of the JUNO Electronics system
+
+Keywords: LLM agents, tool orchestration, AI, detector diagnostics, JUNO, au-
+tonomous Learning, autonomous debugging workflow
+
+
+     Modern particle-physics experiments are limited not only by detector scale and
+sensor precision, but also by the difficulty of operating and understanding complex
+acquisition systems. The Jiangmen Underground Neutrino Observatory (JUNO), a
+20-kiloton liquid-scintillator detector in China, illustrates this challenge clearly. Its
+central detector is read out by 17,596 large photomultiplier tubes (PMTs) connected
+through a hierarchical electronics chain involving many pieces of hardware. The detector
+is filled and sealed, so the underwater electronics cannot be physically accessed during
+operation. Diagnosing faults therefore depends on the careful analysis of detector
+data: silent hardware regions, flashing PMTs, abnormal hit multiplicities, or missing
+electronics components must be inferred indirectly from the recorded event stream.
+    This thesis investigates whether a locally deployed Large Language Model (LLM)
+agent can help physicists perform such diagnostic tasks by translating natural language
+questions into sequences of analysis-tool calls. The goal is not to replace detector
+experts, but to reduce the distance between a physicist’s question and the correct
+diagnostic workflow. For example, a user might ask whether a hardware element was
+silent during a given range of recorded events, or whether a run contains noisy PMTs.
+Answering such questions requires selecting the right analysis tool, supplying correct
+arguments, interpreting outputs, and often chaining several tools together. This process
+is straightforward for an expert who knows the software ecosystem, but difficult to
+automate reliably, especially when the available model must run locally on restricted
+hardware rather than through a frontier cloud API.
+   The central design contribution of this work is the Skill Card abstraction. A Skill
+Card is a structured text file describing an analysis tool taken from a typical JUNO
+physicist tool-kit. It specifies what the tool does, when it should or should not be used,
+what arguments it expects, how it is executed, and what kind of output it returns.
+These cards act simultaneously as documentation for humans, metadata for the agent,
+and validation contracts for the runtime system.
+    On top of this representation, the thesis develops a LangGraph-based Analysis
+Agent using a Select-then-Validate architecture. Instead of asking the LLM to choose a
+tool and format its arguments in a single step, the system separates these tasks. A first
+node selects the most appropriate tool using compact Skill Card summaries. A second
+node loads the full Skill Card, checks whether the choice is appropriate, and formats the
+arguments under a type-safe schema. This design directly addresses common failures of
+small LLMs, such as choosing a plausible but wrong tool, confusing argument types,
+or hallucinating unsupported capabilities. For longer diagnostic workflows, the agent
+also uses Folded Memory, a mechanism that compresses previous steps into a summary
+while preserving key facts such as file paths, PMT identifiers, and anomaly counts.
+    A second subsystem, the Learning Pipeline, explores whether Skill Cards can
+be synthesized automatically from existing Python tools. This pipeline combines
+deterministic static analysis of function signatures and source code with LLM-based
+interpretation, draft generation, testing, and refinement. The resulting Skill Cards are
+evaluated by running them through the Analysis Agent itself, so that a card is not only
+syntactically valid but practically usable.
+    The system was evaluated on a benchmark of 33 JUNO-style diagnostic queries,
+organized by increasing difficulty, and on four long-horizon scenarios requiring multi-
+step reasoning. The full JUNO agent was compared to a standard ReAct baseline
+using the same tool suite. On simple single-tool queries, both agents performed well.
+The advantage of the proposed architecture appeared more clearly on multi-tool and
+long-horizon tasks. In the tiered benchmark, the JUNO agent achieved a high level of
+argument correctness on the first three tiers, with Argument Correctness Rates of 1.00,
+0.99, and 0.90, compared with 0.81, 0.75, and 0.83 for the baseline. On long-horizon
+diagnostic scenarios, the JUNO agent completed 16 out of 20 runs, while the baseline
+completed only 3 out of 20. These results show that explicit tool metadata, validation,
+planning, and memory are particularly important when small local models must perform
+scientific tool orchestration.
+    The work also identifies important limitations. The improved reliability comes
+with a significant latency cost, since the agent uses multiple LLM calls per tool
+invocation. Some long chains remain beyond the reliable capability of the tested model,
+especially comprehensive cross-subsystem diagnoses requiring many dependent tool
+calls. Automatically synthesized Skill Cards perform comparably to hand-written cards
+for positive tool use, but are weaker at defining negative usage boundaries, leading to
+poorer refusal behavior on unsupported queries.
+    Overall, this thesis shows that useful scientific agents require more than access to
+tools. They require structured descriptions of what tools mean, validation of how they
+are called, and memory mechanisms that preserve context across multi-step reasoning.
+Within the scoped JUNO diagnostic setting, the proposed architecture demonstrates
+that locally deployed LLM agents have the potential to become practical assistants for
+scientific computing workflows, provided that their autonomy is constrained by explicit
+engineering structure and expert-verifiable outputs.
+Acknowledgements
+Contents
+
+Abstract
+
+Acknowledgements                                                                         i
+
+1 Introduction                                                                          1
+  1.1   Context and Motivation . . . . . . . . . . . . . . . . . . . . . . . . . .       1
+  1.2   Problem Statement and Research Questions . . . . . . . . . . . . . . .           2
+  1.3   Contributions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    3
+  1.4   Scope and Constraints . . . . . . . . . . . . . . . . . . . . . . . . . . .      4
+  1.5 Thesis Outline . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     4
+
+2 Background and Related Work                                                           6
+  2.1 The JUNO Detector: Technical Background . . . . . . . . . . . . . . .              6
+        2.1.1   Detector Geometry and the Photosensor System . . . . . . . . .           6
+        2.1.2   The Trigger System Hierarchy . . . . . . . . . . . . . . . . . . .       7
+        2.1.3   Run Structure and the Diagnostic Data Format . . . . . . . . .           9
+        2.1.4   Operational Diagnostics: Motivation and Scope . . . . . . . . .         10
+  2.2   Large Language Models and Autonomous Agents . . . . . . . . . . . .             11
+        2.2.1   How Large Language Models Work . . . . . . . . . . . . . . . .          11
+        2.2.2   Tool-Using Agents . . . . . . . . . . . . . . . . . . . . . . . . .     14
+        2.2.3   Fundamental Limitations in Scientific Contexts . . . . . . . . .        17
+  2.3   Related Work and Positioning . . . . . . . . . . . . . . . . . . . . . . .      19
+        2.3.1   Tool-Using Agent Foundations . . . . . . . . . . . . . . . . . . .      19
+        2.3.2   Domain Specific Scientific Agents . . . . . . . . . . . . . . . . .     19
+        2.3.3   Schema-Validated Registries and Decoupled Validation . . . . .          20
+        2.3.4   Memory and Long-Context Management . . . . . . . . . . . . .            20
+        2.3.5   Automatic Tool Integration and Tool Learning . . . . . . . . . .        21
+        2.3.6   Positioning . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   21
+
+3 System Design and Implementation                                                      23
+  3.1   System Overview and Architecture . . . . . . . . . . . . . . . . . . . .        23
+  3.2 The Skill Card Abstraction . . . . . . . . . . . . . . . . . . . . . . . . .      25
+
+                                            ii
+                                                                               CONTENTS
+
+
+        3.2.1   Schema Design . . . . . . . . . . . . . . . . . . . . . . . . . . .       25
+        3.2.2   Validation and Runtime Use . . . . . . . . . . . . . . . . . . . .        26
+        3.2.3   Registry Loading . . . . . . . . . . . . . . . . . . . . . . . . . .      26
+        3.2.4   Comparison to Alternative Representations . . . . . . . . . . . .         28
+  3.3 The Analysis Agent . . . . . . . . . . . . . . . . . . . . . . . . . . . . .        29
+        3.3.1   Graph Architecture . . . . . . . . . . . . . . . . . . . . . . . . .      29
+        3.3.2   Agent State . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     30
+        3.3.3   The Select-then-Validate Workflow . . . . . . . . . . . . . . . .         31
+        3.3.4   Tool Execution . . . . . . . . . . . . . . . . . . . . . . . . . . .      32
+        3.3.5   Memory Management: Folded Memory . . . . . . . . . . . . . .              33
+        3.3.6   Comparison to the ReAct Baseline . . . . . . . . . . . . . . . .          34
+  3.4 The Learning Pipeline . . . . . . . . . . . . . . . . . . . . . . . . . . .         34
+        3.4.1   Pipeline State . . . . . . . . . . . . . . . . . . . . . . . . . . . .    37
+        3.4.2   Phase 1: Analysis . . . . . . . . . . . . . . . . . . . . . . . . . .     37
+        3.4.3   Phase 2: Synthesis . . . . . . . . . . . . . . . . . . . . . . . . .      38
+        3.4.4   Phase 3: The Gauntlet Validation Protocol . . . . . . . . . . . .         39
+        3.4.5   The Refiner . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     41
+
+4 Experiments and Results                                                                 42
+  4.1   Experimental Setup . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      42
+        4.1.1   Models and Infrastructure . . . . . . . . . . . . . . . . . . . . .       42
+        4.1.2   Baseline Agent (B1) . . . . . . . . . . . . . . . . . . . . . . . .       43
+        4.1.3   Tool Suite . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    43
+        4.1.4   Benchmark Design . . . . . . . . . . . . . . . . . . . . . . . . .        43
+        4.1.5   Long-Horizon Scenarios      . . . . . . . . . . . . . . . . . . . . . .   44
+        4.1.6   Metrics   . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   44
+        4.1.7   Statistical Methodology . . . . . . . . . . . . . . . . . . . . . .       46
+  4.2 Tiered Benchmark Results . . . . . . . . . . . . . . . . . . . . . . . . .          47
+        4.2.1   Tool Selection Rate Analysis . . . . . . . . . . . . . . . . . . . .      47
+        4.2.2   Argument Correctness Analysis . . . . . . . . . . . . . . . . . .         48
+        4.2.3   Latency Analysis . . . . . . . . . . . . . . . . . . . . . . . . . .      50
+  4.3   Long-Horizon Scenario Results . . . . . . . . . . . . . . . . . . . . . . .       50
+        4.3.1   Scenario Completion Rates . . . . . . . . . . . . . . . . . . . . .       51
+        4.3.2   Failure Mode Analysis . . . . . . . . . . . . . . . . . . . . . . .       52
+  4.4   Learning Pipeline Evaluation      . . . . . . . . . . . . . . . . . . . . . . .   53
+        4.4.1   Comparative Benchmark: Hand-Written vs. Auto-Synthesised
+                Skill Cards . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   53
+
+                                            iii
+CONTENTS
+
+
+5 Conclusion and Perspectives                                                         55
+  5.1 Summary of Contributions . . . . . . . . . . . . . . . . . . . . . . . . .      55
+      5.1.1 RQ1: Agent architecture and representation. . . . . . . . . . . .         55
+      5.1.2 RQ2: In-context Skill learning. . . . . . . . . . . . . . . . . . .       56
+  5.2 Limitations . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   56
+  5.3 Future Work . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   58
+  5.4 Closing Remarks . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     59
+
+Declaration of Generative AI and AI-assisted Technologies in the Writing
+  Process                                                                60
+
+A Long-Horizon Scenario                                                               61
+
+B Skill Library                                                                       62
+
+C Memory Compression Ablation                                                         64
+  C.1 Memory Compression Ablation . . . . . . . . . . . . . . . . . . . . . .         64
+      C.1.1 Experimental Design . . . . . . . . . . . . . . . . . . . . . . . .       64
+      C.1.2 Results . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   64
+      C.1.3 Interpretation . . . . . . . . . . . . . . . . . . . . . . . . . . . .    64
+
+D Prompt Design and Development                                                       67
+
+Bibliography                                                                          71
+
+
+
+
+                                           iv
+Chapter 1
+
+Introduction
+
+1.1      Context and Motivation
+The Jiangmen Underground Neutrino Observatory (JUNO) is a multi-purpose neutrino
+experiment whose central detector instruments 17,596 large photomultiplier tubes
+(PMTs) read out by a hierarchical electronics chain of mainly Global Control Units
+(GCUs), Back-End Cards (BECs), and Reorganise and Multiplex Units (RMUs). Once
+the detector is sealed and filled, no component in the underwater front-end can be
+physically accessed for the projected 20-year operational lifetime [1]. The sole means
+of detecting and localising hardware anomalies is the statistical analysis of the data
+stream itself.
+   This diagnostic work is supported by a growing ecosystem of analysis tools developed
+by detector experts within the JUNO collaboration. These tools encode domain
+knowledge about the hardware hierarchy, run conditions, and data quality metrics.
+Tools can be written independently, with their own conventions for input formats,
+parameter names, default values, and output structures. No tool was designed with the
+assumption that an automated system would parameterise or invoke it.
+   Using this tool suite effectively requires substantial human expertise. A physicist
+diagnosing a potential hardware fault must know which tools exist, select the appropriate
+one for the current question, provide the correct file paths and parameter values, interpret
+the output in context, and often chain the result into a following query: for example,
+identifying an outlier PMT, looking up which GCU it belongs to, and then checking
+whether that GCU’s parent RMU was active during the run.
+   Recent progress in large language models (LLMs) has enabled a new type of au-
+tonomous software systems, AI Agents. In this thesis, an AI agent is not a detector-
+control system. It is a software assistant built around a LLM. Its role is to decide
+which tool1 to call next, with which arguments, and how to use the returned result to
+  1
+   Tools are any external function or program that the agent can invoke. In this work, they are
+Python functions that perform a specific analysis task and return a structured result
+
+
+                                              1
+CHAPTER 1. INTRODUCTION
+
+
+answer the user (Section 2.2). The reasoning capabilities of modern LLMs, combined
+with structured function-calling interfaces, make it possible in principle to bridge the
+gap between a physicist’s question and the programmatic execution of the relevant
+diagnostic pipeline.
+     However, generic agent frameworks are not directly suited to the constraints of a
+large physics experiment. Some requirements distinguish this setting from the typical
+tool-use benchmarks in the LLM literature. First, the tool library is heterogeneous
+and growing. They have overlapping scopes, inconsistent interfaces, and no central
+registry. An agent must be able to discriminate between semantically similar tools
+and must accommodate new tools without requiring manual prompt modifications or
+retraining. For example, one tool may search for globally noisy PMTs, while another
+may inspect the time profile of one selected PMT. Both are relevant to a question such
+as “is this PMT abnormal?”, but they answer different diagnostic questions. Second,
+reliability requirements are high: a diagnostic conclusion that is confidently wrong can
+be worse than no conclusion at all. Third, the project was constrained to the use of
+small language models deployed on restricted hardware (around 8 to 30B parameters)
+to answer the possible need of data privacy but also due to infrastructure constraints.
+It limits the available models to open-weight LLMs, which are substantially less capable
+than frontier cloud-hosted models on structured reasoning and function calling tasks.
+
+
+1.2        Problem Statement and Research Questions
+The central challenge addressed by this thesis can be stated as follows. An AI agent
+based on a small LLM that orchestrates scientific analysis tools requires structured
+knowledge about each tool: what it does, when it should be used, what arguments
+it expects, and what it returns [2]. In this work, this knowledge is captured in Skill
+Cards: typed, human-readable YAML2 documents that serve simultaneously as tool
+descriptions for the agent, input contracts for argument validation, execution manifests
+for dynamic invocation, and editable documentation for the physicists. Skill Cards
+address this representation problem by making tool interfaces, usage boundaries, and
+expected outputs explicit. But they also need to be autonomously written to lower the
+barrier of entry for a user that would not want to bother writing a specific Skill Card
+from the ground-up.
+    Furthermore, a static, purely prompt-engineered agent may not exploit complex
+multi-step toolchains reliably, particularly on the constrained local models available in
+this work.
+      These considerations motivate two research questions:
+  2
+    YAML is a data language that acts as a bridge between human-readable text and structured data
+interpretable by computers[3].
+
+
+                                               2
+                                                                1.3. CONTRIBUTIONS
+
+
+RQ1 Agent architecture and representation. How should a multi-node, tool-using
+    agent and a Skill Card abstraction be designed so that an LLM can robustly
+    solve JUNO-style diagnostic queries using existing tools?
+
+RQ2 In-context Skill learning. Can Skill Cards be automatically synthesised from
+    Python tool definitions (function signatures, docstrings, and source code) in
+    an offline learning mode, and still support agent performance comparable to
+    manually authored Skill Cards?
+
+
+1.3     Contributions
+This thesis makes the following contributions:
+
+  1. The Skill Card abstraction: a type of "identity card" for each analysis tool,
+     implemented as a typed, machine-validated YAML schema. It captures tool
+     identity, parameter contracts, usage policies, execution details, and output schemas
+     in a single human-readable document, decoupling tool knowledge from both the
+     agent’s reasoning logic and the tool’s source code.
+
+  2. A Select-then-Validate agent architecture: a runtime agent based on Lang-
+     Graph that first chooses which tool seems relevant, then a separate validation step
+     checks whether this choice and its arguments are appropriate before execution.
+
+  3. Folded Memory: a structured memory management system that combines a
+     findings list with a periodically compressed narrative summary, mitigating context
+     degradation during long investigations.
+
+  4. An automated Skill Card synthesis pipeline: an offline LangGraph pipeline
+     that ingests a raw Python function, combines AST-based static analysis with
+     LLM-based code tracing, drafts a Skill Card, and validates it through a testing
+     protocol (the Gauntlet) with a targeted refinement loop.
+
+  5. A tiered evaluation benchmark: a suite of 33 diagnostic queries across 4
+     tiers (numbered 1,2,3,5) plus four long-horizon scenarios (Tier 4), with ground-
+     truth tool selections and expected arguments, designed to measure tool selection
+     accuracy, argument correctness, and multi-step task completion under controlled
+     conditions. This benchmark is used to validate the capabilities of the designed
+     architecture.
+
+  6. Empirical evaluation: a systematic comparison of the full JUNO agent against
+     a standard ReAct baseline on the tiered benchmark and on long-horizon diagnostic
+     scenarios, and a quantitative comparison of agent performance when operating
+     with hand-written versus automatically synthesised Skill Cards.
+
+                                           3
+CHAPTER 1. INTRODUCTION
+
+
+1.4      Scope and Constraints
+Several boundary conditions shape the work presented in this thesis.
+    The system is currently designed for offline diagnostic support: answering questions
+about completed or ongoing runs after data has been collected and preprocessed. It does
+not operate at DAQ (data acquisition) latency and is not intended to replace real-time
+monitoring infrastructure. The LLM inference time, which ranges from tens of seconds
+to several minutes per query depending on task complexity, is the dominant bottleneck.
+The orchestration architecture itself introduces negligible overhead relative to the LLM
+calls. Extending the system toward online monitoring is a plausible future direction, but
+it would require either substantially faster local inference or a fundamentally different
+triggering mechanism, and is not claimed as a current capability.
+    All experiments are conducted using locally deployed open-weight models (GPT-OSS-
+20B) running on consumer-grade hardware. This is a deliberate constraint. The results
+reported in this thesis should therefore be read as results for the class of open-weight
+models that are deployable in a restricted-access scientific computing environment, not
+as a statement about what is achievable with frontier model access. The architectural
+contributions (Skill Cards, the validation gate, Folded Memory) are independent of
+the model and would benefit from stronger underlying models, but the quantitative
+performance figures are specific to the model tier used.
+    The tool suite used for development and evaluation is composed of tools provided
+by the thesis supervisors, representative of real JUNO diagnostic practice, and tools
+developed during this thesis work to achieve sufficient diversity for benchmarking.
+These tools operate on realistic JUNO data (derived from filling-test runs via C++
+preprocessing into a simplified CSV format) and respect the hardware nomenclature
+of the experiment, but they are not claimed to represent the full scope of production
+diagnostics performed by JUNO physicists. Their role is to provide a controlled,
+executable tool suite over which the agent’s capabilities can be systematically evaluated.
+
+
+
+1.5      Thesis Outline
+The remainder of this thesis is organised as follows.
+    Chapter 2 provides the technical background required to contextualise the contribu-
+tions. It describes the JUNO detector hardware and readout hierarchy, the operational
+mechanics of large language models with emphasis on the properties and limitations
+relevant to autonomous agents, prior work on automated tool learning and a comparison
+of adjacently designed AI agents.
+   Chapter 3 presents the system design and implementation. It introduces the Skill
+Card abstraction and its Pydantic-based validation infrastructure, describes the Analysis
+
+                                            4
+                                                                1.5. THESIS OUTLINE
+
+
+Agent’s four-node graph architecture with its Select-then-Validate workflow and Folded
+Memory system, and details the Learning Pipeline’s validation protocol and refinement
+loop.
+    Chapter 4 describes the experimental setup and interprets the results in the context
+of the research questions, discusses the limitations of the evaluation methodology and
+the system’s current capabilities.
+    Finally, chapter 5 concludes the thesis by summarising the main contributions with
+respect to the research questions, discussing the remaining limitations of the proposed
+system, and outlining future directions.
+
+
+
+
+                                           5
+Chapter 2
+
+Background and Related Work
+
+2.1     The JUNO Detector: Technical Background
+The Jiangmen Underground Neutrino Observatory (JUNO) is a large-scale liquid
+scintillator neutrino experiment that started physics data taking on 26 August 2025
+and located in Guangdong Province, southern China, at a depth of approximately
+650 m underground[1][4]. Its primary physics goal is the determination of the neutrino
+mass ordering through precision measurement of the oscillation pattern of reactor
+antineutrinos produced at two nuclear power plants located approximately 52.5 km away.
+Achieving this requires an unprecedented energy resolution of at least 3% at 1 MeV,
+which in turn imposes tight requirements on the detector design and components in the
+detector readout chain. This section describes that chain in sufficient depth to motivate
+the diagnostic tooling and monitoring requirements that this thesis addresses.
+
+
+2.1.1     Detector Geometry and the Photosensor System
+The JUNO central detector consists of 20 kt of liquid scintillator (LS) contained in
+a spherical acrylic vessel of 35.4 m diameter, itself immersed in a large water pool.
+Scintillation photons produced by neutrino interactions in the LS are collected by a
+dual calorimetry photosensor system [1]:
+
+  • 17,596 Large PMTs (LPMTs), 20-inch diameter, providing the primary calori-
+    metric measurement through full waveform sampling. These are the central
+    concern of the readout electronics described in the remainder of this section.
+
+  • 25,587 Small PMTs (SPMTs), 3-inch diameter, interwoven between the
+    LPMTs and operating in a photon-counting mode to provide an independent
+    cross-calibration of the energy response.
+
+   Together, this dual system achieves a photon sensor coverage exceeding 75%, a
+fundamental prerequisite for the target energy resolution. The LPMTs are individually
+
+                                           6
+                            2.1. THE JUNO DETECTOR: TECHNICAL BACKGROUND
+
+
+immersed in the water pool and connected to their corresponding Underwater Box
+(UWB) via coaxial cables. Once the detector is filled and sealed, neither the PMTs
+nor the underwater front-end electronics can be physically accessed for the entire
+projected operational lifetime of 20 years [1]. This inaccessibility is a critical operational
+constraint: any hardware malfunction or data quality anomaly that cannot be diagnosed
+and mitigated remotely represents a permanent loss of detector performance.
+
+
+
+
+            Figure 2.1: Schematic view of the JUNO detector. Taken from [1]
+                                              .
+
+
+
+2.1.2     The Trigger System Hierarchy
+The JUNO large-PMT trigger system is organised into a hierarchy that spans from
+individual PMTs down to the central data acquisition system [4, 5]. Figure 2.2 provides
+a schematic of this chain.
+
+
+Photomultiplier Tube (PMT). When photons coming from the interactions in the
+detector are detected by a LPMT, their corresponding channel forms a negative pulse
+(waveform). Offline waveform-reconstruction extracts per-channel observables such as
+the photon hit time and the collected charge [7].
+
+                                              7
+CHAPTER 2. BACKGROUND AND RELATED WORK
+
+
+
+
+            Figure 2.2: Scheme of the JUNO trigger system. Taken from [6]
+                                           .
+
+Global Control Unit (GCU). The GCU is one of the core electronics module [5].
+Each GCU is responsible for exactly three LPMTs. It performs the digitalization of the
+waveforms, the generation of local triggers, the reconstruction of the time and charge
+information and they also send the PMT waveform data to the DAQ during an accepted
+trigger decision.
+    The GCU are located inside the UWB and communicates with the back-end elec-
+tronics over CAT6 Ethernet cable of approximately 100 m [7]. There are 5878 GCUs
+for the central detector (one per three LPMTs). A GCU that fails silently renders its
+three associated PMTs unreadable without any external hardware indicator.
+
+
+Back-End Card (BEC). The BEC is the outside-water concentrator board that
+interfaces the underwater front-end (UWB/GCU) to the trigger/clock system. Each
+BEC collects trigger primitives from up to 48 GCUs (corresponding up to 144 PMTs),
+sums them, and forwards the result toward the global trigger. It also distributes a
+62.5 MHz synchronisation clock to all connected GCUs, ensuring temporal alignment
+across the detector [4]. Around 123 BECs are required for the central detector [8].
+
+
+Reorganise and Multiplex Unit (RMU). The RMU aggregates signals from up to
+21 BECs and serves as the interface between the distributed GCU/BEC network and the
+Central Trigger Unit (CTU) [7]. It hosts three mezzanine cards and is responsible for
+clock distribution, trigger routing, and data multiplexing. In the nomenclature adopted
+within this thesis and in the diagnostic tools it describes, an RMU is identified by a
+composite index of the form X-Y (e.g. 5-1), where X denotes the RMU board number
+and Y the mezzanine slot. A single RMU therefore supervises a well-defined sub-volume
+of the detector. Silence or instability at the RMU level implies the simultaneous loss of
+
+                                           8
+                           2.1. THE JUNO DETECTOR: TECHNICAL BACKGROUND
+
+
+all PMT channels in that sub-volume.
+
+
+Central Trigger Unit (CTU). The CTU receives trigger primitives from all RMUs,
+computes a global trigger decision by comparing the total summed hit count against a
+configurable threshold, and distributes a validated trigger signal back to all GCUs with
+a timestamp via the RMU/BEC chain [4]. Upon receiving a global trigger, each GCU
+transmits the buffered waveform data to the DAQ event builder.
+
+
+2.1.3     Run Structure and the Diagnostic Data Format
+The native JUNO data format is a ROOT-based binary stream produced by the DAQ
+event builder and processed by the JUNO offline software (JUNOSW) [4, 9]. Raw data
+is first converted to a ROOT-based format (RTRAW), then passed through an Online
+Event Classification (OEC) system which selects between full waveform storage and
+compressed time-charge (t/Q) storage depending on event type [9]. The resulting data
+stream is estimated at approximately 60 MB/s, amounting to several petabytes per
+year [9]. Monitoring the quality of this stream is the responsibility of JUNO’s dedicated
+Data Quality Monitoring (DQM) system [10], which reconstructs raw data directly from
+the DAQ and applies event visualisation and per-channel metrics to detect anomalies
+during data-taking.
+    For the purposes of this thesis, the production ROOT format is not directly suitable
+as a benchmarking substrate. The agent system developed here is intended to be
+evaluated on realistic but self-contained diagnostic scenarios; requiring evaluators to
+maintain a full JUNOSW installation and process large ROOT files would make the
+benchmark environment impractical to reproduce and extend. The test data used in this
+work therefore originates from an actual JUNO filling-test run, whose ROOT output
+was preprocessed with JUNO-specific C++ extraction code into a simplified flat tabular
+format. Each row in the resulting CSV file corresponds to a single PMT hit within
+a single triggered event. An event corresponds to a triggered, time-coincident cluster
+of PMT hits read out together by the DAQ; the trigger decision and event building
+are performed upstream by the online system [9]. The CSV files used as the base of
+the benchmarking are reduced per-hit tables derived from the JUNO filling-test ROOT
+data. CSV files contain the columns Event, PMTID, Charge, Time, Theta, and Phi. The
+resulting schema is summarized in Table 2.1.
+   This schema is still a deliberate simplification of the full detector data model. It does
+not retain waveform samples, trigger metadata, calibration constants, reconstructed
+event vertices, or detailed run-condition information. However, it preserves the infor-
+mation needed for the diagnostic scenarios studied in this thesis: per-PMT occupancy,
+event multiplicity, PMT charge distributions, time-windowed activity checks, and spatial
+
+                                             9
+CHAPTER 2. BACKGROUND AND RELATED WORK
+
+
+Table 2.1: Schema of the per-hit CSV files derived from the JUNO filling-test ROOT data
+and used as the benchmarking substrate for this work.
+
+   Column      Type      Description
+   Event       Integer Event identifier assigned during the conversion of the ROOT
+                       data. It is used to group hits belonging to the same event.
+   PMTID       Integer Unique global identifier of the PMT that recorded the hit.
+                       This identifier provides the link between hit-level data and
+                       detector channels, and can be joined to the hardware map-
+                       ping table to recover the corresponding GCU, BEC, RMU,
+                       and detector position.
+   Charge      Float   Reconstructed charge of the hit, expressed in photoelectrons.
+   Time        Integer Hit time or time-sample information associated with the
+                       recorded PMT signal.
+   Theta       Float   Polar angular coordinate of the PMT in the detector geom-
+                       etry.
+   Phi         Float   Azimuthal angular coordinate of the PMT in the detector
+                       geometry. Together with Theta, it allows spatial localization
+                       and visualization of anomalous PMT activity.
+
+
+charge comparisons. Hardware-level diagnoses are obtained by combining the hit-level
+CSV files with the external PMT-to-electronics mapping table, which associates each
+PMTID with its corresponding GCU, BEC, RMU, and detector coordinates.
+    It is also important to emphasis that some of these observables are already monitored
+by the production JUNO DQM infrastructure, and the analysis Python tools developed
+around this CSV format were written as an accessible approximation of that monitoring
+logic, not as a replacement for it. Their purpose within this thesis is instrumental: they
+define a concrete, executable tool suite over which the agent’s orchestration capabilities
+can be evaluated in a controlled and reproducible environment.
+
+
+
+
+2.1.4      Operational Diagnostics: Motivation and Scope
+
+The hardware hierarchy and data format described above define the operational context
+that motivates this work. Because the front-end electronics is permanently inaccessible
+once the detector is sealed, the only available means of detecting and localising hardware
+anomalies is through the statistical analysis of the data stream itself. Physicists and
+detector operators must answer questions related to the acquisition of data depending
+on the hardware, for example:
+
+Is RMU 4-1 fully operational? Did all its connected GCUs and BECs contribute hits,
+or is a sub-section of the detector silent?
+
+                                              10
+                   2.2. LARGE LANGUAGE MODELS AND AUTONOMOUS AGENTS
+
+
+Answering these types of questions requires selecting the appropriate analysis tool from
+a growing suite, providing it with the correct file paths, parameter values, and hardware
+identifiers, interpreting its output, and often chaining the result into a subsequent query.
+For example, identifying a problematic GCU, tracing which RMU it belongs to, and
+then verifying whether that RMU was active during a specific series of events. Today,
+this process requires expert knowledge of both the detector hardware hierarchy and the
+available software tooling. The central ambition of this thesis is to evaluate whether an
+AI agent can automate this diagnostic workflow from a natural language query.
+    A key design requirement that follows directly from this operational context is that
+the agent must be able to integrate tools written by physicists who authored the tools
+independently and without any consideration for how an AI system might invoke them.
+In this work, the tool suite used for development and evaluation is composed of two
+distinct parts. The first consists of tools provided by the thesis supervisor, written
+by members of the JUNO collaboration and representative of real diagnostic practice
+within the experiment. The second layer consists of tools developed in the course of
+this thesis work, written specifically to extend the suite to a diversity sufficient for
+benchmarking. While these tools operate on realistic JUNO data and respect the
+hardware nomenclature described in the preceding sections, they are not claimed to
+represent the full scope of diagnostics performed by JUNO physicists, nor to meet the
+standards of production analysis software. Their role is instrumental: to provide a
+controlled, executable tool suite over which the agent’s orchestration and tool-learning
+capabilities can be systematically evaluated.
+
+
+
+2.2      Large Language Models and Autonomous Agents
+
+2.2.1     How Large Language Models Work
+Large Language Models (LLMs) are the computational substrate on which the agent
+system described in this thesis is built. This section provides a functional description
+of how they work. The goal is to establish the conceptual vocabulary that will be used
+throughout the rest of this chapter and thesis.
+
+
+The basic unit: tokens and probability. An LLM does not process raw characters
+or words. Instead, it operates on tokens: sub-word units produced by a fixed vocabulary
+of varying entries (e.g., GPT-2 uses 50,257 vocabulary tokens) [11]. Common English
+words are usually single tokens, while rarer words or technical identifiers are split into
+several. The string PMTID might be represented as two tokens, PMT and ID, while the
+is a single token. This tokenisation is fixed at training time and is a property of the
+model.
+
+                                            11
+CHAPTER 2. BACKGROUND AND RELATED WORK
+
+
+      At its core, a typical LLM is a function that maps a sequence of tokens to a
+probability distribution over the next token [12]. Formally, given a sequence of tokens
+t1 , t2 , . . . , tn , the model assigns a probability P (tn+1 | t1 , . . . , tn ) to every token in its
+vocabulary. Text is generated by sampling from this distribution repeatedly: the model
+predicts the next token, appends it to the sequence, predicts the token after that, and
+so on until a stopping condition is reached. This autoregressive process is the same
+whether the model is answering a physics question, writing Python code, or producing
+a JSON object. The generation mechanism is identical in all cases. What changes is
+the input, which steers the distribution toward different regions of the output space.
+    An LLM assigns higher probability to token sequences that are more consistent with
+the patterns seen during training. A temperature parameter T controls how peaked or
+diffuse the sampling distribution is: at T → 0, the model always selects the single most
+probable token (deterministic). While at higher T , it samples more broadly, producing
+more varied but potentially less coherent output.
+
+
+The architecture: transformers and self-attention. The dominant neural ar-
+chitecture underlying most modern LLMs is the Transformer [13]. Functionally, its
+defining primitive is self-attention, which computes interactions between tokens across
+the entire input sequence within each layer. Self-attention connects all positions with a
+constant number of sequentially executed operations, enabling parallel processing of a
+fixed input sequence and shortening the computational path between distant tokens.
+In principle, this allows the model to condition on relationships between distant spans
+of text, linking "RMU 5-1" early in a prompt with "silent" much later, supporting
+long-range dependencies that are valuable for long-context task execution .
+    The scale of these models is significant. The number of parameters in most used
+modern LLMs ranges from a few millions and can go up-to trillions. The model used
+has 20B parameters. This size tier is runnable on local high-range consumer hardware
+but below the capability frontier of the largest cloud-hosted models. This constraint
+is a recurring theme in the architectural decisions. Figure 2.3 gives a schematic view
+of the decoder-only architecture used by modern autoregressive LLMs. The diagram
+abstracts away implementation details but retains the components most relevant to
+tool calling and next-token generation.
+
+
+Training: pre-training and instruction tuning. LLMs are trained in two phases [2,
+14]. In the first phase, pre-training, the model is trained on a very large corpus of text
+(hundreds of billions to trillions of tokens drawn from the web, books, code repositories,
+and scientific literature) using the simple objective of predicting the next token. This
+phase produces a model with broad world knowledge and linguistic competence but no
+particular tendency to be helpful or to follow instructions.
+
+                                                  12
+                   2.2. LARGE LANGUAGE MODELS AND AUTONOMOUS AGENTS
+
+
+
+
+Figure 2.3: Simplified architecture of a decoder-only Transformer language model. The
+input text is tokenised, mapped to token and positional embeddings, processed by a stack of
+masked decoder blocks, and projected by a language-modelling head into a token probability
+distribution.
+
+
+    The second phase, instruction tuning (or fine-tuning with human feedback), shapes
+the model’s behaviour toward that of a useful assistant. The model is trained on curated
+datasets of (instruction, response) pairs, with reinforcement learning from human
+feedback (RLHF) used to align its outputs with human preferences [14]. After this
+phase, the model responds to natural language instructions, maintains a conversational
+register, and declines requests that are out of scope. The model used in this work has
+undergone this process and is typically referred to as chat models or instruction-following
+models.
+   It is important to understand that the training does not make the model learn a
+database of facts, or an explicit set of rules. It learns a very high-dimensional statistical
+manifold of token patterns. Its apparent knowledge of physics, chemistry, or software
+engineering is the result of that statistical structure, not of a factual source. This
+has direct consequences for reliability in scientific contexts, which are discussed in
+Section 2.2.3.
+
+The context window Perhaps the most operationally important concept for this
+thesis is the context window. The context window is the finite sequence of tokens that
+the model can attend to simultaneously during a single inference call [2]. Everything
+the model "knows" during a given response must be present in this window: the system
+instructions, the conversation history, the tool descriptions, the tool outputs, and the
+current query. There is no implicit persistent memory across calls. When the context
+window is cleared, between conversations or when it is deliberately trimmed, the model
+has no recollection of what preceded it.
+    The size of the context window is dependent on the model and has grown substantially
+over recent generations. Early models had windows of 2,048 tokens while current models
+can support up to one million tokens. However, for the locally deployed models used
+in this work, the context window is smaller (128k tokens for GPT-OSS 20B), and
+operational costs scale with its length. A prompt containing 17,596 PMT identifiers,
+
+                                             13
+CHAPTER 2. BACKGROUND AND RELATED WORK
+
+
+the full history of a ten-step diagnostic workflow, and the descriptions of thirty available
+tools would easily exceed practical limits. Furthermore, empirical studies show that
+effective performance can degrade as input length grows, even when the model can still
+retrieve the relevant evidence. This implies that the effective context is smaller than
+the nominal token limit, and that long prompts can dilute reasoning performance [15].
+This is one of the main constraint on the agent, different methods were designed to
+precisely adress this.
+
+
+In-context learning and prompt engineering. An important property of large
+pre-trained models is in-context learning: the ability to perform a new task correctly
+based solely on examples or instructions provided in the context window, without any
+modification to the model’s weights [12]. A model that has never been explicitly trained
+on a JUNO-specific task can still answer JUNO diagnostic queries correctly, provided
+the context window contains a sufficiently detailed description of the task, the available
+tools, and the expected output format. This is the foundational property that makes
+the Skill Card approach of this thesis viable. The model is not retrained for JUNO;
+it is given structured descriptions of tools at inference time, and learns to use them
+in-context.
+    The practical implication is that the quality of the input (the prompt) is a primary
+determinant of model behaviour. Prompt engineering is the practice of designing inputs
+to elicit reliable, accurate, and appropriately formatted responses. In this work, prompt
+engineering is systematic : the agent’s prompts are structured templates with clearly
+delineated sections for skill summaries, memory, plan state, and recent history. The
+concrete prompt templates used by the graph nodes, and the design principles behind
+them, are discussed in Appendix D.
+    A specific and powerful prompting technique relevant to this work is chain-of-thought
+(CoT) prompting [16], in which the model is encouraged to produce intermediate
+reasoning steps before arriving at a final answer. In the agent context, this manifests as
+the thought field in the AgentDecision schema (Section 3.3.3): the model is required
+to articulate its reasoning for selecting a tool before the selection is executed. This
+serves a dual purpose, it improves selection accuracy for smaller models by forcing
+deliberation, and it produces an explicit reasoning for the user.
+
+
+2.2.2     Tool-Using Agents
+In-context learning (Section 2.2.1) allows an LLM to follow instructions and produce
+structured outputs, but it cannot on its own go beyond the information present in the
+context window. While an LLM reasoning about a JUNO dataset of events can describe
+what a flashing PMT is, it cannot tell whether PMT 4258 is flashing in a specific series
+
+                                            14
+                  2.2. LARGE LANGUAGE MODELS AND AUTONOMOUS AGENTS
+
+
+of events unless the relevant data has been computed and placed in front of it. AI
+Agents close this gap by coupling the LLM’s reasoning capability with the ability to
+invoke external tools (python scripts in the case of this thesis) and incorporate their
+outputs into subsequent reasoning steps. This section describes the basic agent loop
+and the two frameworks used in this work: the ReAct pattern, which serves as the
+baseline, and LangGraph, which is the implementation base of the full system. The
+cognitive demands from this design are describe at 2.2.3
+
+Basic agent loop. The fundamental operation of a tool-using agent can be described
+as a loop over three stages [17, 18]:
+
+ (1) Observe: The agent receives the current state of the conversation: the original
+     user query, any instructions provided in the system prompt, the descriptions of
+     available tools, and the accumulated history of prior actions and their outputs.
+
+ (2) Decide: The LLM, conditioned on this context, decides what to do next. This
+     decision is one of two types: either invoke a specific tool with specific arguments,
+     or produce a final answer and terminate. In structured-output mode, this decision
+     is emitted as a validated object rather than free text, ensuring deterministic
+     parsing and type validation by the surrounding software.
+
+ (3) Act: If the decision is a tool call, the surrounding framework executes the
+     designated function with the extracted arguments, captures the return value, and
+     appends it to the context window as a new observation. Control then returns to
+     stage (1).
+
+This loop continues until the agent emits a final answer. The number of iterations is
+not fixed in advance; it is determined dynamically by the agent’s assessment of whether
+the accumulated information given by its own knowledge or the knowledge acquired by
+using the available tools is sufficient to answer the original query.
+
+The ReAct pattern. The most widely adopted framework for tool-using agents is
+ReAct [18], introduced by Yao et al. at ICLR 2023. ReAct stands for Reason + Act,
+and its central insight is that reasoning traces and tool actions should be mixed rather
+than separated: before each action, the model generates an explicit thought (a free-text
+articulation of its current understanding of the task and its reasoning for the next
+action). After receiving the tool output, it generates another thought before deciding
+on the next action. The loop is therefore:
+The explicit thought step serves two purposes. Practically, it improves task performance
+on models of moderate capability by forcing deliberation before commitment, miti-
+gating impulsive tool selection. The original paper demonstrates that ReAct reduces
+
+                                          15
+CHAPTER 2. BACKGROUND AND RELATED WORK
+
+
+
+
+Figure 2.4: Schematic representation of the ReAct pattern. The model alternates between
+reasoning steps (Thought), tool or environment interactions (Action), and returned evidence
+(Observation) until it has enough information to produce a final answer.
+
+
+hallucination and error propagation relative to chain-of-thought prompting alone, by
+grounding the reasoning in verified external observations rather than the model’s inter-
+nal representations [18]. Operationally, the thought trace provides a human-readable
+audit log of the agent’s reasoning, which is valuable in a scientific context where an
+operator needs to understand and verify the diagnostic conclusion.
+    ReAct is intentionally simple. It makes no assumptions about the number of tools,
+the structure of the task, or the nature of the tool outputs. The entire agent state
+is encoded in the growing message history. There is no explicit plan, no structured
+memory, and no separation between the high-level reasoning step (what should I do
+next?) and the low-level formatting step (what exactly are the arguments?). This
+simplicity is its strength as a baseline and its limitation as a production system. In this
+work, a standard LangChain ReAct agent [19] is implemented as the baseline against
+which the full JUNO agent architecture is compared (Chapter 4). The comparison is
+designed to isolate the specific contributions of the architectural additions over the
+plain ReAct loop and is further explained in (Sub-section 3.3.6).
+
+LangGraph as an implementation framework. LangGraph [20] is an open-source
+Python library, developed by the LangChain team, for building stateful agent workflows
+as explicit directed graphs. It is the base of the full JUNO agent system developed
+in this thesis, and it is worth describing its core abstractions here, as they appear
+throughout the system description in Chapter 3.
+   LangGraph decomposes the simple ReAct loop into nodes and edges (routes between
+nodes): one node selects a tool, another validates arguments, another executes the tool,
+and another compresses memory. Furthermore, it adds a critical feature the state : an
+object that is passed as input to every node and updated by its output. It functions as
+the agent’s working memory; in this thesis it carries the message history, the current
+plan and any other information that must persist across steps.
+Thus, LangGraph was selected because it provides a structured graph-based orchestra-
+tion model with support for cyclic execution, persistent state, and modularity. While
+similar system could be implemented using custom Python state machines, LangGraph
+implements most of the need for the architecture. Furthermore, it provides built-in
+checkpointing: the full agent state can be persisted at each step, enabling reproducible
+
+                                            16
+                   2.2. LARGE LANGUAGE MODELS AND AUTONOMOUS AGENTS
+
+
+debugging and trace logging via LangSmith [20].
+
+
+
+
+Figure 2.5: Simplified representation of a LangGraph workflow. The graph state is passed
+between computational nodes, while edges determine the next step of execution. Conditional
+edges allow the workflow to branch toward tool execution, termination, or another agent step.
+taken from [21].
+
+
+
+
+2.2.3     Fundamental Limitations in Scientific Contexts
+There are many conditions for designing a reliable autonomous agent in a scientific
+setting. Several fundamental limitations become important in demanding environment:
+long multi-step tasks, heterogeneous tool catalogues, data-dependent replanning, and
+restricted computing environments. This section enumerates those known limitations
+and states their concrete consequences that appeared during the development of this
+work. The architectural responses to these limitations are developed in Chapter 3.
+
+
+Hallucination. Hallucination is the generation of fluent, confident text that is fac-
+tually incorrect or entirely fabricated. It is the most widely discussed failure mode of
+LLMs [22]. In a conversational setting it is a nuisance; in an autonomous multi-step
+agent it is a cascading failure. If the model fabricates a PMT identifier in step 2
+then every subsequent step that builds on that claim will be internally consistent but
+factually wrong. The final answer will be a coherent narrative about an imaginary
+anomaly.
+    The root cause is architectural: the LLM is a conditional probability distribution over
+tokens, not a database. It does not retrieve facts; it generates text that is statistically
+likely given the context. When the context is long and the relevant fact has low attention
+weight, the model may generate a plausible substitute rather than reproduce the correct
+value.
+
+                                            17
+CHAPTER 2. BACKGROUND AND RELATED WORK
+
+
+Type confusion in argument extraction. A subtler but pervasive failure mode
+is type confusion: the LLM extracts the correct semantic value from the context but
+represents it in the wrong Python type. This is a direct consequence of operating
+entirely in a text domain, where the integer 4258 and the string "4258" are visually
+identical. The distinction becomes consequential at the function call boundary. A tool
+performing a comparison such as df[’PMTID’] == "4258" against an integer-typed
+column will return an empty DataFrame with no exception and no error message. The
+agent, observing an empty result, may conclude that the PMT has no hits and declare
+it dead, when in fact the query was malformed.
+   Type confusion during argument generation is a common failure mode in tool-
+augmented LLM systems [23]. Recent benchmarks show that even state-of-the-art
+models frequently produce incorrect or misaligned arguments when composing structured
+tool calls, particularly in multi-step or nested API sequences. For smaller local models,
+which exhibit weaker instruction-following and schema adherence, these error rates are
+typically higher.
+
+
+Tool selection ambiguity and the distraction problem. When an agent has
+access to a catalogue of tools, selection ambiguity arises whenever two or more tools
+have overlapping descriptions but different operational semantics. In the JUNO context,
+consider the following pair: detect_global_occupancy_outliers, which computes
+outliers across batch of events, and get_pmt_profile, which retrieves the hit time
+series for a single specified PMT. A query such as “is PMT 4258 abnormally noisy?”
+is plausibly handled by either tool. The first reveals whether PMT 4258 appears in
+the global outlier list; the second shows its detailed per-event behaviour. Selecting the
+wrong one does not produce a crash but it produces an answer to a subtly different
+question, with no indication that the selection was incorrect.
+    This is the distraction problem [24]: the presence of a semantically plausible but
+incorrect tool in the catalogue causes the agent to select it instead of the correct one.
+The severity of the problem scales with catalogue size. A registry of five tools poses
+no challenge to a capable model but a registry of fifty tools with semantically similar
+clusters creates systematic confusion, particularly when the model’s available context
+for each tool is limited to a short description.
+
+
+Context degradation over long traces. The lost-in-the-middle effect [2] refers to
+the empirical finding that transformer models recall information placed in the middle of
+a long input context less reliably than information at the beginning or end. For an agent
+executing a ten-to-fifteen step diagnostic, the tool output from step 2 may be effectively
+invisible by step 12 as more recent messages occupy the high-attention positions at the
+end of the context window. The agent does not signal that it has lost the information;
+
+                                           18
+                                             2.3. RELATED WORK AND POSITIONING
+
+
+it either re-derives it at the cost of additional tool calls, generates a plausible substitute
+(hallucination), or silently proceeds with an incorrect value. Furthermore, the increase
+of the context causes the agent to have reduced performance[15].
+
+Local inference constraint. One of the constraint of the thesis discussed at the
+beginning was the possibility to create an agent on restrained hardware capabilities.
+This is not a temporary inconvenience but a fixed boundary condition of the deployment
+environment. The best locally deployable models available at the time of writing,
+Qwen 3.5 family and GPT-OSS 20B [25], are substantially less capable than frontier
+API models on structured reasoning and function calling benchmarks but are far cheaper
+to run [26]. The results reported in Chapter 4 should therefore be read as results for
+the class of open-weight models that are actually deployable in a restricted-access
+scientific computing environment, and not as a statement about what is achievable with
+unconstrained model access.
+
+
+2.3      Related Work and Positioning
+The relevant prior work is centered around systems that are structurally adjacent to the
+JUNO agent: tool-using LLMs, scientific agents, schema-based tool registries, memory
+mechanisms, automatic tool integration, and emerging tool-description standards. This
+section reviews these areas and positions the contributions of this thesis within them.
+
+
+2.3.1     Tool-Using Agent Foundations
+The closest architectural ancestor of the JUNO Analysis Agent is the ReAct pattern [18],
+already introduced in Section 2.2.2.
+    As for the tool use, Toolformer [17] and ToolLLM [24] address it from the training
+and benchmarking side rather than the prompting side. Toolformer demonstrates that
+tool invocation can be learned through self-supervised data generation; ToolLLM scales
+the problem to 16,464 real-world APIs using search over reasoning traces. Both works
+establish that tool use can be seen as a learnable capability, and both rely on fine-tuning
+the base model. This thesis takes a different route by using in-context tool learning
+due to it being easier to implement with the defined constraints.
+
+
+2.3.2     Domain Specific Scientific Agents
+Domain specific scientific agents demonstrate the value of tool orchestration, but most
+operate under different assumptions. ChemCrow integrates 18 expert-designed chemistry
+tools with GPT-4 across synthesis, drug discovery, and materials design [27]. Coscientist
+couples a GPT-4 planner with web search, code execution, and laboratory automation
+
+                                             19
+CHAPTER 2. BACKGROUND AND RELATED WORK
+
+
+commands to design and execute chemistry experiments [28]. CRISPR-GPT applies
+the same broad pattern to gene-editing design [29]. The common assumption is that
+tool sets are chosen by the system builders, descriptions are written for the agent, and
+the target model is a frontier cloud model. These conditions do not hold for JUNO,
+where a local model must select among existing Python functions whose authors did
+not provide easily readable data for the agent.
+
+
+2.3.3     Schema-Validated Registries and Decoupled Validation
+The Skill Card abstraction has three explicit inspirations : HEP run-card convention,
+OpenAI function calling and Anthropic Agent Skills. The comparison is detailed in 3.2.4
+    Two recent systems converge on related designs. HEPTAPOD, published in Decem-
+ber 2025, introduces an HEP orchestration framework for agentic simulation workflows
+using schema-validated operations, structured outputs and run-card-driven configura-
+tion [30]. AgentFlux, published in October 2025, targets on-device agentic systems
+and explicitly decomposes tool calling into selection and argument generation using
+decoupled fine-tuning [31]. Both systems appeared after the design phase of the JUNO
+architecture, so we treat them as independent convergent designs rather than prior art.
+    The convergence is technically informative. HEPTAPOD and the JUNO system
+both arrive at typed registries because unstructured docstrings do not scale in scientific
+tool catalogues. AgentFlux and the JUNO system both decouple tool selection from
+argument generation because small models struggle when asked to solve both problems
+in one pass. The implementation paths diverge: AgentFlux fine-tunes adapters, while
+the JUNO system assumes no fine-tuning and relies on structured prompts, Skill Cards,
+and replanning after failed validations. The overlap validates the Skill Card and Select-
+then-Validate patterns under shared constraints without erasing the specific contribution
+of this thesis.
+
+
+2.3.4     Memory and Long-Context Management
+Agent memory is a reliability issue, not a convenience feature, and general memory
+systems attack the problem through external storage and summarisation. MemGPT
+frames the context window as a virtual-memory problem and pages information across
+explicit memory tiers [32]. MemoryBank adds long-term memory across sessions,
+with mechanisms for storing and updating user-related information [33]. ReadAgent
+compresses long documents into gist memories and retrieves the original passages on
+demand [34]. DeepAgent compresses the memory in to three separate parts to improve
+scalability of their agent [35].
+   Folded Memory (Section 3.3.5) draws on the same general principle but is deliberately
+narrower. Unlike MemGPT and MemoryBank, which target open-ended conversational
+
+                                           20
+                                            2.3. RELATED WORK AND POSITIONING
+
+
+memory across many domains, Folded Memory is focused on local task and designed
+for auditable diagnostic evidence.
+
+
+2.3.5     Automatic Tool Integration and Tool Learning
+The closest prior work to RQ2 is LATM, Large Language Models as Tool Makers [36].
+LATM uses a stronger model as a tool maker that writes reusable Python utility
+functions, and a weaker model as a tool user that calls them on later tasks. It influenced
+the context of this thesis, however, the direction is inverted. LATM creates new tools
+for recurring reasoning tasks, while the JUNO Learning Pipeline describes existing
+tools written by physicists. The executable code is not generated and is not replaceable.
+What is synthesized is the structured descriptor that allows the agent to select, validate,
+and invoke that existing function.
+    Other systems of tool creation are less related. CRAFT creates and retrieves spe-
+cialised code snippets for task families, validating generated solutions before abstracting
+them into reusable tools [37]. ToolMaker transforms papers-with-code repositories
+into LLM-compatible tools by installing dependencies, generating wrappers, and using
+closed-loop debugging [38]. Neither learns a typed descriptor for an existing capability
+and validates it through agent-in-the-loop integration testing, which is the specific
+mechanism of the JUNO Learning Pipeline (Section 3.4).
+
+
+2.3.6     Positioning
+Table 2.2 summarises the positioning. The comparison is not a ranking; it isolates the
+structural assumptions that matter for this thesis: how tools are represented, how tool
+calls are controlled, what model tier is assumed, and how each system relates to the
+JUNO contribution.
+    The contribution of this thesis is therefore not a general-purpose scientific agent. It
+is the specific combination of automated synthesis of structured descriptors for existing
+third-party Python tools, validation through agent-in-the-loop integration testing, and
+a runtime architecture designed for small local models. No surveyed system provides
+that combination under the reliability constraints of a sealed detector electronics chain.
+
+
+
+
+                                            21
+CHAPTER 2. BACKGROUND AND RELATED WORK
+
+
+Table 2.2: Positioning of the JUNO agent relative to structurally adjacent systems and
+standards.
+
+System         Main objective         Tool interface        Target model tier Relation to this
+                                      and control                             work
+
+ChemCrow        Automate chemistry Expert-curated tools Frontier cloud          Establishes the
+/      Coscien- reasoning and, for    and commands        models, especially    broader
+tist [27, 28]   Coscientist, parts of exposed through     GPT-4 in the          scientific-agent
+                laboratory            prompts, retrieval, reported              context, but
+                experimentation.      code execution, and experiments.          assumes curated
+                                      laboratory APIs.                          tools and much
+                                                                                stronger model
+                                                                                access than the
+                                                                                JUNO deployment
+                                                                                allows.
+
+LATM [36]      Generate reusable      A strong tool-maker Frontier maker        Closest prior work
+               Python tools for       model writes tools; model plus cheaper    for RQ2, but
+               recurring reasoning    a weaker tool-user  user model.           inverted: LATM
+               tasks.                 model invokes                             creates new tools,
+                                      cached tools                              while this thesis
+                                      through APIs.                             synthesises
+                                                                                descriptors for
+                                                                                existing JUNO
+                                                                                tools.
+
+           Orchestrate HEP
+HEPTAPOD [30]                         Schema-validated      Not principally      Independent
+           simulation and             operations,           constrained to small convergent HEP
+           analysis workflows         structured outputs,   local models.        design appearing
+           with auditability          sandboxed                                  after the thesis
+           and human                  execution, and                             design phase. It
+           oversight.                 run-card-driven                            validates typed
+                                      configuration.                             registries under
+                                                                                 HEP workflow
+                                                                                 constraints.
+
+AgentFlux [31] Improve on-device      Separates tool      Local/on-device       Independent
+               tool calling through   selection from      models; evaluated     convergent design
+               decoupled              argument generation with Qwen-2.5-7B      appearing after the
+               fine-tuning and        using LoRA          and related local     thesis design phase.
+               inference.             adapters and        tiers.                It shares the
+                                      hierarchical                              decoupling insight,
+                                      orchestration.                            but uses fine-tuning
+                                                                                rather than
+                                                                                in-context Skill
+                                                                                Cards and
+                                                                                validation gates.
+
+JUNO agent Support automated Skill Cards,            Local open-weight          Contribution of this
+system     monitoring and       Select-then-Validate 8–30B models by            thesis: reliable
+           debugging of JUNO dispatch, Pydantic design.                         orchestration and
+           electronics          argument coercion,                              automatic descriptor
+           diagnostics, and     Folded Memory, and                              synthesis for existing
+           learn new tool       Gauntlet validation                             detector-analysis
+           descriptors from raw inside the                                      tools under
+           Python source.       production                                      local-model and
+                                LangGraph graph.                                high-reliability
+                                                                                constraints.
+
+
+                                                 22
+Chapter 3
+
+System Design and Implementation
+
+3.1      System Overview and Architecture
+The system developed in this thesis has two distinct but coupled systems of use, referred
+as the Analysis Agent and the Learning Pipeline. The Analysis Agent system: a physicist
+asks a question in natural language and the system decides which existing Python
+analysis tools should be called to answer it. The Learning Pipeline: a new Python tool
+is added to the tool library and the system prepares the structured description needed
+for the agent to use that tool safely.
+    Both modes are connected by one object, the Skill Card. A Skill Card is a structured
+description of a Python analysis function. It tells the agent what the function does,
+when it should be used, what arguments it expects, how it is executed, and what kind
+of output it returns. The Analysis Agent is designed to scale, it does not need to
+be modified when a new tool is added; it only needs a valid Skill Card for that tool.
+Conversely, the Learning Pipeline does not answer physics questions itself, its role is to
+autonomously produce Skill Cards that can later be loaded by the Analysis Agent.
+   This separation is illustrated conceptually as follows:
+
+                            New Python analysis function
+                                            ↓
+                                  Learning Pipeline
+                                            ↓
+                                       Skill Card
+                                            ↓
+                                    Analysis Agent
+                                            ↓
+                           Tool calls and diagnostic answer
+
+The same structure can also be read from the point of view of a JUNO user. Suppose a
+physicist asks:
+
+                                           23
+CHAPTER 3. SYSTEM DESIGN AND IMPLEMENTATION
+
+
+     Was RMU 5-1 silent between events 5000 and 12000 in this run?
+
+The system must translate this question into concrete operations: identify that the
+task is a hardware-activity check, select the appropriate Python tool, fill in the file
+path, hardware type, hardware identifier, and event window, execute the tool, interpret
+whether the RMU was active or silent, and decide whether a follow-up check is necessary.
+The architecture described in this chapter was designed to make each of these steps
+explicit and testable.
+    Table 3.1 summarises the main design problems and the corresponding components
+introduced in this chapter.
+
+            Table 3.1: Main design problems addressed by the architecture.
+
+     Problem in a naive agent                Design response in this thesis
+     The model does not know the inter-      Skill Cards describe tool purpose, ar-
+     faces of existing analysis tools.       guments, execution, and output.
+     Small models hallucinate and are less   Usage policies and the Select-then-
+     performant.                             Validate design check whether the
+                                             selected tool is appropriate.
+     The model may produce malformed         Pydantic-based validation checks and
+     or wrongly typed arguments.             coerces tool arguments before execu-
+                                             tion.
+     Long investigations cause earlier re-   Folded Memory stores key findings
+     sults to be forgotten or diluted.       and a compressed summary.
+     Adding new tools manually does not      The Learning Pipeline drafts and
+     scale and reduce barrier of entry for   tests Skill Cards from Python source
+     users.                                  code.
+
+
+
+Development-driven design. The final architecture was not designed in a single
+step. It emerged iteratively during development from simpler prototypes in which a local
+LLM was connected directly to the diagnostic tools. In these early versions, most of the
+components retained in the final system appeared necessary in response to recurring
+qualitative failure modes. These failures were not specific to this implementation. They
+coincided with failure modes reported in the literature on tool-using LLM agents as
+described in Subsection 2.2.3. The Skill Card abstraction, the Select-then-Validate
+workflow, explicit plan state, Folded Memory, and the Learning Pipeline were there-
+fore introduced both as practical responses to observed development failures and as
+architectural choices consistent with known limitations of LLM-based agents.
+   These development observations motivate the architecture, but they should not
+be read as controlled evidence that each component is individually necessary. The
+experiments in Chapter 4 evaluate the final integrated system; a component-level
+ablation would be required to quantify the separate contribution of each design element.
+
+                                          24
+                                                 3.2. THE SKILL CARD ABSTRACTION
+
+
+   The remainder of this chapter introduces the three elements of the system: the Skill
+Card abstraction (Section 3.2), the Analysis Agent (Section 3.3), and the Learning
+Pipeline (Section 3.4).
+
+
+
+3.2      The Skill Card Abstraction
+A Skill Card can be understood as an identity card for a Python analysis tool. Without
+it, the agent only sees a function name or a docstring and must guess what the tool does,
+how it should be called, and whether it is relevant to the current diagnostic question.
+With a Skill Card, this information is made explicit in a format that is both readable
+by humans and validated by the software.
+   This is important because most of the tools used by physicists were not all written
+with an AI agent in mind. They may use different parameter names, default values,
+return formats, and implicit assumptions. A human expert can often infer these
+conventions by reading the code or by experience. The agent cannot do this reliably
+unless the relevant information is provided in a structured way.
+     In the implementation, Skill Cards are written in YAML. YAML was chosen because
+it is machine-validated, human-readable and human-editable, which matters both for
+the manually authored cards and for the user who may wish to inspect or adjust a card
+produced by the Learning Pipeline. A Skill Card has five main blocks, described below.
+
+
+3.2.1     Schema Design
+Summary. The summary block contains the information used during the first tool-
+selection step : the tool name, a short description, and the declared input parameters.
+To assure scalability by reducing context overflow, this block should be concise, because
+the agent sees summaries for all available tools at once. Its role is to let the agent form
+a first hypothesis about which tool may answer the user’s question.
+
+
+Execution details. The execution_details block tells the runtime how to call the
+underlying Python function. In the current implementation, tools are Python functions,
+so this block contains the module path and the function name.
+
+
+Usage policy. The usage_policy block is the component that most distinguishes a
+Skill Card from a standard function-calling schema. It contains two fields: use_when, a
+list of scenarios in which the tool is the best choice, and do_not_use_when, a list of
+scenarios in which the tool is inappropriate. These fields are written in natural language
+and are consumed exclusively by the ArgumentFormatterNode during the validation
+step (Section 3.3). Their purpose is to give the agent explicit criteria for judging whether
+
+                                            25
+CHAPTER 3. SYSTEM DESIGN AND IMPLEMENTATION
+
+
+a tool is appropriate. In this thesis, this role is motivated architecturally and examined
+through full-system error analysis.
+
+
+Output schema. The output_schema block describes the structure of the returned
+result. This helps the agent anticipate whether a tool will produce the information
+needed for the next step.
+
+
+Skill ID. The skill_id is the unique string identifier, typically matching the function
+name.
+    Listing 3.1 shows a complete Skill Card for the get_hardware_connections tool,
+illustrating how the five blocks work together to provide a description of a tool’s purpose,
+interface, invocation mechanism, usage boundaries, and output structure.
+    This example also illustrates the main pedagogical role of Skill Cards. They do
+not replace the Python functions. They make the assumptions around those functions
+explicit enough for an LLM-based agent to use them with fewer selection and argument
+errors.
+
+
+3.2.2     Validation and Runtime Use
+Every Skill Card loaded into the system is checked with Pydantic, a Python data-
+validation library [39]. First, this means that a card missing required fields, or containing
+fields of the wrong type, is rejected before the agent starts using it. Second, the agent
+can validated deterministically the tool arguments at runtime. When the LLM proposes
+a tool call, the raw argument dictionary is validated against the parameter schema
+declared in the Skill Card. This validation checks that required arguments are present
+and that values can be interpreted with the expected types. For example, if the model
+writes the PMT identifier as the string "4258" while the tool expects an integer, the
+validation layer can coerce it to 4258. If the required file path or event range is missing,
+the call is rejected before the Python function is executed.
+   This addresses the type confusion failure mode described in Section 2.2.3 without
+requiring the LLM itself to produce correctly typed values, a task at which smaller
+models are unreliable.
+
+
+3.2.3     Registry Loading
+The SkillRegistry loads all YAML Skill Cards from a skill directory when the agent
+starts. Valid cards are indexed by their callable name and can then be retrieved by the
+Analysis Agent. Invalid cards are logged and skipped, so that one broken card does not
+prevent the rest of the system from running.
+
+                                             26
+                                                  3.2. THE SKILL CARD ABSTRACTION
+
+
+
+
+ 1   skill_id : g e t _ h a r d w a r e _ c o n n e c t i o n s
+ 2   summary :
+ 3     name : g e t _ h a r d w a r e _ c o n n e c t i o n s
+ 4     description : >-
+ 5        Finds all connected hardware components ( PMTs , GCUs ,
+ 6        BECs , RMUs ) for a single JUNO hardware element . Use
+ 7        this to trace connections , find related components ,
+ 8        and localize the scope of a problem .
+ 9     parameters :
+10        type : object
+11        properties :
+12          element_type :
+13             type : string
+14             description : " The ␣ type ␣ of ␣ hardware ␣ element . "
+15             required : true
+16          element_id :
+17             type : string
+18             description : " The ␣ specific ␣ ID ␣ of ␣ the ␣ element . "
+19             required : true
+20   exe cutio n_deta ils :
+21     type : python_function
+22     call :
+23        module : " juno_tools . hardware_check "
+24        function : g e t _ h a r d w a r e _ c o n n e c t i o n s
+25   usage_policy :
+26     use_when : >-
+27        - You have a specific component ID and need to find
+28          what it is connected to .
+29        - This is the only tool that can trace connections .
+30     do_not_use_when : >-
+31        - You are checking for activity in an event window
+32          ( use ’ c h e c k _ c o m p o n e n t _ a c t i v i t y ’) .
+33   output_schema :
+34     description : " Dictionary ␣ of ␣ connected ␣ hardware . "
+35     type : object
+36     properties :
+37        query : { type : " string " }
+38        connections :
+39          type : object
+40          properties :
+41             pmt_ids : { type : " array " , items : { type : " integer " } }
+42             gcu_ids : { type : " array " , items : { type : " integer " } }
+43             bec_ids : { type : " array " , items : { type : " integer " } }
+44             rmu_ids : { type : " array " , items : { type : " string " } }
+
+Listing 3.1: Complete Skill Card for the get_hardware_connections tool. The summary
+provides a short description and typed parameter schema for tool selection. The usage policy
+disambiguates this tool from alternatives with overlapping scope. The output schema describes
+the returned dictionary structure.
+
+
+
+
+                                             27
+CHAPTER 3. SYSTEM DESIGN AND IMPLEMENTATION
+
+
+    This registry is instantiated once per agent session. Adding a new tool does not
+require rewriting the agent prompt or modifying the graph logic. The developer or
+the Learning Pipeline provides a valid Skill Card, places it in the skill directory, and
+restarts the agent.
+
+
+3.2.4        Comparison to Alternative Representations
+The Skill Card draws inspiration from two independent methods. The first is the high-
+energy physics convention of the run card: a structured, human-readable configuration
+file that encodes domain knowledge about how a piece of software should be invoked.
+The second is Anthropic’s Agent Skills framework [40], released in October 2025. Agent
+Skills organise tool knowledge into structured folders with a YAML frontmatter block
+(a compact descriptor containing a name and trigger condition) and a full instruction
+document loaded on demand. The core design principle, which Anthropic terms
+progressive disclosure, is that a lightweight summary is always available for discovery
+while the full content is retrieved only when the tool is selected, keeping the context
+window from growing too much regardless of catalogue size. What distinguishes the
+Skill Card from Anthropic’s format is its target: Agent Skills are instruction sets that
+teach a model how to perform a workflow; Skill Cards are typed, machine-validated
+descriptors that tell a reasoning engine when and with what arguments to invoke a
+specific Python function.
+
+
+Raw docstrings. The simplest possible tool representation is the function’s own
+docstring, passed directly to the LLM as part of the tool catalogue. This is the approach1
+used by the ReAct baseline in Chapter 4. It requires zero manual effort and is trivially
+kept in sync with the code. However, it provides no structured parameter schema (the
+LLM must infer argument types from prose), no usage policy (the LLM must guess
+when the tool is appropriate), and no output schema (the LLM cannot plan around
+what a tool will return). In practice, the absence of type information makes the type
+confusion problem more dominant, and the absence of usage boundaries makes the
+distraction problem worse as the skill library grows.
+
+
+OpenAI function-calling schema [41]. The standard for LLM tool descriptions
+is the JSON Schema format used by OpenAI’s function-calling API and adopted by
+most LLM providers. This format provides a structured parameter schema with types,
+descriptions, and required flags which is similar to the summary.parameters block of a
+Skill Card. But it does not include any equivalent of the usage policy or the output
+schema. The function-calling schema tells the model how to call a tool but not when
+  1
+      The docstring are represented by the description of the corresponding Skill Card
+
+
+                                                  28
+                                                            3.3. THE ANALYSIS AGENT
+
+
+to call it or what it will return. For a small catalogue of clearly distinct tools and/or
+bigger models, this omission is tolerable but not for the JUNO case.
+
+
+
+
+3.3      The Analysis Agent
+
+The Analysis Agent is the runtime part of the system that the user interacts with
+during a diagnostic session. Its role is not to replace a physicist, but to help structure a
+technical investigation. Given a natural-language question, it decides which detector-
+analysis tool is relevant, prepares the required arguments, executes the corresponding
+tool, records the useful information, and decides whether another step is needed.This
+section describes the graph-level architecture, the shared state that flows between
+nodes, each node’s responsibilities and implementation, and the different mechanisms
+(progressive context disclosure, select-then-validate and folded memory) that manage
+the finite context window and the model limited abilities across long-running tasks.
+
+
+
+3.3.1     Graph Architecture
+
+The runtime workflow is implemented as a LangGraph StateGraph. In practical terms,
+this means that the agent is represented as a directed graph whose nodes perform
+well-defined operations and whose shared state stores the current diagnostic context.
+The graph contains four main nodes, shown in Figure 3.1.
+
+
+
+               Graph node              Role in the system
+               Agent Node       Interprets the user request, creates
+                                the plan, selects tools and dictate
+                                the loop.
+               Argument Format- Converts the AgentNode proposed
+               ter Node         action into a valid function call with
+                                explicit arguments. It loads the full
+                                Skill Card to get more context and
+                                thus validate or not the selection
+               Tool Node        Executes the selected Python analy-
+                                sis function and records its output.
+               Memory Folder Compresses accumulated observa-
+               Node             tions into a shorter form that re-
+                                mains usable in later steps.
+
+                                            29
+CHAPTER 3. SYSTEM DESIGN AND IMPLEMENTATION
+
+
+
+
+Figure 3.1: State graph used by the Analysis Agent. The workflow alternates between
+tool selection, argument validation, execution, and memory compression until the diagnostic
+question can be answered.
+
+
+   The graph is cyclic. After a tool is executed, control returns to the Agent Node,
+which decides whether the evidence is sufficient or whether another step should be ran.
+The loop stops only when the agent produces a final answer.
+
+
+3.3.2     Agent State
+All nodes communicate through a shared state defined as a Python TypedDict named
+AgentState. Conceptually, this state contains three types of information.
+
+  1. Messages. This includes the user request, recent assistant messages, tool calls,
+     and tool outputs. It supports local reasoning by giving the model the local context
+     needed to decide the next step.
+
+  2. Plan. The plan is a short checklist of the investigation currently being performed.
+     It prevents the agent from treating each tool output as an isolated event and
+     helps it keep track of what has already been checked.This explicit plan structure
+     is different from the standard ReAct pattern, in which the entire task state is
+     implicit in the message history.
+
+  3. Memory. This is a compressed summary of older results. It containes two sub-
+     fields: findings, an append-only list of key facts extracted by the MemoryFolderNode,
+
+                                            30
+                                                                3.3. THE ANALYSIS AGENT
+
+
+        and summary, a compressed narrative of all steps executed so far.
+
+
+3.3.3       The Select-then-Validate Workflow
+The central design choice of the Analysis Agent is the separation between tool selection
+and argument formatting into two sequential LLM calls, each with different context.
+This two-node design, referred to as Select-then-Validate, addresses a practical failure
+mode: tool selection requires awareness of the full tool catalogue and the task, while
+argument formatting requires deep knowledge of a single tool’s structure. Packing both
+requirements into a single LLM call, as a typical ReAct agent does, forces the prompt to
+include the full context of every tool at every step, which both increases context length
+and the unreliability of the smaller models used in this work. The Select-then-Validate
+design resolves this by giving each node exactly the context it needs and nothing more.
+This design increases latency, because one diagnostic step may require two model calls
+instead of one.
+
+Agent Node: Planning and Selection
+
+The AgentNode is the system’s central reasoning component. It is invoked at the start of
+every agent loop iteration and is responsible for three tasks: reflecting on accumulated
+evidence, maintaining the multi-step plan, and deciding what to do next. Its prompt2
+is built from several sources of information:
+
+  (i) Skill Summaries: a formatted list of all registered tools, each represented by its
+      skill_id and the short description from the Skill Card’s summary block. This is
+      the only tool information the AgentNode sees.
+
+ (ii) Folded Memory: the compressed narrative from the FoldedMemory.summary field,
+      providing high-level context about what has been tried, what succeeded, and what
+      failed across the entire task history.
+
+ (iii) Confirmed Findings: the full FoldedMemory.findings list, providing specific
+       facts (file paths, PMT identifiers, anomaly counts) that have been permanently
+       recorded and are guaranteed to survive memory compression.
+
+ (iv) Current Plan: the full plan with their current statuses.
+
+ (v) Recent History: the truncated last ten messages from the message list.
+
+   The node returns a structured decision rather than free text; the structured output
+permits to reduce stochastic errors. Furthermore, it is completed by Chain-of-thought
+  2
+      A shortened example of the AgentNode prompt and its development is given in Appendix D
+
+
+                                               31
+CHAPTER 3. SYSTEM DESIGN AND IMPLEMENTATION
+
+
+mechanism via a thought field. This field plays a role analogous to the explicit thought
+step in ReAct [18]. By requiring the model to articulate its reasoning before the decision
+is taken, the structured output schema effectively encourages structured reasoning close
+to chain-of-thought prompting at every iteration [16]. The thought trace also serves to
+improve interpretability: a user reviewing the agent’s diagnostic can read the sequence
+of thoughts to verify that the reasoning was sound.
+
+Argument Formatter Node: Validation and Argument Construction
+
+Once the AgentNode selects a skill, the ArgumentFormatterNode transforms that deci-
+sion into an executable call. It uses the full Skill Card of the selected tool, including
+the input schema, descriptions of parameters, and constraints on acceptable values.
+    The validation performed here has two levels and is bound by typed Pydantic
+models.
+
+   1. Semantic validation. The formatter checks whether the selected skill is appro-
+      priate for the user’s request. For example, a plotting skill should not be used when
+      the user asks for a numerical comparison unless the plotted result is explicitly
+      needed.
+
+   2. Schema validation. The formatter checks whether the arguments match the
+      expected interface. This includes required parameters, data types, and default
+      values when these are specified in the Skill Card.
+
+    If the proposed action fails validation, the node does not execute the tool. Instead,
+it returns a structured error to the AgentNode, which can choose a different tool, repair
+the plan, or ask the user for missing information. This validation gate is one of the
+main safeguards in the architecture.
+
+
+3.3.4     Tool Execution
+The Tool Node is intentionally deterministic. After validation, it imports the selected
+Python function, executes it with the validated arguments, captures the result, and
+updates the shared state. The language model is not involved in this step.
+     Since, tool functions in the scientific domain return heterogeneous types (e.g. dictio-
+naries, Pandas DataFrames, Matplotlib figures, Numpy values) and the message history,
+requires all content to be JSON-serialisable strings; there is a need to normalized tool
+outputs. It is done by using the normalize_tool_output function that converts the
+tool’s return value into a JSON-serialisable structure (e.g. NumPy types are cast to
+native Python types).
+     The Tool Node also extracts useful findings such as generated plot paths. Any
+file paths found are immediately appended to the FoldedMemory.findings list. This
+
+                                            32
+                                                               3.3. THE ANALYSIS AGENT
+
+
+ensures that file paths produced by tools are captured immediately and are available to
+the next steps without waiting for the next memory folding cycle, effectively reducing
+hallucinations (due to it being done by deterministic code).
+
+
+3.3.5     Memory Management: Folded Memory
+The context window limitations described in Section 2.2.3 become sharp during long
+diagnostic tasks. A ten-step investigation that involves scanning a series of events,
+identifying outlier PMTs, tracing their hardware connections, and verifying component
+activity generates a message history that exceeds the effective attention span of the
+models used in this work. An earlier iteration of this work used a three-parts memory
+model (episodic, working, tool-output) inspired by [35]. During development, we
+observed that the structured plan state already captured most of the working memory
+function, making the partition redundant. So, the design converged towards the simpler
+two-parts FoldedMemory described below. It is designed through a combination of
+structured persistence and periodic compression.
+
+
+The FoldedMemory Data Structure
+
+This compression is orchestrated by the MemoryFolderNode which is triggered every
+five3 tool calls. The FoldedMemory object is a Pydantic model with two fields:
+
+
+Findings. An append-only list of short strings, each recording a specific fact ex-
+tracted from the task history. They are populated by two mechanisms: determinis-
+tic path extraction in the Tool Node (immediate) and LLM-based extraction in the
+MemoryFolderNode (periodic). The system prompt instructs the AgentNode to trust
+findings over the compressed summary for specific values, and to trust them over its
+own recollection from the message history. This hierarchy mitigates the hallucination
+risk described in Section 2.2.3 and improved success rate during testing.
+
+
+Summary. A compressed natural language narrative of all steps executed so far, up-
+dated at each memory folding cycle. The summary is written by the MemoryFolderNode’s
+LLM call and integrates the previous summary with events from the recent message
+history. It provides high-level context that helps the AgentNode maintain coherent
+planning across the task.
+    The separation between findings and summary is a deliberate design choice. Specific,
+retrievable facts (IDs, paths, counts) are stored in a structured, machine-scannable
+list that the AgentNode can reference precisely. Narrative context (what has been
+  3
+    Five was chosen due its good trade-off between latency and performance. Appendix C.1 studies
+the effect of folding on performance.
+
+
+                                              33
+CHAPTER 3. SYSTEM DESIGN AND IMPLEMENTATION
+
+
+tried, what the current status is) is stored in prose that the LLM can integrate into
+its reasoning naturally. Attempting to serve both roles with a single representation (
+either a flat list of facts or a single summary) proved less effective during development.
+
+
+3.3.6     Comparison to the ReAct Baseline
+To contextualise the architectural choices described above, it is useful to enumerate
+what the standard ReAct agent used as the baseline in Chapter 4 does not have. The
+ReAct baseline is a single-node loop: one LLM call per iteration, receiving the full
+tool catalogue, the full message history (untrimmed), and no explicit plan, no folded
+memory, no findings list, and no validation gate. The comparison isolates five specific
+contributions of the full architecture:
+
+  1. The validation gate (ArgumentFormatterNode) catches selection errors and type
+     errors before execution, reducing wasted tool calls.
+
+  2. Progressive context disclosure reduces per-call token cost and focuses each LLM
+     call on a single decision type.
+
+  3. The explicit plan provides structured state that survives across iterations and is
+     visible to the model at every step.
+
+  4. Folded Memory prevents context degradation over long tasks by compressing
+     history into a persistent, structured form.
+
+  5. Skill Cards replace raw docstrings with structured metadata that includes usage
+     policies and output schemas, improving selection accuracy in the presence of
+     semantically overlapping tools.
+
+
+3.4     The Learning Pipeline
+The Analysis Agent can only use a Python analysis tool if that tool is described by
+a valid Skill Card. While, the Learning Pipeline is the offline subsystem that ingests
+a raw Python function and produces such a Skill Card. It addresses the scalability
+problem: as the number of JUNO analysis tools grows, manually authoring Skill Cards
+becomes a bottleneck. Furthermore, manual Skill Card authoring would impose an
+adoption cost on users. Overall, the Learning Pipeline reads a python function, extracts
+what can be known deterministically, asks a language model to interpret the purpose of
+the code, drafts a Skill Card, tests that card, and refines it when validation fails.
+   The pipeline is implemented as a second LangGraph StateGraph, separate from
+the Analysis Agent, with seven nodes organised into three phases: analysis (extracting
+metadata from source code), synthesis (drafting the Skill Card and preparing test
+
+                                           34
+                                                       3.4. THE LEARNING PIPELINE
+
+
+scenarios), and validation (testing the draft against the Analysis Agent itself). This
+separation mirrors the main difficulty of the task. Some information about a function
+can be extracted mechanically from the source code, but other information requires
+interpretation. The pipeline therefore combines deterministic program analysis with
+LLM reasoning and then checks the result using explicit validation gates.
+
+
+
+
+   This section describes the pipeline state, each node, the Gauntlet validation protocol,
+and the refinement mechanism.
+
+                                           35
+CHAPTER 3. SYSTEM DESIGN AND IMPLEMENTATION
+
+
+
+
+Figure 3.2: Learning Pipeline used to generate and validate Skill Cards from existing Python
+analysis functions.
+                                            36
+                                                       3.4. THE LEARNING PIPELINE
+
+
+3.4.1    Pipeline State
+All nodes in the Learning Pipeline communicate through a shared state object. Con-
+ceptually, this state stores four categories of information:
+
+
+   1. The input function, including its source code, module path, and name.
+
+   2. Extracted evidence, such as the function parameters, docstring, analysis, and
+      return types.
+
+   3. The current Skill Card draft, which is updated by the drafter and refiner.
+
+   4. Validation reports and simulation data, which record tests, their results and
+      what should be repaired.
+
+
+    The exact implementation contains additional fields used to route the graph and
+store intermediate messages. The main idea is that the pipeline keeps the original
+evidence, the current draft, and the validation feedback together so that each refinement
+step can be grounded in previous results.
+
+
+3.4.2    Phase 1: Analysis
+The first phase tries to answer a basic question: what does this Python function appear
+to do, and how is it called? The pipeline uses two complementary readers. The first
+is deterministic and reads the code structure. The second is interpretive and uses a
+language model to explain the function’s purpose.
+
+
+  Reader                 Strength                       Limitation
+  Static extraction      Reliable for signatures,       Cannot always infer scientific
+                         names, defaults, imports,      intent or correct usage con-
+                         and docstrings.                text.
+  Neural analysis        Can explain the apparent       May hallucinate details if not
+                         purpose of the function and    constrained by the source
+                         its expected use.              code.
+
+
+    Using both readers is important. Relying only on the language model would make
+the process too fragile, because the model could invent parameters or misunderstand
+the implementation. Relying only on static extraction would miss the scientific meaning
+of the function, especially when the code is poorly documented.
+
+                                           37
+CHAPTER 3. SYSTEM DESIGN AND IMPLEMENTATION
+
+
+Static Extraction Node
+
+The StaticExtractionNode parses the target Python file into an Abstract Syntax
+Tree (AST, a tree structure representation of code focusing on content and structure
+instead of syntax) using Python’s built-in ast module and extracts information that
+can be obtained without interpretation. This includes the function name, module path,
+parameters, default values, type hints when present, docstring, imports, and visible
+return statements. This information forms the factual basis of the Skill Card.
+    This node is deliberately deterministic. If the function has an argument called
+event_range, the extracted metadata must contain event_range, not a paraphrased
+name such as “events”. This is essential because the final Skill Card must match the
+real Python interface.
+
+Neural Analysis Node
+
+The Neural Analysis Node receives the source code and the static metadata, then asks
+the language model to produce a short functional interpretation. It focuses on questions
+such as:
+
+  • What kind of diagnostic task does the function support?
+
+  • What output should the Analysis Agent expect?
+
+  • Are there implicit assumptions, such as required files, detector identifiers, or event
+    ranges?
+
+    The model is instructed to base its interpretation on the code and extracted metadata.
+It, then, outputs fields (input requirements, functional summary,...) that will later be
+used by the other nodes.
+
+
+3.4.3     Phase 2: Synthesis
+The synthesis phase takes the combined analysis output and produces two objects: a
+draft Skill Card and a test plan with associated data.
+
+Drafter Node
+
+The Drafter Node builds the initial Skill Card. It receives the static extraction results,
+the neural analysis, and the Skill Card schema described in Section 3.2. It is constrained
+to conform its output exactly to the five-block schema described in Section 3.2.1. Its
+prompt provides the LLM with the function name, its docstring, and the different fields
+from the Neural analysis node. It also includes an example Skill Card to establish the
+expected style and level of detail (Adding an example improves LLM performance [12]).
+
+                                           38
+                                                        3.4. THE LEARNING PIPELINE
+
+
+    The Drafter Node is invoked in one of two modes. On the first iteration, it operates
+from the raw analysis data. On subsequent iterations, triggered by a failed validation,
+the prompt is augmented with two additional elements: the previous draft (so the LLM
+can see what it produced) and the refinement feedback generated by the Refiner Node
+(so it knows what to fix). This feedback re-drafting is the mechanism through which
+the pipeline self-corrects.
+
+
+Simulator Node
+
+The SimulatorNode generates the test plan that the Gauntlet validation protocol
+will execute. It produces a SimulationData object containing two test scenarios and,
+optionally, mock data files. The last part refers to the face that the SimulatorNode
+operates in one of two modes depending on whether the pipeline was invoked with real
+test files or if a test file is needed:
+  Real data mode. If the manual_test_files field is populated, the node instructs the
+LLM to write scenarios referencing the provided file path. No mock data is generated.
+   Mock data mode. If no test files are provided, the LLM generates minimal mock
+CSV files with appropriate headers and a small number of rows. The prompt constrains
+the LLM to use a consistent data framework. The mock data is not intended to be
+realistic but it is intended to be structurally valid. It should suffice for the tool to
+execute without crashing, so that the Gauntlet can assess whether the Skill Card’s
+parameter schema enables correct invocation.
+
+
+3.4.4     Phase 3: The Gauntlet Validation Protocol
+The Gauntlet is a two-phase validation protocol that tests the draft Skill Card through
+the Analysis Agent itself. Rather than checking the Skill Card’s fields statically (which
+could verify syntax but not usability), the Gauntlet answers the question: can the agent
+actually select, parameterise, and execute this tool correctly given realistic user queries?
+
+
+Phase 1: Unit Testing (Isolation)
+
+The ValidationUnitNode tests the draft Skill Card in an isolated environment where
+it is the only tool available. This eliminates the distraction variable: if the agent fails
+to select the tool when there is no alternative, the problem lies in the Skill Card’s
+description or parameter schema.
+    The node runs the simple scenario through a sequential gate protocol. The gates
+are evaluated in order and failure at any gate halts evaluation of the following gates,
+since their preconditions are not met.
+
+                                            39
+CHAPTER 3. SYSTEM DESIGN AND IMPLEMENTATION
+
+
+Gate A — Isolation Selection. The scenario query is passed to the AgentNode.
+The gate checks that the AgentNode selects the skill. Failure indicates that the Skill
+Card’s description is too weak or too misaligned with the query for the agent to recognise
+it as relevant, even when it is the only option.
+
+
+Gate B — Argument Formatting. The selection message is passed to the
+ArgumentFormatterNode. The gate checks that the ArgumentFormatterNode pro-
+duces a valid tool call attribute . Failure indicates a schema mismatch: the parameter
+types, required flags, or descriptions in the Skill Card are inconsistent enough that the
+ArgumentFormatterNode either rejects the tool or cannot construct valid arguments.
+
+
+Gate C — Execution. The validated tool call is passed to the ToolExecutor. The
+gate checks that execution completes without returning an error. Failure indicates
+a runtime incompatibility: the arguments produced by the ArgumentFormatterNode,
+while schema-valid, are not semantically correct for the underlying function (e.g. a file
+path that does not exist, or a parameter value outside the function’s acceptable range).
+
+
+Gate D — Semantic Validity. If a tool’s return value is an empty result (empty
+dictionary, empty list, or empty string), it indicates that the function was executed but
+produced no useful output, which may signal an issue with the mock data.
+
+
+Phase 2: Integration Testing (Production Environment)
+
+Following a successfull unit test, the ValidationIntegrationNode tests the draft Skill
+Card in the full production environment: a complete Analysis Agent graph loaded with
+all existing production skills plus the draft.
+    Both scenarios (simple and ambiguous) are executed against the full agent, which
+is ran autonomously through its complete Select-then-Validate loop. After execution
+completes, the node performs a post-analysis of the resulting message history, searching
+for specific message types to evaluate :
+
+
+Gate E — Integration Selection. The node searches the message history for the
+most recent SelectSkill message and checks whether the selected skill matches the
+draft’s name. If the agent selected a different tool, this constitutes a distraction failure:
+the draft Skill Card’s description or usage policy was insufficiently distinctive relative
+to a competing production tool. The gate records the name of the competing tool that
+distracted the agent, which the Refiner Node uses to generate targeted feedback.
+
+                                             40
+                                                       3.4. THE LEARNING PIPELINE
+
+
+3.4.5     The Refiner
+When the Gauntlet detects a failure, the RefinerNode analyses the validation reports
+and generates targeted feedback that is routed back to the Drafter Node for a subsequent
+synthesis iteration. The refinement mechanism distinguishes two failure classes and
+produces different feedback for each.
+
+Path 1: Unit Failures. If the unit test report indicates a failure, the Refiner Node
+examines the failed gate and generates feedback specific to the failure type.
+
+Path 2: Ambiguity Failures (Integration Test). If the unit test passed but
+the integration test failed, the Skill Card is technically correct but insufficiently dis-
+tinguishable from competing tools. The Refiner Node identifies the competing tool
+that distracted the agent and loads its usage policy from the production registry. The
+feedback instructs the Drafter Node to update the draft with updated information on
+the conflicting skill.
+The Refiner Node returns the feedback then routes back to the Drafter Node, which
+re-drafts the Skill Card with the feedback injected into its prompt. The loop continues
+until either all Gauntlet gates pass or a configurable maximum number of iterations is
+reached.
+
+
+
+
+                                           41
+Chapter 4
+
+Experiments and Results
+
+This chapter presents the empirical evaluation of the system described in Chapter 3.
+The evaluation is structured around three complementary experiments. Section 4.1
+describes the experimental setup: models, infrastructure, tool suite, benchmark design,
+metrics, and statistical methodology. Section 4.2 reports the results of the tiered query
+benchmark, comparing the full JUNO agent against a standard ReAct baseline on
+short-horizon queries. Section 4.3 evaluates both agents on long-horizon diagnostic sce-
+narios that require multi-step planning, memory management, and cross-tool reasoning.
+Section 4.4 evaluates the Learning Pipeline (RQ2) by comparing agent performance
+with hand-written versus automatically synthesised Skill Cards. An additionnal experi-
+ment in the appendix C.1, presents an ablation study isolating the effect of memory
+compression frequency on long-horizon task completion.
+
+
+4.1     Experimental Setup
+
+4.1.1     Models and Infrastructure
+All experiments were conducted with the open-weight model gpt-oss:20b, served
+locally through Ollama [42] on a workstation equipped with an NVIDIA RTX 4090
+GPU with 24 GB of VRAM. The model was released on Hugging Face and was loaded via
+the Ollama tag gpt-oss:20b. The model has 20.9B total parameters, approximately 3.6B
+active parameters per token, and uses MXFP4 quantisation of the mixture-of-experts
+weights.
+   Generation was performed with temperature T = 0.8, while it introduces variability
+between runs it also directly reflect real use case. The rest of the parameters were
+the default Ollama and LangChain ones. Each benchmark query was executed five
+times (N = 5). The five repetitions were run as independent agent sessions: for each
+repetition, a fresh LangGraph state and message history were created, while the same
+local Ollama server and model weights remained loaded in memory. Therefore, the
+
+                                           42
+                                                         4.1. EXPERIMENTAL SETUP
+
+
+reported variability reflects stochastic generation and agent trajectory differences, not
+changes in model weights or hardware.
+
+
+4.1.2    Baseline Agent (B1)
+The baseline agent, referred to as B1 throughout this chapter, is a standard ReAct [18]
+agent implementation from LangChain [19]. It accesses the same set of analysis tools as
+the JUNO agent. The baseline differs from the full JUNO architecture in five respects,
+corresponding directly to the architectural contributions enumerated in Section 3.3.6:
+
+  (i) B1 performs tool selection and argument formatting in a single LLM call per
+      iteration .
+
+ (ii) B1 receives the full tool catalogue as function docstrings rather than structured
+      Skill Card summaries.
+
+(iii) B1 maintains no explicit plan, the task state is implicit in the growing message
+      history.
+
+ (iv) B1 has no memory compression mechanism, the message history accumulates
+      without trimming or summarisation.
+
+ (v) B1 has no type-safe argument validation, argument values are passed directly
+     from the LLM output to the tool function.
+
+
+4.1.3    Tool Suite
+The agent’s Skill Card registry contains the analysis tools described in Section 2.1.4.
+Table B.1 in the appendix lists the registered tools, grouped by functional category.
+The suite includes tools provided by the thesis supervisors, representative of real JUNO
+diagnostic practice, and tools developed during this thesis work to achieve sufficient
+diversity for benchmarking. Both categories operate on the simplified CSV format
+described in Section 2.1.3 and respect the JUNO hardware nomenclature.
+
+
+4.1.4    Benchmark Design
+Existing benchmarks for tool-using LLM agents are designed around standardized,
+domain-agnostic tasks and cannot be applied directly to the JUNO evaluation prob-
+lem. The Berkeley Function Calling Leaderboard (BFCL) [43] measures single-turn
+function-calling accuracy on generic API signatures (e.g. weather queries, calendar
+events). It tests argument formatting in isolation but not multi-step planning, memory
+management, or tool-chain reasoning. AgentBench [44] evaluates agents across diverse
+
+                                           43
+CHAPTER 4. EXPERIMENTS AND RESULTS
+
+
+environments (web browsing, database queries, operating system interaction) but none
+of its tasks involve scientific tool orchestration or domain-specific hardware diagnostics.
+ScienceAgentBench [45] gets close, as it targets data-driven scientific workflows, but
+its evaluation protocol measures end-to-end code generation rather than tool selection
+and argument correctness over an existing tool registry. More importantly, none of
+these benchmarks captures the specific failure modes that matter in the JUNO context.
+Evaluating the JUNO agent against BFCL or AgentBench would measure generic
+function-calling competence of the underlying LLM, not the architectural contributions
+that this thesis claims.
+    A domain-specific benchmark was therefore designed to measure the capabilities
+of the agent. The benchmark comprises 33 diagnostic queries organized into four
+active tiers of increasing complexity, plus a set of four long-horizon scenarios evaluated
+separately. Each query is specified as a JSON object containing the query text, the
+expected tool or tool sequence, the expected arguments, and, where applicable, the
+ground-truth result. This specification schema enables easy automated scoring against
+deterministic criteria. Table 4.1 defines tiers 1,2,3 and 5 (Tier 4 being Long-horizon
+scenarios explained in the next sub-section) and their design intent.
+    The query specification schema supports several evaluation modes. The expected_tools
+field lists the tool or tools that should be called; for queries with multiple valid ap-
+proaches, the accepted_toolchains field provides a list of acceptable tool sequences.
+The expected_args field specifies the argument values against which the agent’s output
+is compared.
+
+
+4.1.5     Long-Horizon Scenarios
+To evaluate the agent’s ability to plan, execute, and synthesise results across extended
+diagnostic workflows, four long-horizon scenarios (Tier 4) were designed. Each scenario
+encodes a realistic diagnostic task with a known ground truth, requiring the agent to
+autonomously determine the appropriate tool sequence, manage intermediate results,
+and produce a final diagnostic conclusion.
+   Table A.1 in the appendix summarises the four scenarios.
+
+
+4.1.6     Metrics
+Different metrics are reported throughout this chapter.
+
+Tool Selection Rate (TSR). The average correctness of the agent’s tool selec-
+tion strategy across N runs. For a single run i, the score TSRi is binary (1.0 or
+0.0) if the query demands a strict sequence of tools (expected_tools) or a valid re-
+fusal (allowed_refusals). For queries expecting multiple, order-independent tools
+
+                                            44
+                                                            4.1. EXPERIMENTAL SETUP
+
+
+
+
+Table 4.1: Query tier definitions. Each tier targets a specific cognitive demand on the agent.
+The query count column reports the number of distinct queries; each query is executed N = 5
+times.
+
+Tier Label                         # Queries Design intent and example
+
+ 1    Single tool, explicit args      10     Tests basic tool selection and argument extrac-
+                                             tion. All parameters are stated explicitly in
+                                             the query. “What hardware is connected to
+                                             BEC 12?”
+
+ 2    Parameter inference             10     Tests correct tool selection when the query
+                                             does not name the tool and one or more argu-
+                                             ments must be inferred from context or defaults.
+                                             “Give me a quick health check on the KPIs for
+                                             test_data/scenario7_one.csv.”
+
+ 3    Multi-tool sequential            8     Tests chains of 2–3 tools with conditional branch-
+                                             ing. The agent must plan a sequence, inter-
+                                             pret intermediate results, and decide whether
+                                             a follow-up tool call is necessary. “Show the
+                                             event multiplicity for scenario1_one.csv, and if
+                                             there’s a long tail, check PMT 3000’s profile.”
+
+ 5    Negative / refusal               5     Tests out-of-scope rejection. The query requests
+                                             an analysis that no registered tool can per-
+                                             form. The agent must recognise this and decline
+                                             rather than hallucinate a capability. “Analyse
+                                             the ROOT file test_data/scenario1_one.root for
+                                             anomalies.”
+
+
+
+
+                                             45
+CHAPTER 4. EXPERIMENTS AND RESULTS
+
+
+(accepted_toolchains), TSRi is the fractional proportion of expected tools that the
+agent successfully invoked .
+                                          N
+                                       1 X
+                              TSR =         TSRi                              (4.1)
+                                      N i=1
+where TSRi ∈ [0, 1] is the tool selection score for run i.
+
+
+Argument Correctness Rate (ACR). The average fraction of accurately parame-
+terized arguments, evaluated conditionally on runs where the agent successfully selected
+valid tools (TSRi > 0). For a single tool, correctness is the proportion of arguments
+that strictly match the expected values. If a run i requires executing multiple tools,
+ACRi is the mean of these argument-matching proportions across all the expected tools.
+
+                                           1 X
+                                  ACR =            ACRi                              (4.2)
+                                          |V | i∈V
+
+where V = {i | TSRi > 0} is the subset of runs with successful tool selections, and
+ACRi ∈ [0, 1] is the argument correctness score for run i. The conditionality of ACR on
+correct selection is architecturally meaningful. Because ACR is computed only over the
+subset of runs where the right tool was chosen, a high ACR paired with a lower TSR
+localises failure to the AgentNode’s selection logic rather than the Formatter Node’s
+argument extraction. This decomposition is a direct consequence of the Select-then-
+Validate separation described in Section 3.3.3.
+
+
+Latency. Wall-clock time from query submission to final answer, measured in seconds.
+Latency includes all LLM inference calls, tool execution time, and memory compression
+overhead.
+    For the long-horizon scenarios (Section 4.3), TSR and ACR are not individually
+meaningful because the task involves many sequential tool calls with intermediate
+planning decisions. Instead, we report a binary task completion metric: a run is scored
+as successful if and only if the agent’s final answer contains the ground-truth finding of
+the corresponding scenario.
+
+
+4.1.7     Statistical Methodology
+Each query or scenario was executed N = 5 times. These repetitions are useful for
+exposing stochastic failure modes and for descriptive robustness labels, but they are
+not large enough to support precise estimates of production success probabilities or
+strong claims about small differences between agents. The per-tier counts are therefore
+reported descriptively, with Wilson 95% confidence intervals chosen because it provides
+correct coverage for small N and for proportions near 0 or 1. The small differences
+
+                                            46
+                                                      4.2. TIERED BENCHMARK RESULTS
+
+
+with overlapping intervals are interpreted as hypotheses for error analysis rather than
+statistically established effects.
+
+
+4.2      Tiered Benchmark Results
+This section reports the results of the tiered query benchmark (Tiers 1, 2, 3, and 5),
+comparing the JUNO agent against the ReAct baseline B1 on 33 queries executed
+5 times each, for a total of 165 runs per agent. The benchmark evaluates the final
+architecture as an integrated system. Several components were introduced during
+development because simpler agent designs exhibited recurring failure modes, but
+the present evaluation does not isolate the causal contribution of each component1 .
+The results should therefore be interpreted as evidence for the combined architecture,
+complemented by qualitative failure-mode analysis, rather than as proof that every
+architectural element is independently necessary.
+
+
+4.2.1      Tool Selection Rate Analysis
+Figure 4.1 disaggregates the success rate (defined as TSR = 1.0, i.e. correct tool selected)
+by tier.
+
+
+
+
+Figure 4.1: Per-tier success rate (TSR = 1.0) for JUNO and B1. Fractions above bars report
+the raw count of successes over total runs. Error bars: Wilson 95% CI.
+
+
+
+Tier 1 (single tool, explicit arguments). Both agents achieve a perfect success
+rate: 50/50 for JUNO and 50/50 for B1.
+   1
+    Some inferences can still be made to isolate the effect of a specific contribution, see the ACR
+analysis in 4.2.2
+
+
+                                                47
+CHAPTER 4. EXPERIMENTS AND RESULTS
+
+
+Tier 2 (parameter inference). JUNO achieves 40/50 (0.80) while B1 achieves 42/50
+(0.84). The baseline marginally outperforms the JUNO agent on this tier (overlapping
+Wilson confidence interval so results are marginal). Inspection of the failing JUNO
+runs reveals a recurring pattern: the Argument Formatter Node’s semantic validation
+occasionally rejects a correct tool selection when the Skill Card’s do_not_use_when
+conditions are phrased in terms that partially overlap with the query’s phrasing. For
+example, a usage policy stating “do not use when the user asks about a specific event
+window” can trigger a false rejection on queries that mention event-related terms without
+actually requesting a windowed analysis. This can be seen as a false-negative cost linked
+to the validation layer. It can rejects correct selections that B1 would execute without
+question, when the usage policy language is too broad.
+
+Tier 3 (multi-tool sequential). JUNO achieves 38/40 (0.95) while B1 achieves
+35/40 (0.88). The performance gap widens on multi-tool chains, where the validation
+gate prevents cascading argument errors. But the confidence intervals still overlap. The
+result should therefore be read as supportive evidence, not as a statistically established
+tier-level improvement. In a typical Tier 3 query, the agent must execute two to three
+tools sequentially, using the output of each tool to parameterise the next. An argument
+error in the first tool call (e.g. passing a file path as the wrong type) produces an
+incorrect or empty intermediate result, which then propagates into subsequent planning
+decisions. The JUNO agent’s type-safe validation at each step breaks this cascade.
+
+Tier 5 (negative / refusal). JUNO achieves 19/25 (0.76) while B1 achieves 16/25
+(0.64). The failing runs in both agents share a common pattern: the LLM identifies
+a tool that is superficially related to the query (e.g. selecting a CSV-based analysis
+tool when the query asks about a ROOT file) and attempts to invoke it rather than
+declining. Small language models are generally inclined to attempt tasks they should
+refuse, a tendency that structured reasoning mitigates but does not eliminate.
+    It should be noted that several Tier 5 queries sit near the boundary between a
+valid refusal and a reasonable attempt with a caveat. For example, a query requesting
+“calibration analysis” could be validly refused (no calibration tool exists) or validly
+addressed by reporting related KPI metrics with a disclaimer. So, defining a refusal
+more strictly or more leniently would influence the absolute numbers.
+
+
+4.2.2     Argument Correctness Analysis
+Figure 4.2 presents the Argument Correctness Rate by tier for the three tiers where
+ACR is defined (Tier 5 involves refusal rather than tool invocation so it is not taken
+into account).
+The per-tier ACR values are:
+
+                                           48
+                                                     4.2. TIERED BENCHMARK RESULTS
+
+
+
+
+Figure 4.2: Argument Correctness Rate (ACR) by tier, conditional on correct tool selection.
+JUNO’s near-perfect ACR reflects the Pydantic type coercion in the Argument Formatter
+Node. Baseline ACR degrades on Tier 2, where arguments must be inferred from context.
+Error bars: Wilson 95% CI.
+
+
+
+                                      Tier 1       Tier 2   Tier 3
+
+                           JUNO        1.00         0.99     0.90
+                           Baseline    0.81         0.75     0.83
+
+
+
+   The JUNO agent’s ACR is at or near 1.0 across all tiers. The residual errors on
+Tier 3 (ACR = 0.90) arise not from type confusion but from semantic argument errors:
+the LLM extracts the wrong value (e.g. a PMT identifier from the query text when the
+correct identifier should be extracted from a preceding tool’s output). Type coercion
+cannot correct a semantically wrong value that happens to be of the correct type but
+the validation can lower the chance of it happening.
+    The baseline’s ACR is consistently lower and degrades to 0.75 on Tier 2, where
+arguments must be inferred rather than copied from the query text. The dominant failure
+mode is the type confusion and hallucination of arguments described in Section 2.2.3.
+The architectural design shows a clear improvement. ACR is conditional on correct
+tool selection (Equation 4.2), so the near-perfect JUNO ACR combined with the
+lower TSR confirms that when the JUNO agent fails, it fails at the selection stage
+(AgentNode), not at the formatting stage (Formatter Node). The Select-then-Validate
+decomposition thus provides a diagnostic separation: selection failures and formatting
+failures are independently observable, enabling targeted architectural improvements.
+This separation is unavailable in the baseline, where a wrong tool and a wrong argument
+are made in the same LLM call.
+
+                                              49
+CHAPTER 4. EXPERIMENTS AND RESULTS
+
+
+4.2.3     Latency Analysis
+Figure 4.3 presents the mean query latency by tier for both agents.
+
+
+
+
+Figure 4.3: Mean query latency by tier. Labels above JUNO bars report the slowdown factor
+relative to B1. The JUNO agent is consistently slower due to its two-pass LLM architecture
+(selection + validation) and Skill Card loading overhead. Note: JUNO performs two LLM
+inference calls per tool invocation versus one for the baseline.
+
+
+    The JUNO agent is between 3× and 7.5× slower than B1 across all tiers. The
+slowdown is most pronounced on Tier 3 (∼7.5×), where each tool in a multi-step chain
+incurs the full two-pass overhead (AgentNode selection call + Formatter Node validation
+call). For Tier 1 single-tool queries, the overhead is ∼4.5×: one additional LLM call
+for validation plus the Skill Card context loading and validation.
+    This latency cost is a known design-level trade-off. The JUNO system is designed
+for offline diagnostic support (Section 1.4), where task completion correctness takes
+priority over response time.
+     The dominant component of the latency is LLM inference time, not orchestration
+overhead. The graph routing, Skill Card loading, Pydantic validation, and tool execution
+together are not that considerable compared to LLM inference time. Any improvement
+in local inference speed (through model quantisation, hardware upgrades, or more
+efficient serving frameworks) would reduce the absolute latency proportionally without
+requiring architectural changes.
+
+
+4.3      Long-Horizon Scenario Results
+This section reports the results of the four long-horizon scenarios (Tier 4), which test
+the agent’s ability to plan, execute, and synthesise results across extended multi-step
+diagnostics. Each scenario was executed N = 5 times per agent.
+
+                                           50
+                                             4.3. LONG-HORIZON SCENARIO RESULTS
+
+
+4.3.1      Scenario Completion Rates
+Table 4.2 and Figure 4.4 present the task completion rates for each scenario.
+
+Table 4.2: Long-horizon scenario completion rates (N = 5 runs per agent per scenario). A
+run is scored as successful if the final answer contains the ground-truth finding.
+
+      ID   Task                          Average number of calls       JUNO       B1
+
+       A   Flashing PMT detection                    ∼16                 5/5      0/5
+       B   Missing RMU localisation                  ∼24                 5/5      0/5
+       C   Quick anomaly check                       ∼5                  5/5      3/5
+      D    Cross-subsystem diagnosis                 ∼18                 1/5      0/5
+
+      Total                                                             16/20    3/20
+
+
+
+
+Figure 4.4: Task completion rate on long-horizon scenarios. JUNO achieves perfect comple-
+tion on Scenarios A, B, and C. The baseline cannot solve any extended diagnostic reliably; its
+only successes occur on Scenario C, which requires the fewest tool calls.
+
+
+   The results reveal a qualitative gap between the two architectures. The JUNO agent
+achieves perfect completion (5/5) on Scenarios A, B, and C, while the baseline achieves
+0/5 on both extended scenarios (A and B) and only 3/5 on the short Scenario C. The
+baseline is fundamentally unable to solve tasks requiring more than approximately five
+sequential tool calls: it loses track of intermediate results, fails to maintain a coherent
+plan or produces a premature final answer based on incomplete information.
+   At first sight, the long-horizon results may appear counterintuitive: these scenarios
+require many more tool calls than the tiered benchmark, yet the JUNO agent obtains
+higher completion rates on several of them. This should not be interpreted as evidence
+that longer tasks are easier. The two evaluations use different success criteria. In the
+
+                                             51
+CHAPTER 4. EXPERIMENTS AND RESULTS
+
+
+tiered benchmark, a run is penalised when the agent selects an incorrect tool, supplies
+incorrect arguments, or deviates from the expected toolchain, even if it later recovers.
+In the long-horizon scenarios, success is determined at the task level: a run is counted
+as successful if the final answer contains the required ground-truth finding. Thus,
+an agent may make an unnecessary or initially incorrect tool call, recover through
+subsequent reasoning, and still be scored as successful if the final diagnosis is correct.
+The long-horizon results therefore measure end-to-end diagnostic completion, while the
+tiered benchmark measures stricter tool selection and argument construction behaviour.
+
+
+4.3.2     Failure Mode Analysis
+Examination of the failed runs across both agents reveals four recurring failure modes,
+categorised below. These categories are not mutually exclusive, a single failed run may
+exhibit more than one.
+
+Synthesis gap. The agent executes all required tool calls and obtains all intermediate
+results, but fails to synthesise them into a correct final answer. This occurs when
+the relevant finding is present in the message history but has been lost in context by
+subsequent messages. The agent then produces a plausible but incomplete conclusion,
+omitting the critical finding. This failure mode is characteristic of the baseline, which
+has no memory compression to persist intermediate findings.
+
+Structural boundary error. The agent misidentifies where one sub-task ends
+and the next begins. For example, after completing the occupancy analysis phase of
+Scenario D, the agent may attempt to conclude rather than proceeding to the hardware
+tracing phase. This failure mode is related to plan management: the explicit plan
+structure in the JUNO agent mitigates it (the agent can see that pending steps remain),
+but it still occurs on Scenario D when the plan itself is poorly constructed. It can also
+be linked to the reduced abilities of small LLM models.
+
+Tool confusion under catalogue pressure. In the middle of a long chain, the
+agent selects a semantically plausible but incorrect tool for an intermediate step. For
+example, selecting scan_run_for_occupancy_anomalies (a windowed scanner) when
+detect_global_occupancy_outliers (a global outlier detector) is required. The
+validation node catches many of these errors, but not all.
+
+False memory under tool-call pressure. After many sequential tool calls (typically
+more than ten), the LLM begins to generate outputs that reference PMT identifiers,
+scores, or file paths that do not appear in any tool output. This is a hallucination
+failure mode exacerbated by context length. The Folded Memory system’s findings list
+
+                                           52
+                                             4.4. LEARNING PIPELINE EVALUATION
+
+
+mitigates this by providing a compact and high priority reference for specific values, but
+it cannot prevent all instances, particularly when the hallucinated value is consistent
+with the compressed summary.
+
+Scenario D: a limit test. The JUNO agent achieves only 1/5 on Scenario D the four
+failed runs exhibited a combination of structural boundary errors and tool confusion.
+Scenario D was designed to probe the boundary of what the current model tier can
+support with the available architectural scaffolding. The result confirms that cross-
+subsystem reasoning chains of 15+ tool calls exceed the reliable operating envelope of
+GPT-OSS 20B, even with plan structure, validation, and memory compression. This
+finding defines the current capability ceiling and motivates future work on stronger
+planning mechanisms or more capable local models.
+
+
+4.4      Learning Pipeline Evaluation
+This section addresses RQ2: can Skill Cards be automatically synthesised from Python
+tool definitions and still support agent performance comparable to manually authored
+Skill Cards?
+
+
+4.4.1     Comparative Benchmark: Hand-Written vs. Auto-Synthesised
+          Skill Cards
+To isolate the effect of Skill Card authorship, all Python functions went through the
+Learning Pipeline. The tiered benchmark (Section 4.1.4) was re-executed with the
+JUNO agent operating on only the auto-written Skill Cards in place of the hand-written
+originals. All other variables were held constant.
+
+Tool Selection Rate. Table 4.3 presents the per-tier TSR for the two configurations:
+JUNO with hand-written cards, JUNO with auto-written cards.
+
+Table 4.3: Per-tier Tool Selection Rate (TSR) for hand-written Skill Cards and auto-written
+Skill Cards. Raw counts are reported as successes / total runs.
+
+                                   Tier 1   Tier 2    Tier 3   Tier 5
+
+                   Hand-written    50/50     40/50    38/40     19/25
+                   Auto-written    50/50     42/50    39/40     16/25
+
+
+    At the per-tier level, the differences are small relative to the number of runs. Auto-
+written cards marginally improve Tier 2 selection (42/50 vs. 40/50) and Tier 3 selection
+(39/40 vs. 38/40), while marginally degrading Tier 5 refusal accuracy (16/25 vs. 19/25).
+
+                                            53
+CHAPTER 4. EXPERIMENTS AND RESULTS
+
+
+    The Tier 2 improvement appears to be partly explained by the Learning Pipeline’s
+refinement of usage policies. In several cases, the hand-written cards for Tier 2 tools
+contained broad do_not_use_when clauses that caused otherwise appropriate tool calls
+to be rejected at the validation gate (as discussed in Section 4.2.1). After observing such
+failures during integration testing, the Refiner Node produced more specific exclusion
+clauses, reducing some false rejections. This interpretation should be understood as an
+error-analysis observation rather than a causal claim, since the benchmark does not by
+itself isolate the effect of each individual card field.
+    While the results are not flagrant, the Tier 5 degradation reflects the inverse effect.
+From manual inspection, auto-written cards tend to produce more permissive usage
+policies than hand-written ones.The Drafter Node, lacking the domain expert’s intuition
+about what a tool cannot do, generates do_not_use_when entries that are technically
+correct but insufficiently broad to prevent the agent from attempting out-of-scope
+queries.
+
+Argument Correctness Rate. Table 4.4 presents the per-tier ACR for the two
+configurations.
+
+Table 4.4: Per-tier Argument Correctness Rate (ACR), conditional on correct tool selection,
+for hand-written Skill Cards and auto-written Skill Cards.
+
+                                          Tier 1   Tier 2   Tier 3
+
+                      Hand-written         1.00     0.99      0.90
+                      Auto-synthesised     1.00     0.98      0.91
+
+
+   The ACR results are near-identical across both Skill Card variants. This result is
+expected. ACR is primarily determined by two factors: the parameter schema (types,
+required flags, defaults) and the Pydantic type coercion mechanism. The Learning
+Pipeline’s static analyser extracts parameter schemas directly from the Python AST,
+producing type annotations that are at least as accurate as those a human author would
+write by reading the same source code. The Pydantic coercion layer then operates
+identically regardless of whether the schema was hand-written or auto-generated. The
+result therefore confirms that the automated parameter extraction is functionally
+equivalent to manual schema authoring for the purpose of argument validation.
+
+
+
+
+                                            54
+Chapter 5
+
+Conclusion and Perspectives
+
+This thesis investigated to what extent a locally deployed LLM agent can orchestrate
+detector analysis tools reliably enough to support JUNO-style diagnostic queries. The
+motivation was not to replace expert physicists, but to reduce the operational distance
+between a natural-language question and the execution of the appropriate analysis
+pipeline. The work focused on two research questions: the design of a robust tool-using
+architecture for a heterogeneous scientific tool suite, and the possibility of automatically
+synthesising the tool descriptions required by that architecture.
+    The main conclusion is that explicit structure matters. A generic ReAct agent
+can use the same tools and the same underlying language model, but it lacks the
+intermediate representations needed to make tool selection, argument construction,
+memory management, and refusal behaviour separately controllable. The Skill Card
+abstraction, the Select-then-Validate workflow, and Folded Memory address specific
+failure modes observed in small local models: tool confusion, argument hallucination,
+inference constraint and long-context degradation. The resulting system is slower than
+the baseline, but substantially more reliable on the tasks for which scientific correctness
+matters most.
+
+
+5.1      Summary of Contributions
+
+5.1.1     RQ1: Agent architecture and representation.
+The first research question asked how a multi-node agent and a Skill Card abstraction
+should be designed so that an LLM can robustly solve JUNO-style diagnostic queries
+using existing tools. This thesis introduced a typed Skill Card schema that stores tool
+identity, usage policy, argument contracts, execution metadata, and output structure
+in a single human-readable document. It also introduced a Select-then-Validate agent
+architecture implemented with LangGraph, in which tool selection is separated from
+argument formatting and validation. This separation proved useful empirically. On the
+
+                                            55
+CHAPTER 5. CONCLUSION AND PERSPECTIVES
+
+
+tiered benchmark, the JUNO agent matched the baseline on Tier 1 single-tool queries,
+achieved 38/40 successful runs on Tier 3 multi-tool queries compared with 35/40 for
+the baseline, and achieved 19/25 valid refusals on Tier 5 compared with 16/25 for the
+baseline. The clearest difference appeared in Argument Correctness Rate: the JUNO
+agent obtained ACR values of 1.00, 0.99, and 0.90 on Tiers 1–3, while the baseline
+obtained 0.81, 0.75, and 0.83. These results support the central design claim: for small
+local models, explicit validation and structured tool metadata reduce argument errors
+more effectively than relying on a single tool-calling prompt.
+
+
+Long-horizon diagnostic behaviour. The same architecture also improved long-
+horizon performance. On the four extended diagnostic scenarios, the JUNO agent
+completed 16/20 runs, whereas the ReAct baseline completed 3/20. The baseline’s
+failures were not primarily caused by a lack of access to tools, but by the absence of
+persistent state: it lost intermediate findings, produced premature final answers, or
+failed to maintain a coherent multi-step plan. Folded Memory partially mitigated this
+problem by preserving important findings outside the raw message history.
+
+
+5.1.2     RQ2: In-context Skill learning.
+The second research question asked whether Skill Cards could be automatically synthe-
+sised from Python scripts while preserving agent performance. The Learning Pipeline
+combined static analysis of function signatures and source code with LLM-based draft-
+ing, testing, and refinement. In the comparative benchmark, auto-synthesised cards
+produced performance close to hand-written cards. Tool Selection Rate was identical
+on Tier 1 (50/50), quite similar for auto-synthesised cards on Tier 2 (42/50 versus
+40/50) and Tier 3 (39/40 versus 38/40), but lower on Tier 5 refusal queries (16/25
+versus 19/25). Argument correctness was also near-identical: 1.00, 0.99, and 0.90 for
+hand-written cards, compared with 1.00, 0.98, and 0.91 for auto-synthesised cards.
+These results indicate that the Learning Pipeline can achieve similar performance in
+schema parametering. The Tier 5 results suggest that negative usage boundaries may
+be harder to learn automatically, although the small sample size prevents this from
+being treated as a definitive conclusion.
+
+
+
+5.2      Limitations
+The first limitation is the scale and representativeness of the benchmark. The tiered
+benchmark contains 33 diagnostic queries, each executed five times, and the long-horizon
+evaluation contains four scenarios. This is sufficient to expose recurring architectural
+failure modes, but it is not large enough to estimate absolute success probabilities with
+
+                                           56
+                                                                       5.2. LIMITATIONS
+
+
+high precision. The results should be interpreted as evidence about controlled diagnostic
+tasks rather than as a complete measure of production reliability. Furthermore, there is
+the absence of a component-level ablation of the Skill Card fields. The thesis argues that
+Skill Cards are useful because they combine parameter schemas, usage policies, execution
+metadata, and output schemas in a single representation. However, the evaluation
+compares complete agent configurations rather than removing each field independently.
+As a result, the experiments support the usefulness of the combined Skill Card based
+architecture, but they do not establish the individual contribution of usage_policy,
+output_schema, or the parameter schema in isolation. A targeted ablation, for example
+removing usage_policy while keeping the rest of the card unchanged, would be needed
+to quantify these contributions. The intended sample size, which was was supposed to
+be bigger than 5, and this experiment could not be made before submission because the
+hardware server used for the benchmark became unavailable after the main evaluation
+runs.
+   The second limitation is the scope of the tool suite. The implemented tools are
+representative of JUNO diagnostic workflows and use JUNO hardware nomenclature,
+but they do not cover the full operational analysis ecosystem of the experiment. The
+input data are also simplified relative to the complete production data model. The
+thesis therefore evaluates the agent’s ability to orchestrate a realistic and executable
+diagnostic tool suite, not its readiness to cover all detector-operation tasks.
+    The third limitation concerns the model tier. The system was deliberately evaluated
+with locally deployed open-weight models, reflecting the constraints of restricted scientific
+computing environments. This makes the results practically relevant, but also model-
+specific. Stronger local models, better structured-output capabilities, or faster inference
+backends could change both the success rates and the latency trade-off. The architecture
+itself is model-agnostic, but the numerical results are not.
+    The fourth limitation is latency. The JUNO agent is consistently slower than the
+baseline because it performs multiple LLM calls per tool iteration: one for selection,
+one for formatting and validation, and additional calls for memory compression when
+required. This cost is acceptable for offline diagnostic support, where correctness is
+more important than immediate response time. It would not yet be acceptable for
+real-time detector monitoring or DAQ-level intervention.
+    The final limitation concerns the Learning Pipeline. Static analysis can extract
+function names, parameters, defaults, type hints, and some usage evidence from source
+code, but it cannot fully infer detector semantics. Valid PMT ranges, physical units,
+calibration assumptions, and negative usage policies often depend on expert knowledge
+outside the Python function itself. The Learning Pipeline can reduce the effort required
+to create Skill Cards, but it should remain embedded in a human-in-the-loop workflow
+for scientific use.
+
+                                             57
+CHAPTER 5. CONCLUSION AND PERSPECTIVES
+
+
+5.3      Future Work
+A first direction is evaluation with stronger local models. The present architecture was
+designed around the limitations of small open-weight models, and the results show both
+the value and the limits of that approach. Repeating the benchmark across several model
+sizes would clarify which failures are architectural and which are model-capability limits.
+Scenario D, in particular, should be revisited with stronger planning and long-context
+models, since it currently defines the upper boundary of the system’s reliable operating
+abilities.
+   A second direction is a benchmark ablation of the Skill Card representation. Future
+experiments should compare at least four variants: parameter schema only, parameter
+schema plus usage policy, parameter schema plus output schema, and the full Skill
+Card.
+    A third direction is a stronger planning layer. The current agent keeps an explicit
+plan, but the plan is still generated and revised by the same local LLM that performs
+tool selection. Long-horizon failures show that the system sometimes misidentifies
+sub-task boundaries or concludes before all required checks have been completed. A
+more robust planner could represent tasks as structured steps, enforce completion
+criteria for each sub-task, and verify that every required diagnostic question has been
+answered before producing a final response.
+    A fourth direction is extension toward online diagnostic support. The current
+system is intentionally offline: it answers questions about existing files and completed
+or ongoing runs. Moving toward online use would require integration with monitoring
+infrastructure, faster local inference, stricter execution safeguards, and human approval
+for any action with operational consequences. The most realistic intermediate step is
+not full autonomy, but a watch-mode assistant that periodically summarises detector
+conditions, flags anomalies, and proposes follow-up tools for expert approval.
+    A fifth direction is improvement of the Learning Pipeline. The current pipeline can
+synthesise useful Skill Cards from Python source code, but negative usage policies and
+semantic constraints remain weak points. Future versions should incorporate richer test
+generation, explicit unit and range inference, examples from historical tool usage, and
+human-in-the-loop correction. A useful practical target would be a review interface in
+which the system drafts a Skill Card, highlights uncertain fields, and asks the physicist
+to approve or correct only the parts that cannot be inferred reliably.
+    A final direction is cross-experiment transfer. Many large detector experiments
+face similar problems: heterogeneous tool ecosystems, specialised hardware hierarchies,
+restricted computing environments, and a need for traceable diagnostic reasoning. The
+Skill Card abstraction is not specific to JUNO. Applying the same approach to another
+experiment would test whether the architecture generalises beyond the particular tool
+
+                                            58
+                                                             5.4. CLOSING REMARKS
+
+
+suite and data format used in this thesis. Such a transfer study would also clarify which
+parts of the system are domain-independent and which require experiment specific
+design.
+
+
+5.4      Closing Remarks
+The central lesson of this thesis is that reliable scientific agents can’t simply rely on
+a basic tool access. They require explicit representations of what tools mean, when
+they should be used, how their arguments should be validated, and how intermediate
+findings should persist across a diagnostic chain. In this work, Skill Cards provide
+that representation, Select-then-Validate provides the execution, and Folded Memory
+provides the state-management mechanism needed for longer analyses.
+    The resulting system is not a finished operational assistant for JUNO. It is a
+prototype with clear limitations in scale, latency, model robustness, and evaluation
+coverage. Nevertheless, the experiments show that a small local model, when supported
+by the right structure, can perform useful scientific tool orchestration beyond what
+a generic ReAct baseline can reliably achieve. This makes the approach a credible
+foundation for future detector-analysis assistants: not autonomous replacements for
+experts, but structured interfaces through which experts can query, combine, and audit
+their own analysis tools more efficiently.
+
+
+
+
+                                           59
+Declaration of Generative AI and
+AI-assisted Technologies in the
+Writing Process
+
+During the preparation of this work, the author used different AI chatbots ( Gemini,
+Claude, ChatGPT) in order to understand paper’s codebases, debug code, help in
+comprehending concepts, assist in structuring the thesis and discover new routes of
+development be in finding references or brainstorming. After using this tool/service,
+the author reviewed and edited the content as needed and take full responsibility for
+the content of the publication.
+
+
+
+
+                                         60
+Appendix A
+
+Long-Horizon Scenario
+
+                      Table A.1: Long-horizon scenario specifications.
+
+ID Diagnostic task          Ground truth and expected toolchain
+
+A   Flashing PMT de-        PMT 4274 is noisy/flashing across the entire run. The file is
+    tection in a large      large and triggers the Large File Protocol: the agent must in-
+    run                     spect the file, create batches via filter_events_by_range, run
+                            detect_global_occupancy_outliers on each batch, and confirm
+                            with get_pmt_profile.
+
+B   Silent RMU locali-      RMU 5-1 is silent between events 5,000 and 12,000,
+    sation in a large run   and active before and after that window.       The agent
+                            must systematically check all RMU units across the
+                            run    using    find_events_with_missing_components and
+                            check_component_activity, and determine the exact af-
+                            fected event range.
+
+C   Guided multi-tool       The query prescribes an explicit five-step pipeline: inspect the file,
+    pipeline                filter events 0–2,000, compute the multiplicity distribution, detect
+                            occupancy outliers, and plot PMT locations highlighting noisy
+                            PMTs. Tests whether the agent can follow an explicit multi-step
+                            instruction without deviating or omitting steps.
+
+D   Comprehensive           The query requests a seven-part analysis covering global KPIs,
+    cross-subsystem         spatial charge uniformity, occupancy outliers (top 3 noisy and top 3
+    health check            quiet PMTs), a detailed profile of the noisiest PMT, temporal burst
+                            scanning, a missing-BEC audit, and hardware tracing from the
+                            worst missing BEC to its parent RMU. The agent must chain at
+                            least 10 distinct tools, and the final answer must address whether
+                            the RMU connected to the worst BEC was also flagged in the
+                            occupancy scan. Designed as a limit test for the current model
+                            tier.
+
+
+
+
+                                               61
+Appendix B
+
+Skill Library
+
+        Table B.1: Skill Cards currently available to the JUNO diagnostic agent.
+
+Tool name                                  Description
+
+inspect_csv                         Returns a lightweight summary of a JUNO
+                                    run CSV file, including file size, event count,
+                                    event range, column names, and average hits
+                                    per event, without loading the full dataset.
+filter_events_by_range              Extracts all hits in a specified event-ID in-
+                                    terval from a large run CSV and writes the
+                                    selected range to a smaller CSV file for down-
+                                    stream analysis.
+compute_run_kpis                    Computes global run-level key performance
+                                    indicators, such as the number of events, av-
+                                    erage hits per event, and average charge, to
+                                    provide a first diagnostic overview of whether
+                                    the run is unusually noisy or quiet.
+get_event_multiplicity_distribution Builds a hits-per-event multiplicity distribu-
+                                    tion and returns histogram counts and sum-
+                                    mary statistics such as the mean, median, and
+                                    high-percentile tail behaviour.
+detect_global_occupancy_outliers    Identifies globally anomalous PMTs over the
+                                    full run, including potential flashing or dead
+                                    channels, using robust occupancy statistics
+                                    based on the median and median absolute
+                                    deviation.
+
+
+
+
+                                          62
+Tool name                               Description
+
+scan_run_for_occupancy_anomalies    Scans the run in time windows to detect
+                                    transient occupancy anomalies, such as short
+                                    bursts or temporary flashing PMTs, that may
+                                    be hidden in global statistics.
+get_pmt_profile                     Retrieves the activity profile of a single PMT,
+                                    including total hits, average charge, and a
+                                    sampled time series of events in which the
+                                    PMT fired.
+get_hardware_connections            Traces detector hardware connectivity for a
+                                    specified PMT, GCU, BEC, or RMU, return-
+                                    ing the associated connected components and
+                                    helping localise the scope of a hardware prob-
+                                    lem.
+check_component_activity            Checks whether hardware components are ac-
+                                    tive or silent within a specified event window.
+                                    It can operate on a specific component or on
+                                    all components of a selected type.
+find_events_with_missing_components Audits a full run for missing GCU, BEC, or
+                                    RMU components and writes a detailed JSON
+                                    report, while returning a concise summary to
+                                    the agent.
+read_missing_components_report      Reads a JSON report produced by the missing-
+                                    component audit and returns a short human-
+                                    readable summary of the most problematic
+                                    components.
+analyze_spatial_charge_uniformity   Analyses charge uniformity across JUNO
+                                    hardware levels, including GCU, BEC, and
+                                    RMU groupings, and returns charge statis-
+                                    tics, asymmetries, flagged anomalies, and a
+                                    diagnostic narrative.
+plt_pmt_sing                        Produces a two-dimensional PMT map in
+                                    detector coordinates, optionally highlighting
+                                    PMTs present in a run data CSV and colour-
+                                    ing channels by RMU.
+plt_pmt_grp                         Generates PMT group plots from CSV files
+                                    in a directory and writes the resulting plot
+                                    output to disk.
+
+
+                                       63
+Appendix C
+
+Memory Compression Ablation
+
+C.1      Memory Compression Ablation
+The Folded Memory system (Section 3.3.5) compresses the message history periodically,
+extracting key findings into a persistent list and replacing the raw history with a
+compressed narrative summary. The compression frequency (every N tool calls) is
+a configurable parameter. This section reports an ablation study that varies N to
+determine its effect on long-horizon task completion.
+
+
+C.1.1     Experimental Design
+Five compression frequencies were tested: N ∈ {1, 3, 6, 9, 12}. For each frequency, all
+four long-horizon scenarios (A–D) were executed Nruns = 5 times. All other variables
+were held constant. N = 1 represents compression after every tool call.
+
+
+C.1.2     Results
+Figure C.1 plots the task completion rate as a function of compression frequency.
+   The relationship between compression frequency and task completion exhibits an
+inverted-U shape, with a clear optimum at N = 3. Table C.1 reports the numerical
+values.
+
+
+C.1.3     Interpretation
+Too-frequent compression (N = 1). Compressing after every tool call achieves
+70%, which is below the optimum despite maximising the number of compression
+opportunities. Two mechanisms degrade performance at this frequency. First, each
+compression cycle involves a full LLM call to the Memory Folder Node, which adds one
+inference call per tool invocation. For a 16-step scenario, this adds 16 additional LLM
+calls, substantially increasing total latency and token consumption. Second, and more
+
+                                          64
+                                            C.1. MEMORY COMPRESSION ABLATION
+
+
+
+
+Figure C.1: Task completion rate versus memory compression frequency (every N tool calls)
+on the four long-horizon scenarios (4 × 5 = 20 runs per frequency). The optimal frequency is
+N = 3 (85%, 17/20). Error bars: Wilson 95% CI.
+
+
+
+
+Table C.1: Task completion rate by compression frequency. The optimal frequency (N = 3)
+is highlighted.
+
+                       Frequency (N )      Successes / 20     Rate
+
+                          Every 1 call           14/20         0.70
+                         Every 3 calls           17/20        0.85
+                          Every 6 calls          12/20         0.60
+                          Every 9 calls          8/20          0.40
+                         Every 12 calls          7/20          0.35
+
+
+
+
+                                            65
+APPENDIX C. MEMORY COMPRESSION ABLATION
+
+
+importantly, over-frequent compression causes information loss through rewriting: each
+compression cycle replaces the raw message history with a summary. When compression
+occurs after every single tool call, the summary is rewritten before the Agent Node has
+had the opportunity to reason over the raw tool output. Subtle details in tool outputs
+may be lost in the compression if the Memory Folder Node’s LLM does not judge them
+significant enough to extract as findings.
+
+Too-infrequent compression (N ≥ 9). At N = 9 and N = 12, the completion
+rate drops to 40% and 35% respectively. The message history grows substantially before
+any compression occurs, and the context degradation effects described in Section 2.2.3
+dominate. Critical intermediate findings (PMT identifiers, file paths, anomaly counts)
+are displaced from the high-attention positions in the context window before they can
+be persisted in the findings list.
+    It is important to note that this optimal frequency is an empirical finding specific to
+the model tier (GPT-OSS 20B) and the tool suite used in this work. A more capable
+model with better long-context retention might tolerate less frequent compression
+(higher N ), while a weaker model might require more frequent compression. The
+inverted-U shape itself, reflecting the tension between information loss and context
+degradation, is expected to be a general phenomenon.
+
+
+
+
+                                            66
+Appendix D
+
+Prompt Design and Development
+
+The architecture described in Chapter 3 relies not only on the graph topology and
+Skill Card representation, but also on prompt templates that define the role of each
+LLM-based node. These prompts were not written as generic instructions. The prompt
+templates were designed iteratively during implementation by observing recurring fail-
+ures; but they were also informed by established prompt-engineering practices reported
+in the literature. In particular, recent surveys and prompt pattern catalogues recommend
+making the model’s role explicit, decomposing complex tasks into smaller reasoning
+steps, separating instructions from context, providing structured input sections, and
+constraining the expected output format [46].
+   The final prompts follow three design principles.
+
+
+Role separation. Each LLM node is assigned a narrow operational role. The Agent-
+Node is prompted as a manager responsible for planning and tool selection. The
+Argument Formatter Node is prompted as a specialist responsible for validating one
+selected skill and constructing its arguments. The Memory Folder Node is prompted as
+a compressor responsible for extracting persistent facts and summarising previous steps.
+
+
+Context structuring. The prompts are organised into explicitly labelled context
+blocks. For the AgentNode, the input context contains the original user query, compact
+Skill Card summaries, the folded memory summary, confirmed findings, the current
+plan, and recent message history. This formatting was chosen to reduce ambiguity
+about where information should be retrieved from. .
+
+
+Constrained output. Each LLM node is coupled to a Pydantic structured-output
+model. Thus, the prompt does not ask for arbitrary natural language, but for a JSON
+object matching a predefined schema. For the AgentNode, the model must return either
+a tool-selection decision or a final answer. For the Formatter Node, it must return either
+
+                                           67
+APPENDIX D. PROMPT DESIGN AND DEVELOPMENT
+
+
+a validation failure with a reason or a validated argument dictionary. This constraint
+reduces parsing errors and makes node behaviour auditable in the execution trace.
+   Listing D.1 shows a shortened excerpt of the AgentNode prompt1 . The complete
+prompt used in the implementation is longer, but this excerpt illustrates the main struc-
+ture: role assignment, explicit context blocks, decision rules, and schema-constrained
+output.
+ 1   You are the AI " Manager " for the JUNO detector , responsible
+ 2   for high - level planning and reasoning . Your goal is to solve
+ 3   the user ’s request by creating and managing a multi - step plan .
+ 4   If the request is not related to the available skills , you must
+ 5   reject it .
+ 6
+
+ 7   YOUR CONTEXT :
+ 8
+
+ 9   0. Original User Request :
+10   { user_query }
+11
+
+12   1. Skill Summaries :
+13   { skill_summaries }
+14
+
+15   2. Memory Summary :
+16   { folded_memory }
+17
+
+18   3. Confirmed Findings :
+19   { findings }
+20
+
+21   4. Current Plan :
+22   { plan }
+23
+
+24   5. Recent History :
+25   { recent_history }
+26
+
+27   YOUR TASK :
+28
+
+29   1. Reflect :
+30   - Use Recent History for exact data such as IDs , paths ,
+31     numbers , error messages , and tool outputs .
+32   - Use Confirmed Findings for persistent facts that survive
+33     memory folding .
+34   - Check whether the available skills support the request .
+35   - If no skill is relevant , do not hallucinate a capability .
+36
+
+37   2. Decide :
+38   - If the request is unsupported , return a final answer explaining
+
+     1
+         Full prompts can be found in the Git repository
+
+
+                                                    68
+39     why it cannot be fulfilled .
+40   - If the plan is complete , return a final answer .
+41   - Otherwise , select the next pending step ’s skill .
+42
+
+43   3. Output :
+44   Return one JSON object conforming to the AgentDecision schema .
+
+           Listing D.1: Shortened excerpt of the AgentNode prompt template.
+
+    This prompt evolved through qualitative error analysis. Early versions simply listed
+the available tools and asked the model to decide what to do next. Those versions
+often failed in three ways. First, the model attempted unsupported analyses instead of
+refusing. Second, it reused stale or hallucinated file paths after several tool calls. Third,
+it sometimes completed a diagnostic task prematurely after only one intermediate result.
+The final prompt addresses these failures by adding an explicit unsupported request
+check, separating confirmed findings from narrative memory, and requiring the model
+to maintain a plan with pending and completed steps. Similar prompts were designed
+for the other LLM nodes.
+    Overall, the prompt design should be understood as part of the system architecture.
+The prompts encode the operational contract of each LLM node, while LangGraph
+enforces the order in which those contracts are applied and Pydantic validates the
+structured outputs.
+
+
+
+
+                                             69
+Bibliography
+
+[1] JUNO Collaboration. “JUNO physics and detector”. In: Progress in Particle and
+    Nuclear Physics 123 (2022), p. 103927. doi: 10.1016/j.ppnp.2021.103927.
+[2] Wayne Xin Zhao et al. A Survey of Large Language Models. 2023. arXiv: 2303.
+    18223 [cs.CL]. url: https://arxiv.org/abs/2303.18223.
+[3] Oren Ben-Kiki, Clark Evans, and Ingy döt Net. YAML Ain’t Markup Language
+    (YAML) Version 1.2, 3rd Edition. Oct. 2021. url: https://yaml.org/spec/1.
+    2.2/ (visited on 05/14/2026).
+[4] JUNO Collaboration. Initial performance results of the JUNO detector. 2025.
+    arXiv: 2511.14590 [hep-ex]. url: https://arxiv.org/abs/2511.14590.
+[5] Vanessa Cerrone et al. “Validation and integration tests of the JUNO 20-inch PMT
+    readout electronics”. In: Nuclear Instruments and Methods in Physics Research
+    Section A 1053 (2023), p. 168322. doi: 10.1016/j.nima.2023.168322.
+[6] Feng Gao, Yifan Yang, et al. “The status of the back-end card for the JUNO
+    experiment”. In: Journal of Instrumentation 19 (2024), p. C05046. doi: 10.1088/
+    1748-0221/19/05/C05046.
+[7] Pierre-Alexandre Petitjean. “Development and tests of JUNO electronics readout
+    system and study of JUNO performance for core collapse supernova model dis-
+    crimination: From JUNO back-end card hardware tests to statistical methods for
+    supernova studies with JUNO”. Academic year 2024–2025. PhD thesis (Doctorat
+    en Sciences de l’Ingénieur et Technologie). Université libre de Bruxelles (ULB),
+    2024. url: https : / / iihe . ac . be / sites / default / files / thesis - pierre -
+    alexandre - petitjean - juno - phd - 2024pdf / thesis - pierre - alexandre -
+    petitjean-juno-phd-2024.pdf (visited on 03/08/2026).
+[8] Pierre-Alexis Petitjean, Barbara Clerbaux, and on behalf of the JUNO Collabora-
+    tion. “The JUNO experiment and its electronics readout system”. In: Journal of
+    Instrumentation 17 (2022), p. C05014. doi: 10.1088/1748-0221/17/05/C05014.
+[9] JUNO Collaboration. Offline data processing in the First JUNO Data Challenge.
+    2024. arXiv: 2408.00959 [hep-ex]. url: https://arxiv.org/abs/2408.00959.
+
+
+
+                                         71
+BIBLIOGRAPHY
+
+
+[10] K. Huang, Z. You, and on behalf of the JUNO Collaboration. “Data Quality
+     Monitoring for the JUNO Experiment”. In: Proceedings of the 21st International
+     Workshop on Advanced Computing and Analysis Techniques in Physics Research
+     (ACAT 2022). 2022. url: https://indico.cern.ch/event/1106990/papers/
+     4998072/.
+[11] Hugging Face. Summary of the tokenizers. Transformers documentation. Hugging
+     Face. url: https://huggingface.co/docs/transformers/en/tokenizer_
+     summary (visited on 02/27/2026).
+[12] Tom B. Brown et al. “Language Models are Few-Shot Learners”. In: Advances in
+     Neural Information Processing Systems 33 (2020), pp. 1877–1901.
+[13] Ashish Vaswani et al. “Attention Is All You Need”. In: Advances in Neural
+     Information Processing Systems 30 (2017).
+[14] Long Ouyang et al. “Training language models to follow instructions with human
+     feedback”. In: Advances in Neural Information Processing Systems. Vol. 35. 2022,
+     pp. 27730–27744.
+[15] Yufeng Du et al. “Context Length Alone Hurts LLM Performance Despite Perfect
+     Retrieval”. In: Findings of the Association for Computational Linguistics: EMNLP
+     2025. 2025, pp. 23281–23298. url: https://aclanthology.org/2025.findings-
+     emnlp.1264.pdf.
+[16] Jason Wei et al. “Chain-of-Thought Prompting Elicits Reasoning in Large Lan-
+     guage Models”. In: Advances in Neural Information Processing Systems. Vol. 35.
+     2022, pp. 24824–24837.
+[17] Timo Schick et al. “Toolformer: Language Models Can Teach Themselves to Use
+     Tools”. In: Advances in Neural Information Processing Systems. Vol. 36. 2023.
+     arXiv: 2302.04761. url: https://arxiv.org/abs/2302.04761.
+[18] Shunyu Yao et al. “ReAct: Synergizing Reasoning and Acting in Language Models”.
+     In: International Conference on Learning Representations. 2023.
+[19] Harrison Chase. LangChain. https://github.com/langchain-ai/langchain.
+     2022.
+[20] LangChain AI. LangGraph: Building Stateful, Multi-Actor Applications with LLMs.
+     https://github.com/langchain-ai/langgraph. 2024.
+[21] Lore Van Oudenhove. How to Build AI Agents with LangGraph: A Step-by-Step
+     Guide. Medium. Sept. 6, 2024. url: https://medium.com/@lorevanoudenhove/
+     how - to - build - ai - agents - with - langgraph - a - step - by - step - guide -
+     5d84d9c7e832 (visited on 05/05/2026).
+
+
+
+                                          72
+                                                                   BIBLIOGRAPHY
+
+
+[22] Ziwei Ji et al. “Survey of Hallucination in Natural Language Generation”. In:
+     ACM Computing Surveys 55.12 (2023), pp. 1–38. doi: 10.1145/3571730.
+[23] Shirley Kokane, Ming Zhu, Tulika Awalgaonkar, et al. SpecTool: A Benchmark
+     for Characterizing Errors in Tool-Use LLMs. 2024. arXiv: 2411.13547 [cs.CL].
+     url: https://arxiv.org/abs/2411.13547.
+[24] Yujia Qin et al. ToolLLM: Facilitating Large Language Models to Master 16000+
+     Real-world APIs. 2023. arXiv: 2307.16789 [cs.CL]. url: https://arxiv.org/
+     abs/2307.16789.
+[25] Artificial Analysis. Open-Source Small Language Models Benchmark. 2026. url:
+     https://artificialanalysis.ai/models/open- source/small (visited on
+     03/01/2026).
+[26] Artificial Analysis. Large Language Models Benchmark. 2026. url: https://
+     artificialanalysis.ai/models (visited on 03/05/2026).
+[27] Andres M. Bran, Sam Cox, Oliver Schilter, Carlo Baldassari, Andrew D. White,
+     and Philippe Schwaller. “Augmenting large-language models with chemistry tools”.
+     In: Nature Machine Intelligence 6 (2024), pp. 525–535. doi: 10.1038/s42256-
+     024-00832-8.
+[28] Daniil A. Boiko, Robert MacKnight, Ben Kline, and Gabe Gomes. “Autonomous
+     chemical research with large language models”. In: Nature 624 (2023), pp. 570–
+     578. doi: 10.1038/s41586- 023- 06792- 0. url: https://www.nature.com/
+     articles/s41586-023-06792-0.
+[29] Kaixuan Huang et al. “CRISPR-GPT: An LLM Agent for Automated Design of
+     Gene-Editing Experiments”. In: arXiv preprint arXiv:2404.18021 (2024). url:
+     https://arxiv.org/abs/2404.18021.
+[30] Tony Menzo et al. HEPTAPOD: Orchestrating High Energy Physics Workflows
+     Towards Autonomous Agency. 2025. arXiv: 2512.15867 [hep-ph]. url: https:
+     //arxiv.org/abs/2512.15867.
+[31] Rohan Kadekodi et al. AgentFlux: Decoupled Fine-Tuning & Inference for On-
+     Device Agentic Systems. 2025. arXiv: 2510.00229 [cs.LG]. url: https://arxiv.
+     org/abs/2510.00229.
+[32] Charles Packer et al. MemGPT: Towards LLMs as Operating Systems. 2023.
+     arXiv: 2310.08560 [cs.AI]. url: https://arxiv.org/abs/2310.08560.
+[33] Wanjun Zhong, Lianghong Guo, Qiqi Gao, He Ye, and Yanlin Wang. “Mem-
+     oryBank: Enhancing Large Language Models with Long-Term Memory”. In:
+     Proceedings of the AAAI Conference on Artificial Intelligence. 2024.
+
+
+
+                                         73
+BIBLIOGRAPHY
+
+
+[34] Kuang-Huei Lee, Xinyun Chen, Hiroki Furuta, John Canny, and Ian Fischer. A
+     Human-Inspired Reading Agent with Gist Memory of Very Long Contexts. 2024.
+     arXiv: 2402.09727 [cs.CL]. url: https://arxiv.org/abs/2402.09727.
+[35] Xiaoxi Li et al. DeepAgent: A General Reasoning Agent with Scalable Toolsets.
+     2025. arXiv: 2510.21618 [cs.AI]. url: https://arxiv.org/abs/2510.21618.
+[36] Tianle Cai, Xuezhi Wang, Tengyu Ma, Xinyun Chen, and Denny Zhou. “Large
+     Language Models as Tool Makers”. In: The Twelfth International Conference
+     on Learning Representations. 2024. url: https://openreview.net/forum?id=
+     qV83K9d5WB.
+[37] Lifan Yuan, Yangyi Chen, Xingyao Wang, Yi R. Fung, Hao Peng, and Heng
+     Ji. “CRAFT: Customizing LLMs by Creating and Retrieving from Specialized
+     Toolsets”. In: Proceedings of the Twelfth International Conference on Learning
+     Representations. 2024. arXiv: 2309.17428. url: https://arxiv.org/abs/2309.
+     17428.
+[38] Georg Wölflein, Dyke Ferber, Daniel Truhn, Ognjen Arandjelović, and Jakob
+     Nikolas Kather. LLM Agents Making Agent Tools. Accepted at ACL 2025. 2025.
+     arXiv: 2502.11705 [cs.CL]. url: https://arxiv.org/abs/2502.11705.
+[39] Pydantic Contributors. Pydantic: Data Validation Using Python Type Hints.
+     https://docs.pydantic.dev. 2023.
+[40] Anthropic. Introducing Agent Skills. Oct. 2025. url: https://www.anthropic.
+     com/news/skills (visited on 03/05/2026).
+[41] OpenAI. Function Calling and Other API Updates. June 2023. url: https :
+     //openai.com/index/function-calling-and-other-api-updates/ (visited
+     on 05/10/2026).
+[42] Ollama Contributors. Ollama: Run Large Language Models Locally. https://
+     ollama.com. 2023. (Visited on 05/14/2026).
+[43] Fanjia Yan et al. Berkeley Function Calling Leaderboard. 2024. arXiv: 2402.15671
+     [cs.CL]. url: https://arxiv.org/abs/2402.15671.
+[44] Xiao Liu et al. AgentBench: Evaluating LLMs as Agents. 2023. arXiv: 2308.03688
+     [cs.CL]. url: https://arxiv.org/abs/2308.03688.
+[45] Ziru Chen et al. “ScienceAgentBench: Toward Rigorous Assessment of Language
+     Agents for Data-Driven Scientific Discovery”. In: The Thirteenth International
+     Conference on Learning Representations. 2025. url: https://openreview.net/
+     forum?id=6z4YKr0GK6.
+
+
+
+
+                                         74
+                                                              BIBLIOGRAPHY
+
+
+[46] Jules White et al. A Prompt Pattern Catalog to Enhance Prompt Engineering
+     with ChatGPT. 2023. arXiv: 2302.11382 [cs.SE]. url: https://arxiv.org/
+     abs/2302.11382.
+
+
+
+
+                                     75
+

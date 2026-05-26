@@ -1,0 +1,81 @@
+[
+  {
+    "id": "long_A_flashing_pmt",
+    "tier": 4,
+    "query": "Analyze the run data in test_data/long_scenario_A_flashing_pmt.csv for any noisy or flashing PMTs. Report which PMTs are anomalous and how severe the issue is.",
+    "expected_tools": [
+      "inspect_csv",
+      "filter_events_by_range",
+      "detect_global_occupancy_outliers",
+      "get_pmt_profile"
+    ],
+    "forbidden_tools": [],
+    "ground_truth_facts": [
+      "PMT 4274 is flashing/noisy across the entire run"
+    ],
+    "min_tool_calls": 12
+  },
+  {
+    "id": "long_B_dead_rmu",
+    "tier": 4,
+    "query": "Investigate the run data at test_data/long_scenario_B_dead_rmu.csv. This is a very large run. Inspect the file, then systematically check whether all RMU units are active throughout the entire run. If any RMU goes silent, determine exactly which events are affected.",
+    "expected_tools": [
+      "inspect_csv",
+      "filter_events_by_range",
+      "check_component_activity",
+      "find_events_with_missing_components"
+    ],
+    "forbidden_tools": [],
+    "ground_truth_facts": [
+      "RMU 5-1 is silent between events 5000 and 12000",
+      "RMU 5-1 is active before event 5000 and after event 12000"
+    ],
+    "min_tool_calls": 6
+  },
+  {
+    "id": "long_C_flashing_pmt",
+    "tier": 4,
+    "query": "Inspect 'test_data/long_scenario_A_flashing_pmt.csv', filter events 0 to 2000 into a new file, then run the multiplicity distribution on the filtered file, then detect occupancy outliers on the same filtered file. Finally plot the PMT locations and highlight any noisy PMTs.",
+    "expected_tools": [
+      "inspect_csv",
+      "filter_events_by_range",
+      "get_event_multiplicity_distribution",
+      "detect_global_occupancy_outliers",
+      "plt_pmt_sing"
+    ],
+    "forbidden_tools": [],
+    "ground_truth_facts": [
+      "The filtered file covers events 0 to 2000",
+      "Noisy PMTs identified by detect_global_occupancy_outliers are passed to plt_pmt_sing for highlighting"
+    ],
+    "min_tool_calls": 4
+  },
+  {
+    "id": "long_D_comprehensive_health_check",
+    "tier": 4,
+    "query": "Perform a comprehensive health check on 'test_data/long_scenario_D_flashing_pmt.csv'. Your analysis should cover: 1. Global run quality (KPIs, multiplicity distribution) 2. Spatial uniformity across hardware levels 3. Global PMT health (occupancy outliers, identify top 3 noisy and top 3 dead PMTs) 4. Get the detailed profile of the single noisiest PMT 5. Temporal anomalies (scan for burst windows) 6. Hardware completeness (audit for missing BECs) 7. Trace the worst missing BEC to its RMU and verify whether that RMU was also problematic in the occupancy scan. Produce a final structured report summarizing all findings, noting any correlations between spatial, temporal, and hardware anomalies.",
+    "expected_tools": [
+      "inspect_csv",
+      "compute_run_kpis",
+      "get_event_multiplicity_distribution",
+      "analyze_spatial_charge_uniformity",
+      "detect_global_occupancy_outliers",
+      "get_pmt_profile",
+      "scan_run_for_occupancy_anomalies",
+      "find_events_with_missing_components",
+      "read_missing_components_report",
+      "get_hardware_connections"
+    ],
+    "forbidden_tools": [],
+    "ground_truth_facts": [
+      "The agent runs at least 8 distinct tool calls",
+      "detect_global_occupancy_outliers is called before get_pmt_profile",
+      "The pmt_id passed to get_pmt_profile matches the top noisy PMT returned by detect_global_occupancy_outliers",
+      "find_events_with_missing_components is called with element_type BEC",
+      "get_hardware_connections is called with the BEC ID identified as worst in the missing components report",
+      "The final answer explicitly addresses whether the RMU connected to the worst BEC was also flagged in the occupancy scan",
+      "The final answer contains a structured summary covering all 7 analysis steps"
+    ],
+    "min_tool_calls": 8
+  }
+]

@@ -1,0 +1,79 @@
+{
+  "timestamp": "2026-02-16T13:10:14.491618",
+  "mode": "compare",
+  "config": {
+    "skill_folder": "skills",
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": -2
+  },
+  "runs_per_query": 1,
+  "total_queries": 1,
+  "total_runs": 1,
+  "results": [
+    {
+      "query_id": "q006",
+      "tier": 1,
+      "query_text": "Scan test_data/scenario7_one.csv for transient anomalies and bursts",
+      "description": "Tier 1: Single-Tool Direct - scan run for occupancy anomalies",
+      "run_id": 0,
+      "juno": {
+        "query_id": "q006",
+        "tier": 1,
+        "query_text": "Scan test_data/scenario7_one.csv for transient anomalies and bursts",
+        "description": "Tier 1: Single-Tool Direct - scan run for occupancy anomalies",
+        "run_id": 0,
+        "agent_name": "juno",
+        "latency_seconds": 15.404937982559204,
+        "crashed": false,
+        "crash_message": null,
+        "tool_calls": [
+          {
+            "skill_name": "scan_run_for_occupancy_anomalies",
+            "args": {
+              "run_data_path": "test_data/scenario7_one.csv",
+              "events_per_window": 30,
+              "flashing_z_threshold": 7,
+              "top_k_windows": 20
+            },
+            "output_summary": "{\"status\": \"Scan Complete\", \"total_windows_scanned\": 4, \"anomalous_windows_found\": 4, \"results_saved_to\": \"test_data/scenario7_one.csv_scan_results.json\", \"top_anomalous_windows\": [{\"window_id\": 2, \"e",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "tool_call_count": 1,
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \":scan-transient-anomalies\",\n      \"description\": \"Scan test_data/scenario7_one.csv for transient anomalies and bursts\",\n      \"tool\": null,\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"status\\\": \\\"Scan Complete\\\", \\\"total_windows_scanned\\\": 4, \\\"anomalous_windows_found\\\": 4, \\\"results_saved_to\\\": \\\"test_data/scenario7_one.csv_scan_results.json\\\", \\\"top_anomalous_windows\\\": [{\\\"window_id\\\": 2, \\\"event_start\\\": 60, \\\"event_end\\\": 90, \\\"total_hits\\\": 6237, \\\"num_flashers\\\": 1, \\\"is_burst\\\": true, \\\"flashers_preview\\\": [9266]}, {\\\"window_id\\\": 3, \\\"event_start\\\": 90, \\\"event_end\\\": 120, \\\"total_hits\\\": 1909, \\\"num_flashers\\\": 1, \\\"is_burst\\\": true, \\\"flashers_preview\\\": [4769]}, {\\\"window_id\\\": 0, \\\"event_start\\\": 0, \\\"event_end\\\": 30, \\\"total_hits\\\": 6629, \\\"num_flashers\\\": 0, \\\"is_burst\\\": true, \\\"flashers_preview\\\": []}, {\\\"window_id\\\": 1, \\\"event_start\\\": 30, \\\"event_end\\\": 60, \\\"total_hits\\\": 5136, \\\"num_flashers\\\": 0, \\\"is_burst\\\": true, \\\"flashers_preview\\\": []}]}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"The scan is complete. All 4 time windows were examined, and 4 anomalous windows were identified. The results, including detailed window statistics and the most anomalous windows, have been saved to `test_data/scenario7_one.csv_scan_results.json`.\",\n  \"thought\": \"The user requested a scan for transient anomalies. The relevant tool was invoked and returned a complete result. No pending steps remain, so I provide a final answer summarizing the outcome.\"\n}"
+      },
+      "baseline_b1": {
+        "query_id": "q006",
+        "tier": 1,
+        "query_text": "Scan test_data/scenario7_one.csv for transient anomalies and bursts",
+        "description": "Tier 1: Single-Tool Direct - scan run for occupancy anomalies",
+        "run_id": 0,
+        "agent_name": "baseline_b1",
+        "latency_seconds": 4.219102382659912,
+        "crashed": false,
+        "crash_message": null,
+        "tool_calls": [
+          {
+            "skill_name": "scan_run_for_occupancy_anomalies",
+            "args": {
+              "events_per_window": 30,
+              "flashing_z_threshold": 7,
+              "run_data_path": "test_data/scenario7_one.csv",
+              "top_k_windows": 20
+            },
+            "output_summary": "{\"status\": \"Scan Complete\", \"total_windows_scanned\": 4, \"anomalous_windows_found\": 4, \"results_saved_to\": \"test_data/scenario7_one.csv_scan_results.json\", \"top_anomalous_windows\": [{\"window_id\": 2, \"e",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "tool_call_count": 1,
+        "final_answer": "**Transient\u2011Anomaly Scan Summary \u2013 `test_data/scenario7_one.csv`**\n\n| Window | Events | Total Hits | Flashers | Burst? | Flashers (preview) |\n|--------|--------|------------|----------|--------|--------------------|\n| 0 | 0\u201330 | 6\u202f629 | 0 | **Yes** | \u2013 |\n| 1 | 30\u201360 | 5\u202f136 | 0 | **Yes** | \u2013 |\n| 2 | 60\u201390 | 6\u202f237 | 1 | **Yes** | 9\u202f266 |\n| 3 | 90\u2013120 | 1\u202f909 | 1 | **Yes** | 4\u202f769 |\n\n- **All 4 windows** (the entire run is only 120 events) were flagged as anomalous.\n- Each window shows a high hit count relative to the others, with windows\u202f2 and\u202f3 containing a single flashing PMT (IDs\u202f9266 and\u202f4769 respectively).\n- The tool saved a detailed JSON report to `test_data/scenario7_one.csv_scan_results.json` for further inspection.\n\nLet me know if you\u2019d like to drill down into any specific window, examine the PMT profiles, or generate visualizations."
+      }
+    }
+  ]
+}

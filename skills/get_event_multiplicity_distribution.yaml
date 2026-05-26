@@ -1,0 +1,46 @@
+skill_id: get_event_multiplicity_distribution
+summary:
+  name: get_event_multiplicity_distribution
+  description: >-
+    Generates a histogram of hits-per-event (multiplicity). Returns the bin counts 
+    and summary stats (mean, median, p99). Use this to check for "tails" (abnormal high-energy events) 
+    or "double peaks" (mixed data types).
+  parameters:
+    type: object
+    properties:
+      run_data_path:
+        type: string
+        description: "The path to the run data CSV file."
+        required: true
+      num_bins:
+        type: integer
+        description: "Number of bins for the histogram."
+        required: false
+        default: 20
+execution_details:
+  type: python_function
+  call:
+    module: "juno_tools.physics_analysis"
+    function: "get_event_multiplicity_distribution"
+usage_policy:
+  use_when:
+    - You suspect the data contains mixed events (e.g., noise vs. physics).
+    - You want to see the "shape" of the data distribution.
+  do_not_use_when:
+    - You just want a single number summary (use 'compute_run_kpis').
+output_schema:
+  description: "Returns distribution stats and a list of bins."
+  type: object
+  properties:
+    summary_stats: 
+      type: object
+      properties:
+         mean: { type: number }
+         p99: { type: number }
+    histogram_bins:
+      type: array
+      items:
+        type: object
+        properties:
+          bin_range: { type: string, example: "0-10" }
+          count: { type: integer }

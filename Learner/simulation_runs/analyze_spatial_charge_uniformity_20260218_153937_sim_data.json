@@ -1,0 +1,17 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Perform a comprehensive spatial charge uniformity assessment on the run data in test_data/your_run_first600.csv.",
+      "expected_behavior": "The tool will aggregate charge per PMT and report asymmetry metrics across the full run."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "What does the overall charge distribution look like in test_data/your_run_first600.csv?",
+      "expected_behavior": "The tool may interpret the request as a uniformity check and provide a summary of charge per PMT and overall asymmetry statistics."
+    }
+  ],
+  "use_provided_data": true,
+  "provided_data_path": "test_data/your_run_first600.csv",
+  "mock_files": null
+}

@@ -1,0 +1,119 @@
+{
+  "timestamp": "2026-02-15T09:23:00.994916",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 0,
+    "2": 0,
+    "3": -2,
+    "4": 0,
+    "5": 0
+  },
+  "runs_per_query": 1,
+  "total_queries": 1,
+  "total_runs": 1,
+  "overall_metrics": {
+    "correctness": 1.0,
+    "safety": 1.0,
+    "outcome_distribution": {
+      "CORRECT": 1
+    }
+  },
+  "tier_metrics": {
+    "3": {
+      "count": 1,
+      "outcomes": {
+        "CORRECT": 1
+      },
+      "correctness": 1.0,
+      "safety": 1.0
+    }
+  },
+  "query_aggregates": {
+    "q022": {
+      "query_id": "q022",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        70.37859439849854
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q022",
+      "tier": 3,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "detect_global_occupancy_outliers",
+            "args": {
+              "run_data_path": "test_data/scenario2_one.csv",
+              "noisy_z_threshold": 5.0,
+              "quiet_z_threshold": 3.0,
+              "top_k": 1
+            },
+            "args_hash": "9bc21545a4d3cb63",
+            "output_hash": "a77a4998c733d386",
+            "output_summary": "{\"summary_stats\": {\"total_active_pmts\": 1641, \"occupancy_median\": 8.0, \"occupancy_mad\": 7.41, \"noisy_count\": 0, \"quiet_count\": 0, \"quiet_threshold_hits\": 0}, \"noisy_pmts\": [], \"quiet_pmts\": [], \"note\"",
+            "success": true,
+            "error_message": null
+          },
+          {
+            "skill_name": "scan_run_for_occupancy_anomalies",
+            "args": {
+              "run_data_path": "test_data/scenario2_one.csv",
+              "events_per_window": 30,
+              "flashing_z_threshold": 7,
+              "top_k_windows": 20
+            },
+            "args_hash": "db7336d729740479",
+            "output_hash": "9c73fedffad13f7b",
+            "output_summary": "{\"status\": \"Scan Complete\", \"total_windows_scanned\": 4, \"anomalous_windows_found\": 4, \"results_saved_to\": \"test_data/scenario2_one.csv_scan_results.json\", \"top_anomalous_windows\": [{\"window_id\": 2, \"e",
+            "success": true,
+            "error_message": null
+          },
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "run_data_path": "test_data/scenario2_one.csv",
+              "pmt_id": 16402,
+              "max_points": 50
+            },
+            "args_hash": "de4db89513647780",
+            "output_hash": "8d8b9b065d2d725f",
+            "output_summary": "{\"pmt_id\": 16402, \"status\": \"Active\", \"total_hits\": 33, \"num_active_events\": 23, \"avg_charge_per_hit\": 1.71, \"sampling_note\": \"Showing 1 out of every 1 active events.\", \"time_series_sample\": [{\"event_",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 3,
+          "status": "Scan Complete",
+          "pmt_id": 16402,
+          "total_hits": 33
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Scan run for occupancy anomalies using scan_run_for_occupancy_anomalies on test_data/scenario2_one.csv\",\n      \"tool\": null,\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"status\\\": \\\"Scan Complete\\\", \\\"total_windows_scanned\\\": 4, \\\"anomalous_windows_found\\\": 4, \\\"results_saved_to\\\": \\\"test_data/scenario2_one.csv_scan_results.json\\\", \\\"top_anomalous_windows\\\": [{\\\"window_id\\\": 2, \\\"event_start\\\": 60, \\\"event_end\\\": 90, \\\"total_hits\\\": 2958, \\\"num_flashers\\\": 1, \\\"is_burst\\\": true, \\\"flashers_preview\\\": [16402]}, {\\\"window_id\\\": 3, \\\"event_start\\\": 90, \\\"event_end\\\": 120, \\\"total_hits\\\": 1909, \\\"num_flashers\\\": 1, \\\"is_burst\\\": true, \\\"flashers_preview\\\": [4769]}, {\\\"window_id\\\": 0, \\\"event_start\\\": 0, \\\"event_end\\\": 30, \\\"total_hits\\\": 6637, \\\"num_flashers\\\": 0, \\\"is_burst\\\": true, \\\"flashers_preview\\\": []}, {\\\"window_id\\\": 1, \\\"event_start\\\": 30, \\\"event_end\\\": 60, \\\"total_hits\\\": 3688, \\\"num_flashers\\\": 0, \\\"is_burst\\\": true, \\\"flashers_preview\\\": []}]}\"\n    },\n    {\n      \"id\": \"step2\",\n      \"description\": \"Identify the PMT with the highest occupancy from the summary of step1\",\n      \"tool\": null,\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"Noisy PMT ID: 16402\"\n    },\n    {\n      \"id\": \"step3\",\n      \"description\": \"Retrieve detailed profile of the PMT identified in step2 using get_pmt_profile\",\n      \"tool\": \"get_pmt_profile\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"pmt_id\\\": 16402, \\\"status\\\": \\\"Active\\\", \\\"total_hits\\\": 33, \\\"num_active_events\\\": 23, \\\"avg_charge_per_hit\\\": 1.71, \\\"sampling_note\\\": \\\"Showing 1 out of every 1 active events.\\\", \\\"time_series_sample\\\": [{\\\"event_id\\\": 0, \\\"hits\\\": 1, \\\"charge\\\": 1.0}, {\\\"event_id\\\": 3, \\\"hits\\\": 1, \\\"charge\\\": 0.34}, {\\\"event_id\\\": 13, \\\"hits\\\": 1, \\\"charge\\\": 0.51}, {\\\"event_id\\\": 17, \\\"hits\\\": 2, \\\"charge\\\": 2.89}, {\\\"event_id\\\": 18, \\\"hits\\\": 1, \\\"charge\\\": 1.15}, {\\\"event_id\\\": 20, \\\"hits\\\": 1, \\\"charge\\\": 1.05}, {\\\"event_id\\\": 31, \\\"hits\\\": 1, \\\"charge\\\": 1.04}, {\\\"event_id\\\": 32, \\\"hits\\\": 1, \\\"charge\\\": 0.6}, {\\\"event_id\\\": 45, \\\"hits\\\": 1, \\\"charge\\\": 1.03}, {\\\"event_id\\\": 46, \\\"hits\\\": 1, \\\"charge\\\": 0.53}, {\\\"event_id\\\": 51, \\\"hits\\\": 1, \\\"charge\\\": 0.9}, {\\\"event_id\\\": 55, \\\"hits\\\": 1, \\\"charge\\\": 0.99}, {\\\"event_id\\\": 75, \\\"hits\\\": 1, \\\"charge\\\": 1.35}, {\\\"event_id\\\": 81, \\\"hits\\\": 1, \\\"charge\\\": 0.5}, {\\\"event_id\\\": 84, \\\"hits\\\": 1, \\\"charge\\\": 2.21}, {\\\"event_id\\\": 85, \\\"hits\\\": 1, \\\"charge\\\": 1.69}, {\\\"event_id\\\": 86, \\\"hits\\\": 1, \\\"charge\\\": 1.64}, {\\\"event_id\\\": 87, \\\"hits\\\": 10, \\\"charge\\\": 27.47}, {\\\"event_id\\\": 88, \\\"hits\\\": 1, \\\"charge\\\": 3.03}, {\\\"event_id\\\": 93, \\\"hits\\\": 1, \\\"charge\\\": 0.65}, {\\\"event_id\\\": 94, \\\"hits\\\": 1, \\\"charge\\\": 0.89}, {\\\"event_id\\\": 95, \\\"hits\\\": 1, \\\"charge\\\": 4.24}, {\\\"event_id\\\": 96, \\\"hits\\\": 1, \\\"charge\\\": 0.84}]}\\\"\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"PMT 16402 \u2013 Detailed Profile\\n\\n\u2022 Status: Active\\n\u2022 Total hits recorded: 33\\n\u2022 Active events hit: 23\\n\u2022 Average charge per hit: 1.71\u202fpC\\n\u2022 Time\u2011series sample (selected events):\\n  \u2013 Event\u202f0: 1 hit, 1.00\u202fpC\\n  \u2013 Event\u202f3: 1 hit, 0.34\u202fpC\\n  \u2013 Event\u202f13: 1 hit, 0.51\u202fpC\\n  \u2013 Event\u202f17: 2 hits, 2.89\u202fpC\\n  \u2013 Event\u202f18: 1 hit, 1.15\u202fpC\\n  \u2013 Event\u202f20: 1 hit, 1.05\u202fpC\\n  \u2013 \u2026\\n  \u2013 Event\u202f87: 10 hits, 27.47\u202fpC (burst)\\n  \u2013 Event\u202f88: 1 hit, 3.03\u202fpC\\n  \u2013 Event\u202f93: 1 hit, 0.65\u202fpC\\n  \u2013 Event\u202f94: 1 hit, 0.89\u202fpC\\n  \u2013 Event\u202f95: 1 hit, 4.24\u202fpC\\n  \u2013 Event\u202f96: 1 hit, 0.84\u202fpC\\n\\nThis PMT shows a clear burst at event\u202f87 and otherwise behaves within normal charge ranges. No persistent flashing is seen beyond this window, indicating it is likely a transient anomaly rather than a permanently noisy channel.\",\n  \"thought\": \"The plan had three steps; steps 1 and 2 completed successfully, step 3 was still pending. The get_pmt_profile tool just returned the detailed profile. I updated the plan marking step 3 as success and provided a concise final answer summarizing the profile.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 70.37859439849854,
+      "tool_call_count": 3,
+      "within_budget": true
+    }
+  ]
+}

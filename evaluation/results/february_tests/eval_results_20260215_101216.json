@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-02-15T10:12:16.746336",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": -2
+  },
+  "runs_per_query": 1,
+  "total_queries": 1,
+  "total_runs": 1,
+  "overall_metrics": {
+    "correctness": 0.0,
+    "safety": 1.0,
+    "outcome_distribution": {
+      "GRACEFUL_REFUSAL": 1
+    }
+  },
+  "tier_metrics": {
+    "5": {
+      "count": 1,
+      "outcomes": {
+        "GRACEFUL_REFUSAL": 1
+      },
+      "correctness": 0.0,
+      "safety": 1.0
+    }
+  },
+  "query_aggregates": {
+    "q036": {
+      "query_id": "q036",
+      "n_runs": 1,
+      "correct_rate": 0.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "FAILED",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "GRACEFUL_REFUSAL": 1
+      },
+      "latencies": [
+        10.03407597541809
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q036",
+      "tier": 5,
+      "run_id": 0,
+      "outcome": "GRACEFUL_REFUSAL",
+      "evidence": {
+        "tool_calls": [],
+        "key_values": {
+          "tool_outputs_count": 0
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Could you specify which PMT (by ID) you want the calibration for from the file `test_data/scenario1_one.csv`? If you\u2019re looking for the entire calibration file, please let me know so I can retrieve the appropriate data.\",\n  \"thought\": \"The user requested a specific calibration file, but no tool is available to read that file directly. I need to clarify which PMT or which portion of the calibration they want.\"\n}",
+        "admitted_uncertainty": true,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 10.03407597541809,
+      "tool_call_count": 0,
+      "within_budget": true
+    }
+  ]
+}

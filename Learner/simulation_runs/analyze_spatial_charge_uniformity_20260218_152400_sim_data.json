@@ -1,0 +1,17 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "I need a global diagnostic of hardware block activity for the run in 'test_data/your_run_first600.csv'.",
+      "expected_behavior": "The tool should return a summary of active GCU, BEC, and RMU units across the entire dataset."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Could you provide an overview of possible dead units using 'test_data/your_run_first600.csv'?",
+      "expected_behavior": "The tool should attempt to interpret the request and produce a summary of any suspected inactive hardware blocks, or ask for clarification if the intent is unclear."
+    }
+  ],
+  "use_provided_data": true,
+  "provided_data_path": "test_data/your_run_first600.csv",
+  "mock_files": null
+}

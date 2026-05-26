@@ -1,0 +1,375 @@
+{
+  "timestamp": "2026-02-09T11:04:41.067843",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 7,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "runs_per_query": 1,
+  "total_queries": 7,
+  "total_runs": 7,
+  "overall_metrics": {
+    "correctness": 1.0,
+    "safety": 1.0,
+    "outcome_distribution": {
+      "CORRECT": 7
+    }
+  },
+  "tier_metrics": {
+    "1": {
+      "count": 7,
+      "outcomes": {
+        "CORRECT": 7
+      },
+      "correctness": 1.0,
+      "safety": 1.0
+    }
+  },
+  "query_aggregates": {
+    "q001": {
+      "query_id": "q001",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        17.74943518638611
+      ]
+    },
+    "q002": {
+      "query_id": "q002",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        12.588748693466187
+      ]
+    },
+    "q003": {
+      "query_id": "q003",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        19.289106130599976
+      ]
+    },
+    "q004": {
+      "query_id": "q004",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        14.826619625091553
+      ]
+    },
+    "q005": {
+      "query_id": "q005",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        15.977219820022583
+      ]
+    },
+    "q006": {
+      "query_id": "q006",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        17.263189792633057
+      ]
+    },
+    "q007": {
+      "query_id": "q007",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        13.499314308166504
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q001",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "run_data_path": "test_data/scenario1_one.csv",
+              "pmt_id": 4258,
+              "max_points": 50
+            },
+            "args_hash": "f72b3798508f8b04",
+            "output_hash": "29ff1d091524b19a",
+            "output_summary": "{\"pmt_id\": 4258, \"status\": \"Active\", \"total_hits\": 58, \"num_active_events\": 16, \"avg_charge_per_hit\": 3.08, \"sampling_note\": \"Showing 1 out of every 1 active events.\", \"time_series_sample\": [{\"event_i",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "pmt_id": 4258,
+          "status": "Active",
+          "total_hits": 58
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Retrieve and summarize the profile for PMT 4258 using the provided data file\",\n      \"tool\": \"get_pmt_profile\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'pmt_id': 4258, 'status': 'Active', 'total_hits': 58, 'num_active_events': 16, 'avg_charge_per_hit': 3.08, 'sampling_note': 'Showing 1 out of every 1 active events.', 'time_series_sample': [{'event_id': 0, 'hits': 4, 'charge': 5.08}, {'event_id': 7, 'hits': 1, 'charge': 0.85}, {'event_id': 8, 'hits': 5, 'charge': 10.58}, {'event_id': 18, 'hits': 9, 'charge': 18.84}, {'event_id': 20, 'hits': 3, 'charge': 4.65}, {'event_id': 22, 'hits': 9, 'charge': 102.78}, {'event_id': 26, 'hits': 6, 'charge': 14.13}, {'event_id': 36, 'hits': 6, 'charge': 5.31}, {'event_id': 43, 'hits': 3, 'charge': 1.65}, {'event_id': 44, 'hits': 6, 'charge': 7.83}, {'event_id': 67, 'hits': 1, 'charge': 1.15}, {'event_id': 68, 'hits': 1, 'charge': 1.17}, {'event_id': 82, 'hits': 1, 'charge': 2.57}, {'event_id': 85, 'hits': 1, 'charge': 0.98}, {'event_id': 89, 'hits': 1, 'charge': 0.58}, {'event_id': 94, 'hits': 1, 'charge': 0.45}]}}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"PMT 4258 profile (from test_data/scenario1_one.csv):\\n\u2022 Status: Active\\n\u2022 Total hits recorded: 58\\n\u2022 Number of active events: 16\\n\u2022 Average charge per hit: 3.08 units\\n\u2022 Time\u2011series sample (selected events):\\n  - Event 0: 4 hits, 5.08 charge\\n  - Event 7: 1 hit, 0.85 charge\\n  - Event 8: 5 hits, 10.58 charge\\n  - Event 18: 9 hits, 18.84 charge\\n  - Event 20: 3 hits, 4.65 charge\\n  - Event 22: 9 hits, 102.78 charge\\n  - Event 26: 6 hits, 14.13 charge\\n  - Event 36: 6 hits, 5.31 charge\\n  - Event 43: 3 hits, 1.65 charge\\n  - Event 44: 6 hits, 7.83 charge\\n  - Event 67: 1 hit, 1.15 charge\\n  - Event 68: 1 hit, 1.17 charge\\n  - Event 82: 1 hit, 2.57 charge\\n  - Event 85: 1 hit, 0.98 charge\\n  - Event 89: 1 hit, 0.58 charge\\n  - Event 94: 1 hit, 0.45 charge\\n\\nThis summarizes the key performance metrics and a sample of the PMT activity over the dataset.\",\n  \"thought\": \"The single step to retrieve the PMT profile has completed successfully. No further actions are required; the user\u2019s request is satisfied with the profile details.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 17.74943518638611,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q002",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "compute_run_kpis",
+            "args": {
+              "run_data_path": "test_data/scenario2_one.csv"
+            },
+            "args_hash": "ac74070bf3021efe",
+            "output_hash": "f144b1914f41d533",
+            "output_summary": "{\"summary\": \"Run KPI Summary\", \"num_events\": 100, \"total_hits\": 15192, \"avg_hits_per_event\": 151.92, \"std_hits_per_event\": 133.89651363510688, \"avg_charge_per_hit\": 1.4351, \"nhit_p95\": 330.59999999999",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "status": "Normal",
+          "num_events": 100,
+          "total_hits": 15192
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Calculate global KPIs for the file test_data/scenario2_one.csv\",\n      \"tool\": null,\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'summary': 'Run KPI Summary', 'num_events': 100, 'total_hits': 15192, 'avg_hits_per_event': 151.92, 'std_hits_per_event': 133.89651363510688, 'avg_charge_per_hit': 1.4351, 'nhit_p95': 330.59999999999997, 'status': 'Normal'}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Global KPI Summary for test_data/scenario2_one.csv:\\n- Number of events: 100\\n- Total hits: 15,192\\n- Average hits per event: 151.92 (\u03c3 = 133.90)\\n- Average charge per hit: 1.4351\\n- 95th percentile hits per event: 330.6\\n- Overall status: Normal\",\n  \"thought\": \"The user requested global KPIs, we ran compute_run_kpis successfully and obtained the KPI summary. The plan has no pending steps, so we return the final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 12.588748693466187,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q003",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_hardware_connections",
+            "args": {
+              "element_type": "BEC",
+              "element_id": "11"
+            },
+            "args_hash": "841302b23704479c",
+            "output_hash": "1b7c29c42a4a30b3",
+            "output_summary": "{\"query\": \"BEC 11\", \"connections\": {\"pmt_ids\": [261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 383, 384, 385, 386, 387, 388, 38",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"/BEC/11/connections\",\n      \"description\": \"Find all hardware components connected to BEC 11\",\n      \"tool\": null,\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'query': 'BEC 11', 'connections': {'pmt_ids': [261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 383, 384, 385, 386, 387, 388, 389, 390, 391, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 941, 942, 943, 944, 945, 946, 947, 948, 949, 950, 951, 952, 953, 954, 955], \\\"gcu_ids\\\": [901, 1330, 1620, 2020, 2033, 2291, 2823, 3254, 3397, 3426, 3612, 3651, 3663, 3672, 3728, 3737, 3742, 3847, 3865, 4134, 4183, 4233, 4249, 4261, 4374, 4635, 4709, 4792, 4881, 4896, 4975, 5238, 5553, 5755, 5795, 6104, 6189, 6479, 6502, 7094, 7197, 7260, 7307, 7418], \\\"bec_ids\\\": [11], \\\"rmu_ids\\\": [\\\"7-2\\\"]}, \\\"pmt_match_count\\\": 132}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"The BEC\u201111 bus is connected to:\\n- **132 PMTs** (IDs 261\u2013272, 321\u2013332, 383\u2013391, 441\u2013452, 515\u2013528, 597\u2013608, 671\u2013682, 742\u2013756, 836\u2013853, 941\u2013955)\\n- **48 GCUs** (IDs 901, 1330, 1620, 2020, 2033, 2291, 2823, 3254, 3397, 3426, 3612, 3651, 3663, 3672, 3728, 3737, 3742, 3847, 3865, 4134, 4183, 4233, 4249, 4261, 4374, 4635, 4709, 4792, 4881, 4896, 4975, 5238, 5553, 5755, 5795, 6104, 6189, 6479, 6502, 7094, 7197, 7260, 7307, 7418)\\n- **The BEC itself** (ID\u00a011)\\n- **One RMU** (ID\u00a07\u20112)\\n\\nThese components together form the hardware configuration for the BEC\u00a011 bus.\",\n  \"thought\": \"The tool get_hardware_connections returned a complete list of connected PMTs, GCUs, the BEC, and the RMU. Since the plan step succeeded, no further actions are needed. Provide a concise summary of the connected hardware.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 19.289106130599976,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q004",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "detect_global_occupancy_outliers",
+            "args": {
+              "run_data_path": "test_data/scenario3_one.csv",
+              "noisy_z_threshold": 5.0,
+              "quiet_z_threshold": 3.0,
+              "top_k": 20
+            },
+            "args_hash": "d17fe502a2df5958",
+            "output_hash": "1a8cb650dac6fa95",
+            "output_summary": "{\"summary_stats\": {\"total_active_pmts\": 1657, \"occupancy_median\": 10.0, \"occupancy_mad\": 8.9, \"noisy_count\": 1, \"quiet_count\": 0, \"quiet_threshold_hits\": 0}, \"noisy_pmts\": [{\"pmt_id\": 1245, \"hits\": 28",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Detect globally noisy PMTs in the run file test_data/scenario3_one.csv\",\n      \"tool\": \"detect_global_occupancy_outliers\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'summary_stats': {'total_active_pmts': 1657, 'occupancy_median': 10.0, 'occupancy_mad': 8.9, 'noisy_count': 1, 'quiet_count': 0, 'quiet_threshold_hits': 0}, 'noisy_pmts': [{'pmt_id': 1245, 'hits': 2800, 'z_score': 313.64}], 'quiet_pmts': [], 'note': 'PMTs with fewer than 0 hits are flagged as quiet.'}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"The noisy PMT(s) in test_data/scenario3_one.csv are: PMT ID 1245 (hits: 2800, z-score: 313.64).\",\n  \"thought\": \"The plan had a single step that successfully identified noisy PMTs. No further actions are required, so I return a final answer summarizing the identified noisy PMT.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 14.826619625091553,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q005",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_event_multiplicity_distribution",
+            "args": {
+              "run_data_path": "test_data/scenario4_one.csv",
+              "num_bins": 20
+            },
+            "args_hash": "d3b1f4d8c6d22c2c",
+            "output_hash": "093b7cc02b7c5aca",
+            "output_summary": "{\"summary_stats\": {\"mean\": 209.37, \"median\": 179.0, \"max\": 1148, \"min\": 137, \"p99\": 595.5800000000029}, \"histogram_bins\": [{\"bin_range\": \"137-187\", \"count\": 64}, {\"bin_range\": \"187-238\", \"count\": 22},",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Generate hits-per-event distribution histogram for test_data/scenario4_one.csv\",\n      \"tool\": \"get_event_multiplicity_distribution\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"summary_stats\\\": {\\\"mean\\\": 209.37, \\\"median\\\": 179.0, \\\"max\\\": 1148, \\\"min\\\": 137, \\\"p99\\\": 595.5800000000029}, \\\"histogram_bins\\\": [{\\\"bin_range\\\": \\\"137-187\\\", \\\"count\\\": 64}, {\\\"bin_range\\\": \\\"187-238\\\", \\\"count\\\": 22}, {\\\"bin_range\\\": \\\"238-288\\\", \\\"count\\\": 4}, {\\\"bin_range\\\": \\\"288-339\\\", \\\"count\\\": 3}, {\\\"bin_range\\\": \\\"339-389\\\", \\\"count\\\": 3}, {\\\"bin_range\\\": \\\"389-440\\\", \\\"count\\\": 1}, {\\\"bin_range\\\": \\\"440-490\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"490-541\\\", \\\"count\\\": 1}, {\\\"bin_range\\\": \\\"541-591\\\", \\\"count\\\": 1}, {\\\"bin_range\\\": \\\"591-642\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"642-693\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"693-743\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"743-794\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"794-844\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"844-895\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"895-945\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"945-996\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"996-1046\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"1046-1097\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"1097-1148\\\", \\\"count\\\": 1}], \\\"note\\\": \\\"Bins with 0 counts are included to show gaps.\\\"}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Here is the hits\u2011per\u2011event distribution for *test_data/scenario4_one.csv*.\\n\\n**Summary statistics**\\n- Mean: 209.4 hits/event\\n- Median: 179 hits/event\\n- Minimum: 137 hits/event\\n- Maximum: 1,148 hits/event\\n- 99th percentile (p99): 595.6 hits/event\\n\\n**Histogram (counts per 50\u2011hit bin)**\\n| Bin (hits) | Count |\\n|------------|-------|\\n| 137\u2011187 | 64 |\\n| 187\u2011238 | 22 |\\n| 238\u2011288 | 4 |\\n| 288\u2011339 | 3 |\\n| 339\u2011389 | 3 |\\n| 389\u2011440 | 1 |\\n| 440\u2011490 | 0 |\\n| 490\u2011541 | 1 |\\n| 541\u2011591 | 1 |\\n| 591\u2011642 | 0 |\\n| 642\u2011693 | 0 |\\n| 693\u2011743 | 0 |\\n| 743\u2011794 | 0 |\\n| 794\u2011844 | 0 |\\n| 844\u2011895 | 0 |\\n| 895\u2011945 | 0 |\\n| 945\u2011996 | 0 |\\n| 996\u20111046 | 0 |\\n| 1046\u20111097 | 0 |\\n| 1097\u20111148 | 1 |\\n\\nThe distribution is sharply peaked around 150\u2011200 hits per event, with a long tail extending to over a thousand hits. No anomalous peaks are evident beyond the main body of the distribution. \",\n  \"thought\": \"The user requested a hits\u2011per\u2011event distribution. The tool `get_event_multiplicity_distribution` already produced the necessary statistics and histogram bins. Since the plan has no remaining pending steps, I return the final answer summarizing the distribution.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 15.977219820022583,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q006",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "scan_run_for_occupancy_anomalies",
+            "args": {
+              "run_data_path": "test_data/scenario7_one.csv",
+              "events_per_window": 30,
+              "flashing_z_threshold": 7.0,
+              "top_k_windows": 20
+            },
+            "args_hash": "f779828c2749e10f",
+            "output_hash": "a9c2c8b4ff8d5239",
+            "output_summary": "{\"status\": \"Scan Complete\", \"total_windows_scanned\": 4, \"anomalous_windows_found\": 4, \"results_saved_to\": \"test_data/scenario7_one.csv_scan_results.json\", \"top_anomalous_windows\": [{\"window_id\": 2, \"e",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "status": "Scan Complete"
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Scan the CSV file for transient occupancy anomalies and bursts.\",\n      \"tool\": \"scan_run_for_occupancy_anomalies\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'status': 'Scan Complete', 'total_windows_scanned': 4, 'anomalous_windows_found': 4, 'results_saved_to': 'test_data/scenario7_one.csv_scan_results.json', 'top_anomalous_windows': [{'window_id': 2, 'event_start': 60, 'event_end': 90, 'total_hits': 6237, 'num_flashers': 1, 'is_burst': true, 'flashers_preview': [9266]}, {'window_id': 3, 'event_start': 90, 'event_end': 120, 'total_hits': 1909, 'num_flashers': 1, 'is_burst': true, 'flashers_preview': [4769]}, {'window_id': 0, 'event_start': 0, 'event_end': 30, 'total_hits': 6629, 'num_flashers': 0, 'is_burst': true, 'flashers_preview': []}, {'window_id': 1, 'event_start': 30, 'event_end': 60, 'total_hits': 5136, 'num_flashers': 0, 'is_burst': true, 'flashers_preview': []}]}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"The scan of **test_data/scenario7_one.csv** identified four anomalous 30\u2011second windows that all exhibited burst\u2011like behaviour:\\n\\n| Window | Start\u2011End (s) | Total Hits | Flashers | Is Burst |\\n|--------|--------------|------------|----------|----------|\\n| 0 | 0\u201330 | 6,629 | 0 | \u2705 |\\n| 1 | 30\u201360 | 5,136 | 0 | \u2705 |\\n| 2 | 60\u201390 | 6,237 | 1 (PMT 9266) | \u2705 |\\n| 3 | 90\u2013120 | 1,909 | 1 (PMT 4769) | \u2705 |\\n\\nAll windows were flagged as bursts by the occupancy anomaly detector. The detailed JSON report is stored at `test_data/scenario7_one.csv_scan_results.json`.\",\n  \"thought\": \"All required work was performed by the single scan step, which completed successfully. The user requested a scan and a summary of bursts, so I provide a concise table summarizing the worst windows. No further steps are needed.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 17.263189792633057,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q007",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "find_events_with_missing_components",
+            "args": {
+              "run_data_path": "test_data/scenario8_one.csv",
+              "element_type": "BEC"
+            },
+            "args_hash": "6166e54ae7abf522",
+            "output_hash": "a7fc9c7181a3d8ba",
+            "output_summary": "{\"query\": \"Audit of missing BEC components\", \"element_type\": \"BEC\", \"total_events_in_run\": 100, \"components_with_misses_count\": 134, \"full_report_saved_to\": \"test_data/scenario8_one_BEC_audit_report.j",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "element_type": "BEC"
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Run a full BEC audit on the specified CSV file\",\n      \"tool\": \"find_events_with_missing_components\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'query': 'Audit of missing BEC components', 'element_type': 'BEC', 'total_events_in_run': 100, 'components_with_misses_count': 134, 'full_report_saved_to': 'test_data/scenario8_one_BEC_audit_report.json'}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"BEC audit completed. Total events: 100. Missing BEC components reported: 134. Detailed report saved to `test_data/scenario8_one_BEC_audit_report.json`.\",\n  \"thought\": \"The only step in the plan ran successfully, producing the audit report. No further actions are required.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 13.499314308166504,
+      "tool_call_count": 1,
+      "within_budget": true
+    }
+  ]
+}

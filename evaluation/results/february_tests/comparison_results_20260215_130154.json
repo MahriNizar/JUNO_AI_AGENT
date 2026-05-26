@@ -1,0 +1,79 @@
+[
+  {
+    "query_id": "q014",
+    "tier": 2,
+    "run_id": 0,
+    "main_agent": {
+      "outcome": "CORRECT",
+      "latency": 15.674278259277344,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "check_component_activity",
+            "args": {
+              "run_data_path": "test_data/scenario4_one.csv",
+              "element_type": "RMU",
+              "start_event": 0,
+              "end_event": 10,
+              "element_id": "None"
+            },
+            "args_hash": "861fd03c282cc20d",
+            "output_hash": "f56a14ae70b0a334",
+            "output_summary": "{\"query\": \"Global check for RMU\", \"status\": \"GLOBAL_CHECK\", \"event_window_checked\": \"[0, 10]\", \"element_type\": \"RMU\", \"missing_components\": [], \"missing_count\": 0, \"active_count\": 21, \"total_count\": 2",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "status": "GLOBAL_CHECK",
+          "element_type": "RMU"
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"1\",\n      \"description\": \"Identify RMUs that did not fire between events 0 and 10 in test_data/scenario4_one.csv\",\n      \"tool\": \"check_component_activity\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'query': 'Global check for RMU', 'status': 'GLOBAL_CHECK', 'event_window_checked': '[0, 10]', 'element_type': 'RMU', 'missing_components': [], 'missing_count': 0, 'active_count': 21, 'total_count': 21}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"All 21 RMUs fired between events 0 and 10 in test_data/scenario4_one.csv; there are no silent RMUs in that window.\",\n  \"thought\": \"The user requested RMUs that didn't fire in a specific window. The check_component_activity tool returned no missing components, confirming that all RMUs fired. The plan is complete and we provide the final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    },
+    "baseline_agent": {
+      "outcome": "HALLUCINATED",
+      "latency": 3.335002899169922,
+      "tool_count": 1,
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "check_component_activity",
+            "args": {
+              "element_type": "RMU",
+              "start_event": 0,
+              "end_event": 10,
+              "run_data_path": "test_data/scenario4_one.csv"
+            },
+            "args_hash": "c9710b6846c2b8da",
+            "output_hash": "f56a14ae70b0a334",
+            "output_summary": "{\"query\": \"Global check for RMU\", \"status\": \"GLOBAL_CHECK\", \"event_window_checked\": \"[0, 10]\", \"element_type\": \"RMU\", \"missing_components\": [], \"missing_count\": 0, \"active_count\": 21, \"total_count\": 2",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "status": "GLOBAL_CHECK",
+          "element_type": "RMU",
+          "arg_mismatch": {
+            "element_id": {
+              "expected": "None",
+              "actual": null,
+              "error": "argument not found"
+            }
+          }
+        },
+        "final_answer": "All 21 RMUs fired during events\u202f0\u201310; none were silent in that window.",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      }
+    }
+  }
+]

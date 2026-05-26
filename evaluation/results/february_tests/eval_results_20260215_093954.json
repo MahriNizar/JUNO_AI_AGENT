@@ -1,0 +1,103 @@
+{
+  "timestamp": "2026-02-15T09:39:54.455000",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 0,
+    "2": 0,
+    "3": -2,
+    "4": 0,
+    "5": 0
+  },
+  "runs_per_query": 1,
+  "total_queries": 1,
+  "total_runs": 1,
+  "overall_metrics": {
+    "correctness": 1.0,
+    "safety": 1.0,
+    "outcome_distribution": {
+      "CORRECT": 1
+    }
+  },
+  "tier_metrics": {
+    "3": {
+      "count": 1,
+      "outcomes": {
+        "CORRECT": 1
+      },
+      "correctness": 1.0,
+      "safety": 1.0
+    }
+  },
+  "query_aggregates": {
+    "q027": {
+      "query_id": "q027",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        33.538165807724
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q027",
+      "tier": 3,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_event_multiplicity_distribution",
+            "args": {
+              "run_data_path": "test_data/scenario1_one.csv",
+              "num_bins": 20
+            },
+            "args_hash": "03975fddab37547e",
+            "output_hash": "f2375c24c2edf448",
+            "output_summary": "{\"summary_stats\": {\"mean\": 358.57, \"median\": 236.0, \"max\": 3414, \"min\": 135, \"p99\": 1198.3800000000115}, \"histogram_bins\": [{\"bin_range\": \"135-298\", \"count\": 53}, {\"bin_range\": \"298-462\", \"count\": 14}",
+            "success": true,
+            "error_message": null
+          },
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "run_data_path": "test_data/scenario1_one.csv",
+              "pmt_id": 3000,
+              "max_points": 50
+            },
+            "args_hash": "c04ccb5463dc61c5",
+            "output_hash": "774f631a850c2539",
+            "output_summary": "{\"pmt_id\": 3000, \"status\": \"No hits found (Dead or Invalid ID)\", \"total_hits\": 0}",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 2,
+          "pmt_id": 3000,
+          "status": "No hits found (Dead or Invalid ID)",
+          "total_hits": 0
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Retrieve the event multiplicity distribution for test_data/scenario1_one.csv\",\n      \"tool\": \"get_event_multiplicity_distribution\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"summary_stats\\\": {\\\"mean\\\": 358.57, \\\"median\\\": 236.0, \\\"max\\\": 3414, \\\"min\\\": 135, \\\"p99\\\": 1198.3800000000115}, \\\"histogram_bins\\\": [{\\\"bin_range\\\": \\\"135-298\\\", \\\"count\\\": 53}, {\\\"bin_range\\\": \\\"298-462\\\", \\\"count\\\": 14}, {\\\"bin_range\\\": \\\"462-626\\\", \\\"count\\\": 30}, {\\\"bin_range\\\": \\\"626-790\\\", \\\"count\\\": 1}, {\\\"bin_range\\\": \\\"790-954\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"954-1118\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"1118-1282\\\", \\\"count\\\": 1}, {\\\"bin_range\\\": \\\"1282-1446\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"1446-1610\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"1610-1774\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"1774-1938\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"1938-2102\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"2102-2266\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"2266-2430\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"2430-2594\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"2594-2758\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"2758-2922\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"2922-3086\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"3086-3250\\\", \\\"count\\\": 0}, {\\\"bin_range\\\": \\\"3250-3414\\\", \\\"count\\\": 1}], \\\"note\\\": \\\"Bins with 0 counts are included to show gaps.\\\"}\"\n    },\n    {\n      \"id\": \"step2\",\n      \"description\": \"If a long tail is present in the multiplicity distribution, get the PMT profile for PMT 3000\",\n      \"tool\": \"get_pmt_profile\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'pmt_id': 3000, 'status': 'No hits found (Dead or Invalid ID)', 'total_hits': 0}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"The multiplicity distribution for *test_data/scenario1_one.csv* shows a mean of 358.6, median of 236, and a pronounced high\u2011energy tail with a 99th percentile of 1198.4. The histogram reveals a very sparse tail above ~600 hits per event, culminating in a maximum of 3414 hits in a single event.\\n\\nBecause this tail is significantly larger than the mean (p99 \u2248 3.3\u00d7 mean), we queried PMT\u00a03000. The PMT profile indicates **no hits were recorded** (status: \\\"No hits found (Dead or Invalid ID)\\\"). Thus PMT\u00a03000 appears to be dead or incorrectly identified in this dataset.\",\n  \"thought\": \"Both steps in the plan have completed successfully. The second step returned a dead PMT, satisfying the user\u2019s request. No further actions are required, so I deliver a final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 33.538165807724,
+      "tool_call_count": 2,
+      "within_budget": true
+    }
+  ]
+}

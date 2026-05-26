@@ -1,0 +1,22 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Run a global charge uniformity diagnosis on the data file 'Learner/mock_data\\mock_run.csv'.",
+      "expected_behavior": "The tool should process the file and return a global charge uniformity report."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Can you analyze the charge uniformity from the file 'Learner/mock_data\\mock_run.csv'?",
+      "expected_behavior": "The tool should interpret the request as a charge uniformity analysis and provide the relevant diagnostics."
+    }
+  ],
+  "use_provided_data": false,
+  "provided_data_path": null,
+  "mock_files": [
+    {
+      "name": "mock_run.csv",
+      "content": "EventID,PMTID,Charge,Theta\n1,1001,5.2,0.3\n2,1002,4.8,0.4\n3,1003,6.1,0.5"
+    }
+  ]
+}

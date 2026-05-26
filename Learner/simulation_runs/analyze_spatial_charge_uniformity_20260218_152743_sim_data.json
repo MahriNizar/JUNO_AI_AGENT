@@ -1,0 +1,17 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Please perform a global spatial uniformity audit of the entire run using test_data/your_run_first600.csv.",
+      "expected_behavior": "The tool should analyze the entire dataset for charge uniformity."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Check the charge distribution for the first 600 events in test_data/your_run_first600.csv.",
+      "expected_behavior": "The tool may interpret this as a global audit but could be ambiguous about the scope."
+    }
+  ],
+  "use_provided_data": true,
+  "provided_data_path": "test_data/your_run_first600.csv",
+  "mock_files": null
+}

@@ -1,0 +1,91 @@
+{
+  "timestamp": "2026-02-15T09:04:29.574733",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 0,
+    "2": -2,
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "runs_per_query": 1,
+  "total_queries": 1,
+  "total_runs": 1,
+  "overall_metrics": {
+    "correctness": 1.0,
+    "safety": 1.0,
+    "outcome_distribution": {
+      "CORRECT": 1
+    }
+  },
+  "tier_metrics": {
+    "2": {
+      "count": 1,
+      "outcomes": {
+        "CORRECT": 1
+      },
+      "correctness": 1.0,
+      "safety": 1.0
+    }
+  },
+  "query_aggregates": {
+    "q012": {
+      "query_id": "q012",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        17.874959468841553
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q012",
+      "tier": 2,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "check_component_activity",
+            "args": {
+              "run_data_path": "test_data/scenario2_one.csv",
+              "element_type": "BEC",
+              "start_event": 30,
+              "end_event": 60,
+              "element_id": "142"
+            },
+            "args_hash": "83567e32c7dbcf53",
+            "output_hash": "c2f6f4fb8b3a38e1",
+            "output_summary": "{\"query\": \"BEC 142\", \"status\": \"ACTIVE\", \"event_window_checked\": \"[30, 60]\", \"active_pmts\": 11, \"total_pmts\": 138, \"details\": \"Component BEC 142 was active. 11 of its 138 PMTs were active in this wind",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "status": "ACTIVE"
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Check if BEC 142 was inactive during events 30-60 in test_data/scenario2_one.csv\",\n      \"tool\": \"check_component_activity\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'query': 'BEC 142', 'status': 'ACTIVE', 'event_window_checked': '[30, 60]', 'active_pmts': 11, 'total_pmts': 138, 'details': 'Component BEC 142 was active. 11 of its 138 PMTs were active in this window.'}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"There was no issue with BEC\u202f142 during events 30\u201360 in test_data/scenario2_one.csv. The component was active, with 11 of its 138 PMTs firing in that window.\",\n  \"thought\": \"The user asked if BEC\u202f142 had any issues during the specified events. The check_component_activity tool returned that the BEC was active and 11 PMTs fired, indicating normal operation. The plan has no remaining steps, so we provide a final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 17.874959468841553,
+      "tool_call_count": 1,
+      "within_budget": true
+    }
+  ]
+}

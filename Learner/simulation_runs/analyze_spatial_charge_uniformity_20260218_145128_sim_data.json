@@ -1,0 +1,17 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Run a global charge uniformity check on the first 600 events using 'test_data/your_run_first600.csv'.",
+      "expected_behavior": "The tool should perform a uniformity analysis across all hardware levels and report any dead or failing GCU/BEC/RMU units."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Check for any charge distribution problems in the dataset 'test_data/your_run_first600.csv'.",
+      "expected_behavior": "The tool should attempt to interpret the request as a uniformity analysis and provide a concise report, or prompt for clarification."
+    }
+  ],
+  "use_provided_data": true,
+  "provided_data_path": "test_data/your_run_first600.csv",
+  "mock_files": null
+}

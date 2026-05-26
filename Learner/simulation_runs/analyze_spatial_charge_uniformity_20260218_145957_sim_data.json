@@ -1,0 +1,17 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Analyze the global charge uniformity across the full run using the file test_data/your_run_first600.csv.",
+      "expected_behavior": "The tool will compute the overall asymmetry and hemispheric imbalance for the entire dataset, identifying any significant deviations."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Could you help spot any hardware block failures and check for hemispheric imbalance with test_data/your_run_first600.csv?",
+      "expected_behavior": "The tool will attempt to interpret the request and run a comprehensive hardware health and charge distribution check, potentially flagging ambiguous or missing thresholds."
+    }
+  ],
+  "use_provided_data": true,
+  "provided_data_path": "test_data/your_run_first600.csv",
+  "mock_files": null
+}

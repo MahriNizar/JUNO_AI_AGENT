@@ -1,0 +1,307 @@
+skill_id: analyze_spatial_charge_uniformity
+summary:
+  name: analyze_spatial_charge_uniformity
+  description: Analyzes spatial charge uniformity across JUNO detector hardware levels
+    (GCU, BEC, RMU) and returns a structured summary of charge statistics, asymmetries,
+    flagged anomalies, and a diagnostic narrative.
+  parameters:
+    type: object
+    properties:
+      run_data_path:
+        type: string
+        description: Path to the CSV file containing event data (Event, PMTID, Charge,
+          Time, Theta, Phi).
+        required: true
+        default: null
+      min_events:
+        type: integer
+        description: 'Minimum number of events required for reliable statistics (default:
+          300).'
+        required: false
+        default: 300
+      asymmetry_threshold:
+        type: number
+        description: 'Fractional deviation from mean used to flag a unit (default:
+          0.10).'
+        required: false
+        default: 0.1
+      top_bottom_threshold:
+        type: number
+        description: 'Threshold for top/bottom hemisphere charge ratio deviation (default:
+          0.05).'
+        required: false
+        default: 0.05
+      top_k_anomalies:
+        type: integer
+        description: 'Number of most anomalous units to return per level (default:
+          10).'
+        required: false
+        default: 10
+execution_details:
+  type: python_function
+  call:
+    module: juno_tools.spatial_charge
+    function: analyze_spatial_charge_uniformity
+usage_policy:
+  use_when:
+  - "The user requests a comprehensive assessment of charge uniformity across the\
+    \ entire run, aiming to spot hardware\u2011level failures or large\u2011scale\
+    \ asymmetries."
+  - "The analysis is needed to cross\u2011check calibration or to confirm that the\
+    \ detector is operating uniformly before detailed physics studies."
+  do_not_use_when:
+  - The user wants to inspect a small event window or a specific set of PMTs; a more
+    targeted tool such as `check_component_activity` is preferred.
+  - The user is performing a fast, online monitor where the full data aggregation
+    would be too slow.
+output_schema:
+  description: The function returns a dictionary that summarizes spatial charge uniformity
+    for a JUNO detector run. The dictionary can contain either a normal analysis payload
+    or an error payload.
+  type: dict
+  properties:
+    run_summary:
+      type: dict
+      properties:
+        total_events:
+          type: integer
+          description: Number of unique events in the CSV.
+        total_hits:
+          type: integer
+          description: Number of hit rows that were successfully mapped to hardware.
+        total_charge:
+          type: number
+          description: "Sum of all charge values (rounded to 2\u202Fdp)."
+        mapped_pmts:
+          type: integer
+          description: Number of distinct PMTIDs that found a match in HARDWARE_MAP_DF.
+        active_gcus:
+          type: integer
+          description: Number of distinct GCU_IDs that appear in the mapped data.
+        active_becs:
+          type: integer
+          description: Number of distinct BEC_IDs that appear in the mapped data.
+        active_rmus:
+          type: integer
+          description: Number of distinct RMU_IDs that appear in the mapped data.
+      required:
+      - total_events
+      - total_hits
+      - total_charge
+      - mapped_pmts
+      - active_gcus
+      - active_becs
+      - active_rmus
+    top_bottom_asymmetry:
+      type: dict
+      properties:
+        top_charge:
+          type: number
+          description: "Total charge for events with Theta < 90 (rounded to 2\u202F\
+            dp)."
+        bottom_charge:
+          type: number
+          description: "Total charge for events with Theta \u2265 90 (rounded to 2\u202F\
+            dp)."
+        top_nhit:
+          type: integer
+          description: Number of hits in the top hemisphere.
+        bottom_nhit:
+          type: integer
+          description: Number of hits in the bottom hemisphere.
+        top_bottom_ratio:
+          type: number
+          description: "Top/Btm ratio (rounded to 4\u202Fdp).  If bottom_charge ==\
+            \ 0 it is +inf."
+        asymmetry_fraction:
+          type: number
+          description: "Fractional asymmetry |T\u2011B|/(T+B) (rounded to 4\u202F\
+            dp)."
+        flagged:
+          type: boolean
+          description: True if asymmetry_fraction > top_bottom_threshold.
+      required:
+      - top_charge
+      - bottom_charge
+      - top_nhit
+      - bottom_nhit
+      - top_bottom_ratio
+      - asymmetry_fraction
+      - flagged
+    gcu_level:
+      type: dict
+      properties:
+        mean_charge_per_gcu:
+          type: number
+          description: "Mean total charge per GCU (rounded to 2\u202Fdp)."
+        std_charge_per_gcu:
+          type: number
+          description: "Std\u2011dev of total charge per GCU (rounded to 2\u202Fdp)."
+        n_flagged_gcus:
+          type: integer
+          description: Number of GCU units whose relative deviation exceeds asymmetry_threshold.
+        anomalous_gcus:
+          type: array
+          items:
+            type: dict
+            properties:
+              gcu_id:
+                anyOf:
+                - type: integer
+                - type: string
+                - type: 'null'
+              total_charge:
+                type: number
+              total_hits:
+                type: integer
+              charge_deviation:
+                type: number
+              type:
+                type: string
+                enum:
+                - deficit
+                - excess
+              bec_id:
+                anyOf:
+                - type: integer
+                - type: string
+                - type: 'null'
+              rmu_id:
+                anyOf:
+                - type: integer
+                - type: string
+                - type: 'null'
+              n_active_pmts:
+                anyOf:
+                - type: integer
+                - type: 'null'
+            required:
+            - gcu_id
+            - total_charge
+            - total_hits
+            - charge_deviation
+            - type
+          description: List (up to top_k_anomalies) of dicts describing the worst
+            offenders.
+      required:
+      - mean_charge_per_gcu
+      - std_charge_per_gcu
+      - n_flagged_gcus
+      - anomalous_gcus
+    bec_level:
+      type: dict
+      properties:
+        mean_charge_per_bec:
+          type: number
+        n_flagged_becs:
+          type: integer
+        anomalous_becs:
+          type: array
+          items:
+            type: dict
+            properties:
+              bec_id:
+                anyOf:
+                - type: integer
+                - type: string
+                - type: 'null'
+              total_charge:
+                type: number
+              total_hits:
+                type: integer
+              charge_deviation:
+                type: number
+              type:
+                type: string
+                enum:
+                - deficit
+                - excess
+              rmu_id:
+                anyOf:
+                - type: integer
+                - type: string
+                - type: 'null'
+              n_active_pmts:
+                anyOf:
+                - type: integer
+                - type: 'null'
+              n_active_gcus:
+                anyOf:
+                - type: integer
+                - type: 'null'
+            required:
+            - bec_id
+            - total_charge
+            - total_hits
+            - charge_deviation
+            - type
+          description: List (up to top_k_anomalies) of anomalous BECs.
+      required:
+      - mean_charge_per_bec
+      - n_flagged_becs
+      - anomalous_becs
+    rmu_level:
+      type: dict
+      properties:
+        mean_charge_per_rmu:
+          type: number
+        n_flagged_rmus:
+          type: integer
+        anomalous_rmus:
+          type: array
+          items:
+            type: dict
+            properties:
+              rmu_id:
+                anyOf:
+                - type: integer
+                - type: string
+                - type: 'null'
+              total_charge:
+                type: number
+              total_hits:
+                type: integer
+              charge_deviation:
+                type: number
+              type:
+                type: string
+                enum:
+                - deficit
+                - excess
+              n_active_pmts:
+                anyOf:
+                - type: integer
+                - type: 'null'
+              n_active_becs:
+                anyOf:
+                - type: integer
+                - type: 'null'
+              n_active_gcus:
+                anyOf:
+                - type: integer
+                - type: 'null'
+            required:
+            - rmu_id
+            - total_charge
+            - total_hits
+            - charge_deviation
+            - type
+          description: List (up to top_k_anomalies) of anomalous RMUs.
+      required:
+      - mean_charge_per_rmu
+      - n_flagged_rmus
+      - anomalous_rmus
+    diagnosis:
+      type: array
+      items:
+        type: string
+      description: "Human\u2011readable strings summarising any flagged problems."
+  items:
+    error_payload:
+      type: dict
+      properties:
+        error:
+          type: string
+          description: Descriptive error message.
+      required:
+      - error

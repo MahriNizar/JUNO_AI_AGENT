@@ -1,0 +1,22 @@
+{
+  "scenarios": [
+    {
+      "type": "happy_path",
+      "user_query": "Please filter events 10 to 20 from /tmp/Learner/mock_data\\mock_run.csv so I can inspect them locally.",
+      "expected_behavior": "The tool should return a success dictionary containing the output path, number of events, total rows, and the event range."
+    },
+    {
+      "type": "ambiguous",
+      "user_query": "Can you give me a slice of events near event 50 from /tmp/Learner/mock_data\\mock_run.csv?",
+      "expected_behavior": "The tool should interpret the request as a request for a manageable subset of events around the specified event number and return a success dictionary. If it cannot determine a range, it should return an error indicating insufficient information."
+    }
+  ],
+  "use_provided_data": false,
+  "provided_data_path": null,
+  "mock_files": [
+    {
+      "name": "mock_run.csv",
+      "content": "Event,time_ns,charge_pe\n1,10.5,0.8\n2,11.0,1.2\n3,12.0,0.9\n4,12.5,1.0\n5,13.0,0.7\n6,13.5,1.1\n7,14.0,0.8\n8,14.5,1.3\n9,15.0,0.6\n10,15.5,0.9\n11,16.0,1.0\n12,16.5,0.7\n13,17.0,1.2\n14,17.5,0.9\n15,18.0,1.0\n16,18.5,0.8\n17,19.0,1.1\n18,19.5,0.7\n19,20.0,1.0\n20,20.5,0.9"
+    }
+  ]
+}

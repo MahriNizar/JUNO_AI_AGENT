@@ -1,0 +1,279 @@
+{
+  "timestamp": "2026-02-09T10:23:00.893570",
+  "config": {
+    "skill_folder": "skills",
+    "temperature": 0.0,
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": 5,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "runs_per_query": 1,
+  "total_queries": 5,
+  "total_runs": 5,
+  "overall_metrics": {
+    "correctness": 1.0,
+    "safety": 1.0,
+    "outcome_distribution": {
+      "CORRECT": 5
+    }
+  },
+  "tier_metrics": {
+    "1": {
+      "count": 5,
+      "outcomes": {
+        "CORRECT": 5
+      },
+      "correctness": 1.0,
+      "safety": 1.0
+    }
+  },
+  "query_aggregates": {
+    "q001": {
+      "query_id": "q001",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        31.422114372253418
+      ]
+    },
+    "q002": {
+      "query_id": "q002",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        12.172973871231079
+      ]
+    },
+    "q005": {
+      "query_id": "q005",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        18.74233841896057
+      ]
+    },
+    "q007": {
+      "query_id": "q007",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        11.761969327926636
+      ]
+    },
+    "q010": {
+      "query_id": "q010",
+      "n_runs": 1,
+      "correct_rate": 1.0,
+      "hallucination_rate": 0.0,
+      "worst_case": "CORRECT",
+      "consistency": 1.0,
+      "outcome_distribution": {
+        "CORRECT": 1
+      },
+      "latencies": [
+        13.233274936676025
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "query_id": "q001",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_pmt_profile",
+            "args": {
+              "run_data_path": "test_data/scenario1_one.csv",
+              "pmt_id": 4258,
+              "max_points": 50
+            },
+            "args_hash": "f72b3798508f8b04",
+            "output_hash": "29ff1d091524b19a",
+            "output_summary": "{\"pmt_id\": 4258, \"status\": \"Active\", \"total_hits\": 58, \"num_active_events\": 16, \"avg_charge_per_hit\": 3.08, \"sampling_note\": \"Showing 1 out of every 1 active events.\", \"time_series_sample\": [{\"event_i",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "pmt_id": 4258,
+          "status": "Active",
+          "total_hits": 58
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Retrieve the PMT profile for PMT 4258 from the provided data file.\",\n      \"tool\": \"get_pmt_profile\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'pmt_id': 4258, 'status': 'Active', 'total_hits': 58, 'num_active_events': 16, 'avg_charge_per_hit': 3.08, 'sampling_note': 'Showing 1 out of every 1 active events.', 'time_series_sample': [{'event_id': 0, 'hits': 4, 'charge': 5.08}, {'event_id': 7, 'hits': 1, 'charge': 0.85}, {'event_id': 8, 'hits': 5, 'charge': 10.58}, {'event_id': 18, 'hits': 9, 'charge': 18.84}, {'event_id': 20, 'hits': 3, 'charge': 4.65}, {'event_id': 22, 'hits': 9, 'charge': 102.78}, {'event_id': 26, 'hits': 6, 'charge': 14.13}, {'event_id': 36, 'hits': 6, 'charge': 5.31}, {'event_id': 43, 'hits': 3, 'charge': 1.65}, {'event_id': 44, 'hits': 6, 'charge': 7.83}, {'event_id': 67, 'hits': 1, 'charge': 1.15}, {'event_id': 68, 'hits': 1, 'charge': 1.17}, {'event_id': 82, 'hits': 1, 'charge': 2.57}, {'event_id': 85, 'hits': 1, 'charge': 0.98}, {'event_id': 89, 'hits': 1, 'charge': 0.58}, {'event_id': 94, 'hits': 1, 'charge': 0.45}]}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"PMT 4258 Profile (from test_data/scenario1_one.csv):\\n- Status: Active\\n- Total hits: 58 across 16 active events\\n- Average charge per hit: 3.08\u202fpC\\n- Sampled time\u2011series (one event per line):\\n  * Event 0: 4 hits, 5.08\u202fpC\\n  * Event 7: 1 hit, 0.85\u202fpC\\n  * Event 8: 5 hits, 10.58\u202fpC\\n  * Event 18: 9 hits, 18.84\u202fpC\\n  * Event 20: 3 hits, 4.65\u202fpC\\n  * Event 22: 9 hits, 102.78\u202fpC\\n  * Event 26: 6 hits, 14.13\u202fpC\\n  * Event 36: 6 hits, 5.31\u202fpC\\n  * Event 43: 3 hits, 1.65\u202fpC\\n  * Event 44: 6 hits, 7.83\u202fpC\\n  * Event 67: 1 hit, 1.15\u202fpC\\n  * Event 68: 1 hit, 1.17\u202fpC\\n  * Event 82: 1 hit, 2.57\u202fpC\\n  * Event 85: 1 hit, 0.98\u202fpC\\n  * Event 89: 1 hit, 0.58\u202fpC\\n  * Event 94: 1 hit, 0.45\u202fpC\\n\\nThe PMT shows normal activity with a few high\u2011charge outliers (e.g., event 22). No signs of persistent flashing or dead behavior are evident from this sample.\",\n  \"thought\": \"The user requested a PMT profile. The tool get_pmt_profile already returned all requested details. The plan is now complete, so we provide a concise final answer summarizing the key statistics and a sample time\u2011series.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 31.422114372253418,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q002",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "compute_run_kpis",
+            "args": {
+              "run_data_path": "test_data/scenario2_one.csv"
+            },
+            "args_hash": "ac74070bf3021efe",
+            "output_hash": "f144b1914f41d533",
+            "output_summary": "{\"summary\": \"Run KPI Summary\", \"num_events\": 100, \"total_hits\": 15192, \"avg_hits_per_event\": 151.92, \"std_hits_per_event\": 133.89651363510688, \"avg_charge_per_hit\": 1.4351, \"nhit_p95\": 330.59999999999",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "status": "Normal",
+          "num_events": 100,
+          "total_hits": 15192
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Compute global KPIs for test_data/scenario2_one.csv\",\n      \"tool\": null,\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'summary': 'Run KPI Summary', 'num_events': 100, 'total_hits': 15192, 'avg_hits_per_event': 151.92, 'std_hits_per_event': 133.89651363510688, 'avg_charge_per_hit': 1.4351, 'nhit_p95': 330.59999999999997, 'status': 'Normal'}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Global KPIs for **test_data/scenario2_one.csv**:\\n- Total events: 100\\n- Total hits: 15,192\\n- Average hits per event: 151.92\\n- Standard deviation of hits per event: 133.90\\n- Average charge per hit: 1.4351\\n- 95th percentile hits per event: 330.60\\n- Overall status: Normal\",\n  \"thought\": \"The single step to compute the global KPIs completed successfully. No pending steps remain, so the plan is finished and we return the KPI summary.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 12.172973871231079,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q005",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "get_event_multiplicity_distribution",
+            "args": {
+              "run_data_path": "test_data/scenario4_one.csv",
+              "num_bins": 20
+            },
+            "args_hash": "d3b1f4d8c6d22c2c",
+            "output_hash": "093b7cc02b7c5aca",
+            "output_summary": "{\"summary_stats\": {\"mean\": 209.37, \"median\": 179.0, \"max\": 1148, \"min\": 137, \"p99\": 595.5800000000029}, \"histogram_bins\": [{\"bin_range\": \"137-187\", \"count\": 64}, {\"bin_range\": \"187-238\", \"count\": 22},",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step_1\",\n      \"description\": \"Generate hits-per-event distribution histogram for test_data/scenario4_one.csv\",\n      \"tool\": \"get_event_multiplicity_distribution\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'summary_stats': {'mean': 209.37, 'median': 179.0, 'max': 1148, 'min': 137, 'p99': 595.5800000000029}, 'histogram_bins': [{'bin_range': '137-187', 'count': 64}, {'bin_range': '187-238', 'count': 22}, {'bin_range': '238-288', 'count': 4}, {'bin_range': '288-339', 'count': 3}, {'bin_range': '339-389', 'count': 3}, {'bin_range': '389-440', 'count': 1}, {'bin_range': '440-490', 'count': 0}, {'bin_range': '490-541', 'count': 1}, {'bin_range': '541-591', 'count': 1}, {'bin_range': '591-642', 'count': 0}, {'bin_range': '642-693', 'count': 0}, {'bin_range': '693-743', 'count': 0}, {'bin_range': '743-794', 'count': 0}, {'bin_range': '794-844', 'count': 0}, {'bin_range': '844-895', 'count': 0}, {'bin_range': '895-945', 'count': 0}, {'bin_range': '945-996', 'count': 0}, {'bin_range': '996-1046', 'count': 0}, {'bin_range': '1046-1097', 'count': 0}, {'bin_range': '1097-1148', 'count': 1}], 'note': 'Bins with 0 counts are included to show gaps.'}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"The hits\u2011per\u2011event distribution for **test_data/scenario4_one.csv** is summarized as follows:\\n\\n- **Mean**: 209.4 hits\\n- **Median**: 179 hits\\n- **Min**: 137 hits\\n- **Max**: 1148 hits\\n- **99th percentile (p99)**: ~596 hits\\n\\nThe histogram (bins of 50 hits each) is:\\n```\\n137\u2013187   : 64 events\\n187\u2013238   : 22 events\\n238\u2013288   : 4 events\\n288\u2013339   : 3 events\\n339\u2013389   : 3 events\\n389\u2013440   : 1 event\\n440\u2013490   : 0 events\\n490\u2013541   : 1 event\\n541\u2013591   : 1 event\\n591\u2013642   : 0 events\\n642\u2013693   : 0 events\\n693\u2013743   : 0 events\\n743\u2013794   : 0 events\\n794\u2013844   : 0 events\\n844\u2013895   : 0 events\\n895\u2013945   : 0 events\\n945\u2013996   : 0 events\\n996\u20131046  : 0 events\\n1046\u20131097 : 0 events\\n1097\u20131148 : 1 event\\n```\\nThis distribution shows a typical physics run with most events clustered between 137 and 389 hits, and a long tail reaching up to 1148 hits. No anomalous spikes were observed.\\n\",\n  \"thought\": \"The user requested the hits\u2011per\u2011event distribution, which was provided by the tool. The plan now has a single completed step and no pending tasks. I return the final answer summarizing the distribution.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 18.74233841896057,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q007",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "find_events_with_missing_components",
+            "args": {
+              "run_data_path": "test_data/scenario8_one.csv",
+              "element_type": "BEC"
+            },
+            "args_hash": "6166e54ae7abf522",
+            "output_hash": "a7fc9c7181a3d8ba",
+            "output_summary": "{\"query\": \"Audit of missing BEC components\", \"element_type\": \"BEC\", \"total_events_in_run\": 100, \"components_with_misses_count\": 134, \"full_report_saved_to\": \"test_data/scenario8_one_BEC_audit_report.j",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "element_type": "BEC"
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Audit the run file for missing BEC components\",\n      \"tool\": null,\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{'query': 'Audit of missing BEC components', 'element_type': 'BEC', 'total_events_in_run': 100, 'components_with_misses_count': 134, 'full_report_saved_to': 'test_data/scenario8_one_BEC_audit_report.json'}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"BEC audit completed: 100 events processed with 134 missing BEC components. Full report is available at `test_data/scenario8_one_BEC_audit_report.json`.\",\n  \"thought\": \"The tool output confirms the audit was performed and a report was generated. No further steps are pending, so the task is finished.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 11.761969327926636,
+      "tool_call_count": 1,
+      "within_budget": true
+    },
+    {
+      "query_id": "q010",
+      "tier": 1,
+      "run_id": 0,
+      "outcome": "CORRECT",
+      "evidence": {
+        "tool_calls": [
+          {
+            "skill_name": "find_events_with_missing_components",
+            "args": {
+              "run_data_path": "test_data/scenario1_one.csv",
+              "element_type": "GCU"
+            },
+            "args_hash": "624a7eca420ad546",
+            "output_hash": "06066cf6afdf34fd",
+            "output_summary": "{\"query\": \"Audit of missing GCU components\", \"element_type\": \"GCU\", \"total_events_in_run\": 100, \"components_with_misses_count\": 5878, \"full_report_saved_to\": \"test_data/scenario1_one_GCU_audit_report.",
+            "success": true,
+            "error_message": null
+          }
+        ],
+        "key_values": {
+          "tool_outputs_count": 1,
+          "element_type": "GCU"
+        },
+        "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"step1\",\n      \"description\": \"Audit the entire run test_data/scenario1_one.csv for missing GCUs and obtain a high\u2011level summary.\",\n      \"tool\": \"find_events_with_missing_components\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": \"{\\\"query\\\": \\\"Audit of missing GCU components\\\", \\\"element_type\\\": \\\"GCU\\\", \\\"total_events_in_run\\\": 100, \\\"components_with_misses_count\\\": 5878, \\\"full_report_saved_to\\\": \\\"test_data/scenario1_one_GCU_audit_report.json\\\"}\"\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"Audit completed. In the run \\\"test_data/scenario1_one.csv\\\", a total of 100 events were examined, and 5,878 missing GCU components were identified across those events. The full audit report has been saved to \\\"test_data/scenario1_one_GCU_audit_report.json\\\" for detailed review.\",\n  \"thought\": \"The only required step was executed successfully with the find_events_with_missing_components tool, providing the high\u2011level summary. Since no further actions are needed, I return the final answer.\"\n}",
+        "admitted_uncertainty": false,
+        "crashed": false,
+        "crash_message": null
+      },
+      "latency_seconds": 13.233274936676025,
+      "tool_call_count": 1,
+      "within_budget": true
+    }
+  ]
+}

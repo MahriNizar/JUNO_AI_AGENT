@@ -1,0 +1,33 @@
+skill_id: compute_run_kpis
+summary:
+  name: compute_run_kpis
+  description: >-
+    Calculates global Key Performance Indicators (KPIs) for a run, such as total events, 
+    average hits per event, and average charge. Use this as a first step to assess 
+    if a run is "noisy" (high avg hits) or "quiet" compared to normal physics runs.
+  parameters:
+    type: object
+    properties:
+      run_data_path:
+        type: string
+        description: "The path to the run data CSV file (e.g., 'test_data/run_123.csv')."
+        required: true
+execution_details:
+  type: python_function
+  call:
+    module: "juno_tools.physics_analysis"
+    function: "compute_run_kpis"
+usage_policy:
+  use_when:
+    - You start analyzing a new file and need a quick overview.
+    - You want to check if the overall noise level is high.
+  do_not_use_when:
+    - You need to find specific flashing PMTs (use 'detect_global_occupancy_outliers').
+    - You need to check a specific time window (use 'scan_run_for_occupancy_anomalies').
+output_schema:
+  description: "Returns a dictionary of scalar metrics."
+  type: object
+  properties:
+    num_events: { type: integer }
+    avg_hits_per_event: { type: number }
+    nhit_p95: { type: number, description: "The 95th percentile of hits-per-event." }

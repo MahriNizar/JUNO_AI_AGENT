@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-02-16T13:08:33.482232",
+  "mode": "juno",
+  "config": {
+    "skill_folder": "skills",
+    "timeout_seconds": 1200,
+    "recursion_limit": 50,
+    "random_seed": 42
+  },
+  "queries_per_tier": {
+    "1": -2
+  },
+  "runs_per_query": 1,
+  "total_queries": 1,
+  "total_runs": 1,
+  "results": [
+    {
+      "query_id": "q006",
+      "tier": 1,
+      "query_text": "Scan test_data/scenario7_one.csv for transient anomalies and bursts",
+      "description": "Tier 1: Single-Tool Direct - scan run for occupancy anomalies",
+      "run_id": 0,
+      "agent_name": "juno",
+      "latency_seconds": 29.737228631973267,
+      "crashed": false,
+      "crash_message": null,
+      "tool_calls": [
+        {
+          "skill_name": "scan_run_for_occupancy_anomalies",
+          "args": {
+            "run_data_path": "test_data/scenario7_one.csv",
+            "events_per_window": 30,
+            "flashing_z_threshold": 7,
+            "top_k_windows": 20
+          },
+          "output_summary": "{\"status\": \"Scan Complete\", \"total_windows_scanned\": 4, \"anomalous_windows_found\": 4, \"results_saved_to\": \"test_data/scenario7_one.csv_scan_results.json\", \"top_anomalous_windows\": [{\"window_id\": 2, \"e",
+          "success": true,
+          "error_message": null
+        }
+      ],
+      "tool_call_count": 1,
+      "final_answer": "{\n  \"type\": \"final\",\n  \"plan\": [\n    {\n      \"id\": \"1\",\n      \"description\": \"Scan test_data/scenario7_one.csv for transient occupancy anomalies and bursts\",\n      \"tool\": \"scan_run_for_occupancy_anomalies\",\n      \"status\": \"success\",\n      \"error\": null,\n      \"output\": null\n    }\n  ],\n  \"skill_to_use\": null,\n  \"final_answer\": \"The scan of `test_data/scenario7_one.csv` completed successfully.\\n\\n- Total windows scanned: 4\\n- Anomalous windows found: 4\\n- Results file: `test_data/scenario7_one.csv_scan_results.json`\\n\\nTop anomalous windows:\\n1. Window 2 (events 60\u201390): 6,237 total hits, 1 flasher (ID 9266), burst flagged.\\n2. Window 3 (events 90\u2013120): 1,909 total hits, 1 flasher (ID 4769), burst flagged.\\n3. Window 0 (events 0\u201330): 6,629 total hits, no flashers, burst flagged.\\n4. Window 1 (events 30\u201360): 5,136 total hits, no flashers, burst flagged.\\n\\nFeel free to open the JSON file for a detailed per\u2011window breakdown or let me know if you\u2019d like visualizations or further analysis.\",\n  \"thought\": \"The user requested a scan for transient anomalies and bursts. The available tool `scan_run_for_occupancy_anomalies` performed the scan, yielding a success status. The plan now has no pending steps, so we provide a final answer summarizing the results.\"\n}"
+    }
+  ]
+}
