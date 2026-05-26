@@ -77,7 +77,7 @@ Download the test data here:
 
 After downloading, extract the archive into the project root so the folder structure is:
 
-```text
+
 JUNO_AI_THESIS/
 ├── test_data/
 │   ├── full_events_file.csv
@@ -88,6 +88,8 @@ JUNO_AI_THESIS/
 ├── main.py
 ├── requirements.txt
 └── README.md
+
+
 ## Core Concepts
 
 ### Skill Cards
