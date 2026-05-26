@@ -30,21 +30,7 @@ The repository also contains a **Learning Pipeline**, an offline LangGraph workf
 
 ## Architecture At A Glance
 
-```mermaid
-flowchart LR
-    User["Natural-language query"] --> Agent["AgentNode<br/>select tool or answer"]
-    Agent --> Formatter["ArgumentFormatterNode<br/>load full Skill Card<br/>validate selection<br/>format args"]
-    Formatter --> Executor["ToolExecutor<br/>run Python tool"]
-    Executor --> Memory{"Fold memory?"}
-    Memory -->|yes| Folder["MemoryFolderNode<br/>compress history<br/>persist findings"]
-    Memory -->|no| Agent
-    Folder --> Agent
-    Agent --> Final["Final answer"]
-
-    Skills["skills/*.yaml<br/>Skill Cards"] --> Agent
-    Skills --> Formatter
-    Tools["juno_tools/*.py<br/>analysis functions"] --> Executor
-```
+![Alt text](skills/schema_analyse.png)
 
 The thesis-to-code map is maintained in [CODE_THESIS_ARCHITECTURE_MAP.md](CODE_THESIS_ARCHITECTURE_MAP.md).
 
