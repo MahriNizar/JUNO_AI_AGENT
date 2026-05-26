@@ -17,7 +17,6 @@ to reproduce the thesis experiments.
 | --- | --- | --- |
 | Operating system | Microsoft Windows NT 10.0.19045.0 | Report exact OS/build used for final runs |
 | Shell | Windows PowerShell 5.1.19041.6456 | Command examples below use PowerShell |
-| Python interpreter | Python 3.13.7 in `.venv` | From `.venv\Scripts\python.exe --version` |
 | CPU | AMD64 Family 23 Model 8, 16 logical processors | Replace with full CPU model if available |
 | RAM | TO FILL | Include installed RAM, e.g. 32 GB |
 | GPU | NVIDIA GeForce RTX 2060 SUPER, 8192 MiB VRAM | From `nvidia-smi` |

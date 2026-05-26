@@ -75,19 +75,7 @@ Download the test data here:
 
 [Download test_data.rar](https://drive.google.com/file/d/19h8mal7icv5TOPA5qXZApBbB9tAoHOGS/view?usp=sharing)
 
-After downloading, extract the archive into the project root so the folder structure is:
-
-
-JUNO_AI_THESIS/
-├── test_data/
-│   ├── full_events_file.csv
-│   ├── long_scenario_A_flashing_pmt.csv
-│   ├── long_scenario_B_dead_rmu.csv
-│   ├── long_scenario_D_flashing_pmt.csv
-│   └── ...
-├── main.py
-├── requirements.txt
-└── README.md
+After downloading, extract the archive into the project root.
 
 
 ## Core Concepts
@@ -330,7 +318,7 @@ Baseline:
 Most diagnostic tools operate on per-hit CSV files derived from JUNO-style filling-test data. The expected columns are generally:
 
 ```text
-Event, PMTID, Charge, Time
+Event, PMTID, Charge, Time, Theta, Phi
 ```
 
 Hardware-level tools also rely on:

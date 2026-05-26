@@ -118,16 +118,3 @@ If you are trying to understand the system from code and thesis together, read i
 | Section 4.1.5, "Long-Horizon Scenarios" | [`evaluation/long_scenario_queries.json`](evaluation/long_scenario_queries.json), [`evaluation/run_long_evaluation_b1.py`](evaluation/run_long_evaluation_b1.py#L54) | Stores scenario prompts, expected tools, ground-truth facts, and minimum tool-call counts. |
 | Section 4.3, "Long-Horizon Scenario Results" | [`evaluation/results/valid_tests/long_eval_comparison_5times.json`](evaluation/results/valid_tests/long_eval_comparison_5times.json), [`evaluation/run_long_evaluation_b1.py`](evaluation/run_long_evaluation_b1.py#L156) | Stores long-horizon traces and formats outputs with ground-truth facts for scoring. |
 
-## Known Traceability Notes
-
-These are places where the thesis and code should be checked together before final submission.
-
-| Topic | Code evidence | Thesis section | Note |
-| --- | --- | --- | --- |
-| Baseline description | [`evaluation/baseline_b1.py`](evaluation/baseline_b1.py#L121) | Section 3.3.6, "Comparison to the ReAct Baseline"; Section 4.1.2, "Baseline Agent (B1)" | The baseline uses Skill Card summaries as prose descriptions, not raw Python docstrings. |
-| Prompt-driven large-file behavior | [`prompts.py`](prompts.py#L151), [`nodes.py`](nodes.py#L97) | Appendix D, "Prompt Design"; Section 3.3.3, "The Select-then-Validate Workflow" | `SYSTEM_PROMPT_2` contains a large-file protocol, but `AgentNode` currently uses `SYSTEM_PROMPT_T`. |
-| Validation strength | [`skill_models.py`](skill_models.py#L6), [`skill_registry.py`](skill_registry.py#L71) | Section 3.2.2, "Validation and Runtime Use" | Runtime validation is mainly basic Pydantic type validation. Enum and richer schema constraints are not fully enforced. |
-| Fold frequency | [`main.py`](main.py#L14) | Section 3.3.5, "Memory Management: Folded Memory"; Appendix C, "Memory Compression Ablation" | The code currently sets `FOLDING_NUMBER = 5`, while Appendix C discusses an optimum at another frequency. |
-| Long-horizon scoring | [`evaluation/run_long_evaluation_b1.py`](evaluation/run_long_evaluation_b1.py#L156), [`evaluation/results/valid_tests/long_eval_comparison_5times.json`](evaluation/results/valid_tests/long_eval_comparison_5times.json) | Section 4.3, "Long-Horizon Scenario Results" | The runner stores traces and ground truth, but completion labels should be made explicit in the saved artifacts if the table reports completion counts. |
-| Benchmark/result synchronization | [`evaluation/query_benchmark.json`](evaluation/query_benchmark.json), [`evaluation/results/valid_tests/t1_t2_t5_5times.json`](evaluation/results/valid_tests/t1_t2_t5_5times.json) | Section 4.1.4, "Benchmark Design"; Section 4.2, "Tiered Benchmark Results" | The benchmark JSON and saved result IDs should be frozen together for reproducibility. |
-
