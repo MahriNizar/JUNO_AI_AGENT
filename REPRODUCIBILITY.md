@@ -3,17 +3,6 @@
 This file records the execution environment, artifacts, parameters, and commands needed
 to reproduce the thesis experiments. 
 
-## Snapshot
-
-| Item | Value used / to be reported | Why it matters |
-| --- | --- | --- |
-| Repository URL | TO FILL: final GitHub/GitLab/Zenodo URL | Permanent pointer cited by the thesis |
-| Code commit | TO FILL: output of `git rev-parse HEAD` after repository creation | Identifies the exact code snapshot |
-| Archive tag / release | TO FILL, recommended: `thesis-final` | Stable version for thesis readers |
-| Date of archive | TO FILL | Distinguishes final archive from development runs |
-| Working directory used for reported local run | `C:\Users\mahri\Documents\1memoire\Proto_3` | Local path used while preparing the thesis |
-| Root dependency manifest | TO ADD: `requirements.txt` or `environment.yml` | Required for installation on a clean machine |
-| Current repository status at table creation | Not a Git repository yet | Commit hash cannot be reported until repository is initialized |
 
 ## Known Reproducibility Limitation
 

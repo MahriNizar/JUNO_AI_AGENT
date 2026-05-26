@@ -63,11 +63,31 @@ The thesis-to-code map is maintained in [CODE_THESIS_ARCHITECTURE_MAP.md](CODE_T
 | [Learner/](Learner) | Learning Pipeline nodes, prompts, state classes, mock data, and generated simulation logs. |
 | [learner_mode_run.py](learner_mode_run.py) | Entry point for the Skill Card synthesis pipeline. |
 | [evaluation/](evaluation) | Benchmark specifications, runners, scoring scripts, and saved result artifacts. |
-| [test_data/](test_data) | CSV files used by the benchmark and example diagnostics. |
+| [test_data/](test_data) | CSV files used by the benchmark and example diagnostics. Need to be downloaded |
 | [pmt_bec_rmu_map.csv](pmt_bec_rmu_map.csv) | Hardware mapping used by the diagnostic tools. |
 | [REPRODUCIBILITY.md](REPRODUCIBILITY.md) | Environment, benchmark, artifact, and reproducibility record. |
-| [thesis_draft.txt](thesis_draft.txt) | Text extracted from the thesis PDF for section-to-code traceability. |
 
+## Test Data
+
+The full test datasets are not stored in this Git repository because several CSV files exceed GitHub's file size limits.
+
+Download the test data here:
+
+[Download test_data.rar](https://drive.google.com/file/d/19h8mal7icv5TOPA5qXZApBbB9tAoHOGS/view?usp=sharing)
+
+After downloading, extract the archive into the project root so the folder structure is:
+
+```text
+JUNO_AI_THESIS/
+├── test_data/
+│   ├── full_events_file.csv
+│   ├── long_scenario_A_flashing_pmt.csv
+│   ├── long_scenario_B_dead_rmu.csv
+│   ├── long_scenario_D_flashing_pmt.csv
+│   └── ...
+├── main.py
+├── requirements.txt
+└── README.md
 ## Core Concepts
 
 ### Skill Cards
@@ -342,7 +362,7 @@ For thesis review and defense preparation, start with:
 
 - [CODE_THESIS_ARCHITECTURE_MAP.md](CODE_THESIS_ARCHITECTURE_MAP.md): maps thesis sections to code files.
 - [REPRODUCIBILITY.md](REPRODUCIBILITY.md): records benchmark and environment assumptions.
-- [thesis_draft.txt](thesis_draft.txt): extracted thesis text used for line-level traceability.
+- The thesis PDF itself: keep it open beside the architecture map; thesis references are given by section title.
 
 The most important implementation-to-thesis correspondences are:
 
@@ -384,4 +404,3 @@ It is not yet:
 ## License
 
 No license file is currently included in this archive. Add a license before publishing the repository publicly.
-
