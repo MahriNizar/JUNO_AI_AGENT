@@ -99,8 +99,6 @@ Long diagnostic chains can exceed the useful context of a local model. Folded Me
 
 - A running summary.
 - Confirmed findings.
-- Relevant file paths.
-- Errors and unresolved issues.
 
 The folding logic lives in [nodes.py](nodes.py) and [state_and_class.py](state_and_class.py). The current runtime folds every five tool calls, controlled by `FOLDING_NUMBER` in [main.py](main.py).
 

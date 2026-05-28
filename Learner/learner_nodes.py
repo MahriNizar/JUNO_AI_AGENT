@@ -614,25 +614,6 @@ class RefinerNode:
                                     
                                 )
 
-                            # 2. ALIGNMENT (Agent picked right tool, but Formatter rejected it)
-                            elif gate.gate_name == "F_Integration_Formatting":
-                                reason = gate.details.get("rejection_reason", gate.error_message)
-                                feedback_lines.append(
-                                    f"- ALIGNMENT ERROR: The Agent selected your skill based on its Summary, "
-                                    f"but the Validator rejected it based on the Full Policy."
-                                    f"\n  VALIDATOR SAID: '{reason}'"
-                                    f"\n  FIX: Your 'Summary' is making promises the 'Usage Policy' forbids. "
-                                    f"Update the Summary (description) to explicitly mention the constraints found in the Usage Policy."
-                                )
-
-                            # 3. PRODUCTION CRASH (Rare, but possible if interactions cause issues)
-                            elif gate.gate_name == "G_Integration_Execution":
-                                feedback_lines.append(
-                                    f"- PRODUCTION CRASH: The tool crashed when run inside the full agent loop."
-                                    f"\n  ERROR: {gate.error_message}"
-                                    f"\n  FIX: Ensure the tool output is robust and doesn't conflict with agent memory limits."
-                                )
-
         # SUCCESS
         if not feedback_lines:
             return {"refinement_feedback": "SUCCESS"}

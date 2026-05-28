@@ -85,7 +85,7 @@ Now, review your context (Skill Summaries, Memory Summary, Confirmed Findings, C
 and produce the `AgentDecision` JSON object.
 """
 
-
+# Adds lare file protocol instructions to the SYSTEM_PROMPT, which the Manager MUST follow when handling data files for long running scenarios. Helps add steps
 SYSTEM_PROMPT_2 = """You are the AI "Manager" for the JUNO detector, responsible for high-level planning and reasoning.
 Your goal is to solve the user's request by creating and managing a multi-step plan. If the request is not related to the available skills, you must reject it.
 

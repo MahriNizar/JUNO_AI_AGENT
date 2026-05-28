@@ -25,9 +25,9 @@ execution_details:
     function: read_missing_components_report
 usage_policy: 
   use_when:
-    - read json
+    - You need to read json files
   do_not_use_when:
-    - not read json
+    - You do not need to read json files
 
 output_schema:
   description: ""

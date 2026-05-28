@@ -48,7 +48,6 @@ to reproduce the thesis experiments.
 | `numpy` | 2.3.3 |
 | `matplotlib` | 3.10.6 |
 | `PyYAML` | 6.0.2 |
-| `langsmith` | 0.8.5 |
 | `seaborn` | 0.13.2 |
 
 ## Core System Parameters

@@ -40,7 +40,7 @@ If you are trying to understand the system from code and thesis together, read i
 
 | Thesis section | Code location | What the code does |
 | --- | --- | --- |
-| Section 3.3.2, "Agent State" | [`state_and_class.py`](state_and_class.py#L72) | `AgentState` defines the state shared by all graph nodes: messages, plan, memory, findings, errors, selected skill, formatted arguments, and counters. |
+| Section 3.3.2, "Agent State" | [`state_and_class.py`](state_and_class.py#L72) | `AgentState` contains the state shared by all graph nodes: messages, plan, memory, findings, errors, selected skill, formatted arguments, and counters. |
 | Section 3.3.3, "The Select-then-Validate Workflow" | [`state_and_class.py`](state_and_class.py#L50) | `AgentDecision` is the structured Pydantic output returned by the manager LLM. |
 | Section 3.3.3, explicit planning state | [`state_and_class.py`](state_and_class.py#L38) | `PlanStep` represents each structured plan entry used during execution and final-answer construction. |
 | Section 3.3.5, "Memory Management: Folded Memory" | [`state_and_class.py`](state_and_class.py#L20), [`state_and_class.py`](state_and_class.py#L59) | `FoldedMemory` stores persistent summaries and findings; `MemoryFoldResult` is the structured output used to update it. |

@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import sys
+from collections import Counter
 
 Z_95 = 1.959963984540054
 
@@ -16,31 +17,44 @@ def is_subseq(sub, full):
     it = iter(full)
     return all(any(x == y for y in it) for x in sub)
 
+def _coverage_score(required_tools, agent_sequence):
+    """Return the fraction of required tools invoked, ignoring order."""
+    if not required_tools:
+        return 0.0
+
+    required = Counter(required_tools)
+    observed = Counter(agent_sequence)
+    matched = sum(min(observed[tool], count) for tool, count in required.items())
+    total = sum(required.values())
+    return float(matched) / total if total else 0.0
+
 def compute_tsr(agent_data, query_spec):
     if agent_data.get('crashed', False):
         return 0.0
         
     tool_calls = agent_data.get('tool_calls', [])
     agent_sequence = [tc['skill_name'] for tc in tool_calls]
-    
+
+    allowed_refusals = query_spec.get('allowed_refusals')
+    if allowed_refusals is not None:
+        return 1.0 if len(tool_calls) == 0 else 0.0
+
+    expected_tools = query_spec.get('expected_tools') or []
     accepted_toolchains = query_spec.get('accepted_toolchains')
     if accepted_toolchains:
-        for chain in accepted_toolchains:
-            if is_subseq(chain, agent_sequence):
-                return 1.0
-        return 0.0
-        
-    expected_tools = query_spec.get('expected_tools')
+        candidate_chains = list(accepted_toolchains)
+        if expected_tools:
+            candidate_chains.append(expected_tools)
+
+        return max(_coverage_score(chain, agent_sequence) for chain in candidate_chains)
+
     if expected_tools:
-        alt_tools = set(query_spec.get('alternative_tools') or [])
-        valid_tools_set = set(expected_tools).union(alt_tools)
-        
-        found = len(set(agent_sequence).intersection(valid_tools_set))
-        return min(1.0, float(found) / len(expected_tools))
-        
-    allowed_refusals = query_spec.get('allowed_refusals')
-    if allowed_refusals is not None and len(tool_calls) == 0:
-        return 1.0
+        alternative_tools = query_spec.get('alternative_tools') or []
+        if len(expected_tools) == 1:
+            valid_tools_set = set(expected_tools).union(alternative_tools)
+            return 1.0 if any(tool in valid_tools_set for tool in agent_sequence) else 0.0
+
+        return 1.0 if is_subseq(expected_tools, agent_sequence) else 0.0
         
     return 0.0
 

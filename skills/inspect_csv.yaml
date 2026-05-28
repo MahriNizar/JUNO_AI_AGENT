@@ -37,7 +37,7 @@ output_schema:
           description: File size in megabytes, rounded to 2 decimals.
         total_rows:
           type: integer
-          description: "Number of hit\u2011level rows in the CSV."
+          description: "Number of hit level rows in the CSV."
         num_events:
           type: integer
           description: Number of unique events.
@@ -58,7 +58,7 @@ output_schema:
           description: Mean hits per event, rounded to 1 decimal.
         recommendation:
           type: string
-          description: "Human\u2011readable hint for the next step."
+          description: "Human readable hint for the next step."
       required:
       - file_size_mb
       - total_rows
